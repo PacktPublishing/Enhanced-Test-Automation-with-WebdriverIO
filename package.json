@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "wdio": "wdio run test/wdio.conf.ts",
-    "allure": "wdio run test/wdio.conf.ts && allure generate report allure-results --clean && allure open"
+    "report": "wdio run test/wdio.conf.ts && allure generate report allure-results --clean && allure open"
   },
   "keywords": [],
   "author": "",
