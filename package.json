@@ -22,5 +22,8 @@
     "ts-node": "^10.9.1",
     "typescript": "^4.9.3",
     "wdio-chromedriver-service": "^8.0.0"
+  },
+  "dependencies": {
+    "expect-webdriverio": "^3.0.0"
   }
 }
