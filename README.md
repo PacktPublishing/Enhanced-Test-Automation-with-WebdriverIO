@@ -3,7 +3,7 @@
 
 This is a demonstration project of advanced WebdriverIO methods.  
 ## Features
-
+-   Configured to run browser and see console output on a single monitor 
 -   TypeScript
 -   Custom Debugging
 -   Custom global.log
