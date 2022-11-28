@@ -3,3 +3,4 @@ allure-report
 allure-results
 all-logs
 driver-logs
+*.png
