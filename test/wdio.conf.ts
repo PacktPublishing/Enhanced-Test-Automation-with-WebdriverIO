@@ -1,10 +1,29 @@
 
 import type { Options } from '@wdio/types'
+// Chapter 4 - Automation SwitchBoard 
+function switchboardFactory () {
+    
+    const switchboard = new Map
 
-const DEBUG = (process.env.DEBUG === undefined) ? true : (process.env.DEBUG === `true`)
-console.log(`DEBUG: ${DEBUG}`)
+    //Set 
+    switchboard.set ("DEBUG", (process.env.DEBUG === undefined) ? true : (process.env.DEBUG === `true`))    
+    
+    return {
+        get(k:string) {
+            return switchboard.get(k)
+        },
 
-let timeout = (DEBUG === true) ? 1_000_000 : 10_000
+        set(k:string, v:any) {
+             switchboard.set(k,v)
+        }
+    }
+}
+
+const ASB = switchboardFactory()
+console.log(`DEBUG: ${ASB.get("DEBUG")}`)
+
+ASB.set("timeout", (ASB.get("DEBUG") === true) ? 1_000_000 : 10_000)
+let timeout = ASB.get("timeout")
 console.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`)
 
 
@@ -107,7 +126,7 @@ export const config: Options.Testrunner = {
     // Define all options that are relevant for the WebdriverIO instance here
     //
     // Level of logging verbosity: trace | debug | info | warn | error | silent
-    logLevel: 'warn',
+    logLevel: 'trace',
     //
     // Set specific log levels per logger
     // loggers:
@@ -369,11 +388,12 @@ export const config: Options.Testrunner = {
  * log wrapper
  * @param text to be output to the console window 
  */
+ const logASB = switchboardFactory()
+ 
+ 
 global.log = async (text: any) =>
 {
-
-    if (text) //truthy value check
-    {
+    if (text) { //truthy value check
         if (text===Promise){
             console.log(`--->     WARN: Log was passed a Promise oject`)
             console.trace()
@@ -381,4 +401,5 @@ global.log = async (text: any) =>
             console.log(`---> ${text}`)
         }
     }
+    
 }
