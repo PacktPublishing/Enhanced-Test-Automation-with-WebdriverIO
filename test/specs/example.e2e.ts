@@ -13,10 +13,15 @@ describe('My Login application', () => {
         // await global.log (null) // Does not print 
         // await global.log (Promise) // Adds trace back
 
-        LoginPage.login('tomsmith', 'SuperSecretPassword!');
+        LoginPage.login('tomsmith1', 'SuperSecretPassword!');
         expect(SecurePage.flashAlert).toBeExisting();
         expect(SecurePage.flashAlert).toHaveTextContaining(
             'You logged into a secure area!');
+
+        // Chapter 4
+        Promise.resolve().then( _ => console.log(`2`));
+        setTimeout( _ => console.log(`3`),0);
+        console.log(`1`);
     });
 });
 

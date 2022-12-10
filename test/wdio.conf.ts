@@ -6,7 +6,7 @@ function switchboardFactory () {
     const switchboard = new Map
 
     //Set 
-    switchboard.set ("DEBUG", (process.env.DEBUG === undefined) ? true : (process.env.DEBUG === `true`))    
+    switchboard.set ("DEBUG", (process.env.DEBUG === undefined) ? false : (process.env.DEBUG === `true`))    
     
     return {
         get(k:string) {
@@ -24,6 +24,7 @@ console.log(`DEBUG: ${ASB.get("DEBUG")}`)
 
 ASB.set("timeout", (ASB.get("DEBUG") === true) ? 1_000_000 : 10_000)
 let timeout = ASB.get("timeout")
+
 console.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`)
 
 
@@ -126,7 +127,7 @@ export const config: Options.Testrunner = {
     // Define all options that are relevant for the WebdriverIO instance here
     //
     // Level of logging verbosity: trace | debug | info | warn | error | silent
-    logLevel: 'trace',
+    logLevel: 'silent',
     //
     // Set specific log levels per logger
     // loggers:
