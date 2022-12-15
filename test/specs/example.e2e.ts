@@ -1,6 +1,6 @@
 "strict mode"
-import LoginPage from  '../pageobjects/login.page';
-import SecurePage from '../pageobjects/secure.page';
+import LoginPage from  '../pageobjects/login.page.js';
+import SecurePage from '../pageobjects/secure.page.js';
 
 
 describe('My Login application', () => {
@@ -13,9 +13,9 @@ describe('My Login application', () => {
         // await global.log (null) // Does not print 
         // await global.log (Promise) // Adds trace back
 
-        LoginPage.login('tomsmith', 'SuperSecretPassword!');
-        expect(SecurePage.flashAlert).toBeExisting();
-        expect(SecurePage.flashAlert).toHaveTextContaining(
+        await LoginPage.login('tomsmith', 'SuperSecretPassword!');
+        await expect(SecurePage.flashAlert).toBeExisting();
+        await expect(SecurePage.flashAlert).toHaveTextContaining(
             'You logged into a secure area!');
     });
 });

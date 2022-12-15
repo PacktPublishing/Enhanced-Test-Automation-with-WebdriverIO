@@ -1,5 +1,4 @@
 
-import type { Options } from '@wdio/types'
 // Chapter 4 - Automation SwitchBoard 
 function switchboardFactory () {
     
@@ -27,7 +26,46 @@ let timeout = ASB.get("timeout")
 console.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`)
 
 
-export const config: Options.Testrunner = {
+
+/**
+ * log wrapper
+ * @param text to be output to the console window 
+ */
+ const logASB = switchboardFactory()
+ 
+// @ts-expect-error
+global.log = async (text: any) =>
+{
+    if (text) { //truthy value check
+        if (text===Promise){
+            console.log(`--->     WARN: Log was passed a Promise oject`)
+            console.trace()
+        }else{
+            console.log(`---> ${text}`)
+        }
+    }
+    
+}
+
+/** global helpers */
+
+(async ()=>{
+    // @ts-expect-error
+await global.log (`Starting...`)
+// @ts-expect-error
+global.helpers = require("./helpers");
+// @ts-expect-error
+await global.helpersLoaded()
+console.log (`Done.`)
+})
+
+//import type { Options } from '@wdio/types'
+
+import url from 'node:url'
+import path from 'node:path'
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
+
+export const config: WebdriverIO.Config = {
     //
     // ====================
     // Runner Configuration
@@ -46,20 +84,20 @@ export const config: Options.Testrunner = {
     // environment variables for ts-node or use wdio config's autoCompileOpts section.
     //
 
-    autoCompileOpts: {
-        autoCompile: true,
-        // see https://github.com/TypeStrong/ts-node#cli-and-programmatic-options
-        // for all available options
-        tsNodeOpts: {
-            transpileOnly: true,
-            project: 'test/tsconfig.json'
-        }
-        // tsconfig-paths is only used if "tsConfigPathsOpts" are provided, if you
-        // do please make sure "tsconfig-paths" is installed as dependency
-        // tsConfigPathsOpts: {
-        //     baseUrl: './'
-        // }
-    },
+    // autoCompileOpts: {
+    //     autoCompile: true,
+    //     // see https://github.com/TypeStrong/ts-node#cli-and-programmatic-options
+    //     // for all available options
+    //     tsNodeOpts: {
+    //         transpileOnly: true,
+    //         project: './specs/**/*.ts'
+    //     }
+    //     // tsconfig-paths is only used if "tsConfigPathsOpts" are provided, if you
+    //     // do please make sure "tsconfig-paths" is installed as dependency
+    //     // tsConfigPathsOpts: {
+    //     //     baseUrl: './' 
+    //     // }
+    // },
     //
     // ==================
     // Specify Test Files
@@ -127,6 +165,7 @@ export const config: Options.Testrunner = {
     //
     // Level of logging verbosity: trace | debug | info | warn | error | silent
     logLevel: 'trace',
+    outputDir: path.resolve(__dirname, 'logs'),
     //
     // Set specific log levels per logger
     // loggers:
@@ -166,7 +205,7 @@ export const config: Options.Testrunner = {
     // Services take over a specific job you don't want to take care of. They enhance
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
-    services: ['chromedriver'],
+    //services: ['chromedriver'],  //REMOVED
 
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
@@ -201,22 +240,22 @@ export const config: Options.Testrunner = {
         // The Jasmine framework allows interception of each assertion in order to log the state of the application
         // or website depending on the result. For example, it is pretty handy to take a screenshot every time
         // an assertion fails.
-        expectationResultHandler: async function (passed, assertion)
-        {
-            /**
-             * only take screenshot if assertion failed
-             */
+        // expectationResultHandler:  function (passed, assertion)
+        // {
+        //     /**
+        //      * only take screenshot if assertion failed
+        //      */
 
-            if (passed)
-            {
-                return
-            }
-            //await console.log (`Jasmine screenshot of ${assertion.error.message}.`) 
-            //await console.log(`Waiting for ${timeout/60000} min...`) 
-            await browser.saveScreenshot(`assertionError_${assertion.error.message}.png`)
-            //await browser.pause(timeout);
-            //await console.log(`DEBUG wait done`) 
-        }
+        //     if (passed)
+        //     {
+        //         return
+        //     }
+        //     //await console.log (`Jasmine screenshot of ${assertion.error.message}.`) 
+        //     //await console.log(`Waiting for ${timeout/60000} min...`) 
+        //     await browser.saveScreenshot(`assertionError_${assertion.error.message}.png`)
+        //     //await browser.pause(timeout);
+        //     //await console.log(`DEBUG wait done`) 
+        // }
     },
 
     //
@@ -289,6 +328,7 @@ export const config: Options.Testrunner = {
     /**
      * Function to be executed before a test (in Mocha/Jasmine) starts.
      */
+    // @ts-expect-error
     beforeTest: async function (test, context)
     {
         //Option #1: Run browser full screen on dual monitors
@@ -296,6 +336,7 @@ export const config: Options.Testrunner = {
 
         // Option #2: Run browser 3/4 screen on single monitor
         // Allow VS Code Terminal visible on bottom of the screen  
+        // @ts-expect-error
         await global.log(`Changing window size`)
         browser.setWindowSize(1920, 770)
 
@@ -304,10 +345,10 @@ export const config: Options.Testrunner = {
      * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
      * beforeEach in Mocha)
      */
-    beforeHook: function (test, context)
-    {
+    //beforeHook: function (test, context)
+    //{
         // Create custom commands here
-    },
+    //},
     /**
      * Hook that gets executed _after_ a hook within the suite starts (e.g. runs after calling
      * afterEach in Mocha)
@@ -324,6 +365,7 @@ export const config: Options.Testrunner = {
      * @param {Boolean} result.passed    true if test has passed, otherwise false
      * @param {Object}  result.retries   informations to spec related retries, e.g. `{ attempts: 0, limit: 0 }`
      */
+    // @ts-expect-error
     afterTest: async function (test, context, { error, result, duration, passed, retries })
     {
         if (!passed)
@@ -384,22 +426,3 @@ export const config: Options.Testrunner = {
     // }
 }
 
-/**
- * log wrapper
- * @param text to be output to the console window 
- */
- const logASB = switchboardFactory()
- 
- 
-global.log = async (text: any) =>
-{
-    if (text) { //truthy value check
-        if (text===Promise){
-            console.log(`--->     WARN: Log was passed a Promise oject`)
-            console.trace()
-        }else{
-            console.log(`---> ${text}`)
-        }
-    }
-    
-}
