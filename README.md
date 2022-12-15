@@ -22,23 +22,23 @@ This is a demonstration project of advanced WebdriverIO methods.
 
 Install the dependencies:
 
-```bash
+```bash /zsh
 npm install
 ```
 
 Compile TypeScript:
-```bash
+```bash / zsh
 npm run build
 ```
 
 Run e2e tests:
 Run this command to test the global.log command with empty/null strings and a Promise object 
-```bash
+```bash / zsh
 npm run wdio
 ```
 
-Run this command to test the global.log command with a longer timeout 
-```bash
+Run this command to test the Framework DEBUG command with a longer timeout 
+```bash /zsh
 npm run debug
 ```
 
@@ -47,12 +47,12 @@ npm run debug
 ### Allure
 Run this command to generate the allure report in the directory `./test-report/allure-report`:
 You can run this command to start a server on your machine and open the allure report on the browser:
-```bash
+```bash / zsh
 npm run report
 ```
 
 ## Prettier and Eslint
 Run to format the code:
-```bash
+```bash / zsh
 npm run code:format
 ```
