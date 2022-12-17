@@ -1,19 +1,25 @@
+//chapter-5 Custom Commands
 
+import * as ts from 'typescript'
+import { Map, MapLike } from 'typescript'
 // Chapter 4 - Automation SwitchBoard 
-function switchboardFactory () {
-    
+function switchboardFactory()
+{
+
     const switchboard = new Map
 
     //Set 
-    switchboard.set ("DEBUG", (process.env.DEBUG === undefined) ? true : (process.env.DEBUG === `true`))    
-    
+    switchboard.set("DEBUG", (process.env.DEBUG === undefined) ? true : (process.env.DEBUG === `true`))
+
     return {
-        get(k:string) {
+        get(k: string)
+        {
             return switchboard.get(k)
         },
 
-        set(k:string, v:any) {
-             switchboard.set(k,v)
+        set(k: string, v: any)
+        {
+            switchboard.set(k, v)
         }
     }
 }
@@ -84,20 +90,20 @@ export const config: WebdriverIO.Config = {
     // environment variables for ts-node or use wdio config's autoCompileOpts section.
     //
 
-    // autoCompileOpts: {
-    //     autoCompile: true,
-    //     // see https://github.com/TypeStrong/ts-node#cli-and-programmatic-options
-    //     // for all available options
-    //     tsNodeOpts: {
-    //         transpileOnly: true,
-    //         project: './specs/**/*.ts'
-    //     }
-    //     // tsconfig-paths is only used if "tsConfigPathsOpts" are provided, if you
-    //     // do please make sure "tsconfig-paths" is installed as dependency
-    //     // tsConfigPathsOpts: {
-    //     //     baseUrl: './' 
-    //     // }
-    // },
+    autoCompileOpts: {
+        autoCompile: true,
+        // see https://github.com/TypeStrong/ts-node#cli-and-programmatic-options
+        // for all available options
+        tsNodeOpts: {
+            transpileOnly: true,
+            project: './specs/**/*.ts'
+        }
+        // tsconfig-paths is only used if "tsConfigPathsOpts" are provided, if you
+        // do please make sure "tsconfig-paths" is installed as dependency
+        // tsConfigPathsOpts: {
+        //     baseUrl: './'
+        // }
+    },
     //
     // ==================
     // Specify Test Files
@@ -310,8 +316,12 @@ export const config: WebdriverIO.Config = {
      * @param {Array.<String>} specs        List of spec file paths that are to be run
      * @param {Object}         browser      instance of created browser/device session
      */
-    // before: function (capabilities, specs) {
-    // },
+    before: function (capabilities, specs) {
+        //Add commands to WebdriverIO
+        //Object.keys(commands).forEach(key => {
+        //    browser.addCommand(key, commands[key]);
+        //})
+    },
     /**
      * Runs before a WebdriverIO command gets executed.
      * @param {String} commandName hook command name
@@ -328,7 +338,7 @@ export const config: WebdriverIO.Config = {
     /**
      * Function to be executed before a test (in Mocha/Jasmine) starts.
      */
-    // @ts-expect-error
+
     beforeTest: async function (test, context)
     {
         //Option #1: Run browser full screen on dual monitors
@@ -365,7 +375,7 @@ export const config: WebdriverIO.Config = {
      * @param {Boolean} result.passed    true if test has passed, otherwise false
      * @param {Object}  result.retries   informations to spec related retries, e.g. `{ attempts: 0, limit: 0 }`
      */
-    // @ts-expect-error
+
     afterTest: async function (test, context, { error, result, duration, passed, retries })
     {
         if (!passed)
@@ -424,5 +434,25 @@ export const config: WebdriverIO.Config = {
     */
     // onReload: function(oldSessionId, newSessionId) {
     // }
+
 }
 
+/**
+ * log wrapper
+ * @param text to be output to the console window 
+ */
+ const logASB = switchboardFactory()
+ 
+ 
+global.log = async (text: any) =>
+{
+    if (text) { //truthy value check
+        if (text===Promise){
+            console.log(`--->     WARN: Log was passed a Promise oject`)
+            console.trace()
+        }else{
+            console.log(`---> ${text}`)
+        }
+    }
+    
+}

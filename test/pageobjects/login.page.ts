@@ -35,7 +35,7 @@ class LoginPage extends Page {
         await global.log (`Entered '${username}'`)
         await this.inputPassword.setValue(password);
         await global.log (`Entered '${password}' and clicking Submit`)
-        await this.btnSubmit.click();
+        await this.btnSubmit.clickAdv();
         await global.log ("Submit clicked!")
     }
 
