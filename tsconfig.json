@@ -1,18 +1,21 @@
 {
-    "compilerOptions": 
-    {
+    "ts-node": {
+        "files": true
+    },
+    "compilerOptions": {
         "moduleResolution": "node",
         "target": "ES2022",
         "module": "ESNext",
-          /* Strict Type-Checking Options */
-    "strict": true,  
-       
-        "types": 
-        [
+        /* Strict Type-Checking Options */
+        "strict": true,
+        "types": [
             "node",
             "@wdio/globals/types",
             "@wdio/jasmine-framework",
             "expect-webdriverio"
+        ],
+        "typeRoots": [
+            "helpers/global.d.ts"
         ],
         "allowSyntheticDefaultImports": true, /* Allow default imports from modules with no default export. This does not affect code emit, just typechecking. */
         "skipLibCheck": true, /* Skip type checking of declaration files. */

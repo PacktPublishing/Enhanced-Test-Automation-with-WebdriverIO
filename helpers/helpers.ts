@@ -6,3 +6,7 @@ module.exports = {
     }
 }
 
+url: async (url:string, timeout: number) => {
+    const urlTimeout = timeout || global.setTimeout
+    await browser.waitUntil(browser.$("body"),timeout);
+}
