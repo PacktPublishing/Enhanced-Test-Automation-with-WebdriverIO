@@ -1,12 +1,16 @@
-//console.log(`LOADING  Framework Helpers...`);
-
-module.exports = {
-    helpersLoaded: async () => {
-        console.log(`COMPLETE Framework Helpers`);
+/**
+ * Console.log wrapper 
+ *    - Does not print if string is empty / null
+ *    - Prints trace if not passed string or number
+ * @param message 
+ */
+export function log(message: any) {
+    if (typeof message === 'string' || typeof message === 'number') {
+      if (message) {
+        console.log(`---> ${message}`);
+      }
+    } else {
+      console.log (`--->   helpers.console() received: ${message}`)
+      console.trace();
     }
-}
-
-url: async (url:string, timeout: number) => {
-    const urlTimeout = timeout || global.setTimeout
-    await browser.waitUntil(browser.$("body"),timeout);
-}
+  }

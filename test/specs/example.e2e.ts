@@ -1,10 +1,13 @@
 "strict mode"
 import LoginPage from  '../pageobjects/login.page.js';
 import SecurePage from '../pageobjects/secure.page.js';
+import * as helpers from '../../helpers/helpers.js';
 
 
 describe('My Login application', () => {
     it('should login with valid credentials', async () => {
+        helpers.log(`Hello, World!`)
+        helpers.log(Promise)
         await LoginPage.open();
         // Chapter 3
         // console.log (`Entering password`) // Intrinsic log
