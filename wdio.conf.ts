@@ -437,12 +437,6 @@ export const config: WebdriverIO.Config = {
 
 }
 
-/**
- * log wrapper
- * @param text to be output to the console window 
- */
- const logASB = switchboardFactory()
- 
  
 global.log = async (text: any) =>
 {
