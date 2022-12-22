@@ -1,7 +1,5 @@
 //chapter-5 Custom Commands
 
-import * as ts from 'typescript'
-import { Map, MapLike } from 'typescript'
 // Chapter 4 - Automation SwitchBoard 
 function switchboardFactory()
 {
@@ -438,15 +436,3 @@ export const config: WebdriverIO.Config = {
 }
 
  
-global.log = async (text: any) =>
-{
-    if (text) { //truthy value check
-        if (text===Promise){
-            console.log(`--->     WARN: Log was passed a Promise oject`)
-            console.trace()
-        }else{
-            console.log(`---> ${text}`)
-        }
-    }
-    
-}
