@@ -1,5 +1,5 @@
 import { ChainablePromiseElement } from 'webdriverio';
-
+import * as helpers from '../../helpers/helpers.js'; 
 import Page from './page.js';
 
 /**
@@ -27,7 +27,7 @@ class LoginPage extends Page {
      */
     public async login (username: string, password: string) {
         
-        console.log ("Write to Console window")
+        helpers.log ("Write to Console window")
         
         //Removed await keyword
          console.log (`Logging in with '${username}' and '${password}'`)
@@ -36,7 +36,7 @@ class LoginPage extends Page {
         await this.inputPassword.setValue(password);
          console.log (`Entered '${password}' and clicking Submit`)
         await this.btnSubmit.click();
-         console.log ("Submit clicked!")
+        helpers.log ("Submit clicked!")
     }
 
     /**
