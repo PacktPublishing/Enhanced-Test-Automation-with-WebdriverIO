@@ -211,19 +211,8 @@ export const config: WebdriverIO.Config = {
     /**
      * Function to be executed before a test (in Mocha/Jasmine) starts.
      */
-
-    beforeTest: async function (test, context)
-    {
-        //Option #1: Run browser full screen on dual monitors
-        //browser.maximizeWindow();
-
-        // Option #2: Run browser 3/4 screen on single monitor
-        // Allow VS Code Terminal visible on bottom of the screen  
-        // @ts-expect-error
-        await global.log(`Changing window size`)
-        browser.setWindowSize(1920, 770)
-
-    },
+    // beforeTest: function (test, context) {
+    // },
     /**
      * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
      * beforeEach in Mocha)
@@ -239,14 +228,8 @@ export const config: WebdriverIO.Config = {
     /**
      * Function to be executed after a test (in Mocha/Jasmine).
      */
-
-    afterTest: async function (test, context, { error, result, duration, passed, retries })
-    {
-        if (!passed)
-        {
-            await browser.takeScreenshot();
-        }
-    },
+    // afterTest: function(test, context, { error, result, duration, passed, retries }) {
+    // },
 
 
     /**
