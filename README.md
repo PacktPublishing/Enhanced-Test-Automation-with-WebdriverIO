@@ -1,7 +1,26 @@
 # E2E tests with WebDriverIO and Jasmine
+.
+└── package.json
+├── tsconfig.json
+├── wdio.conf.ts
+└── test
+    ├── specs
+       └── example.e2e.ts
+    └── pageobjects
+       ├── login.page.ts
+       ├── page.ts
+       └── secure.page.ts
+└── helpers
+    └── helpers.ts
+└── logs
+    ├── wdio.log
+    └── wdio-0-0.log
+└── allure-results  # folder and content gets created automatically on test run
+    └── chrome
+        ├── xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx-testsuite.xml
+        └── xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx-attachment.json
 
-
-This is a demonstration project of advanced WebdriverIO methods.  
+This is a demonstration project of advanced Typescript WebdriverIO helper methods.  
 ## Features
 -   Configured to run browser and see console output on a single monitor 
 -   TypeScript

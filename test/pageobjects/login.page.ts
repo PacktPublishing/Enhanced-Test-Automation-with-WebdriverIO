@@ -30,13 +30,12 @@ class LoginPage extends Page {
         helpers.log ("Write to Console window")
         
         //Removed await keyword
-         console.log (`Logging in with '${username}' and '${password}'`)
+         helpers.log (`Logging in with '${username}' and '${password}'`)
         await this.inputUsername.setValue(username);
-         console.log (`Entered '${username}'`)
+        helpers.log (`Entered '${username}'`)
         await this.inputPassword.setValue(password);
-         console.log (`Entered '${password}' and clicking Submit`)
-        await this.btnSubmit.click();
-        helpers.log ("Submit clicked!")
+        helpers.log (`Entered '${password}' and clicking Submit with ClickAdv`)
+        await this.btnSubmit.clickAdv();
     }
 
     /**

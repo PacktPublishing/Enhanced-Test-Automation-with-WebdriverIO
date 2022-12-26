@@ -7,7 +7,7 @@ import * as helpers from '../../helpers/helpers.js';
 describe('My Login application', () => {
     it('should login with valid credentials', async () => {
         helpers.log(`Hello, World!`)
-        helpers.log(Promise)
+        // helpers.log(Promise) // Unit test log returns warning when anything but string is passsed
         await LoginPage.open();
         // Chapter 3
         // console.log (`Entering password`) // Intrinsic log

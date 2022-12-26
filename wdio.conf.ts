@@ -1,122 +1,27 @@
-//chapter-5 Custom Commands
-
-// Chapter 4 - Automation SwitchBoard 
-function switchboardFactory()
-{
-
-    const switchboard = new Map
-
-    //Set 
-    switchboard.set("DEBUG", (process.env.DEBUG === undefined) ? true : (process.env.DEBUG === `true`))
-
-    return {
-        get(k: string)
-        {
-            return switchboard.get(k)
-        },
-
-        set(k: string, v: any)
-        {
-            switchboard.set(k, v)
-        }
-    }
-}
-
-const ASB = switchboardFactory()
-console.log(`DEBUG: ${ASB.get("DEBUG")}`)
-
-ASB.set("timeout", (ASB.get("DEBUG") === true) ? 1_000_000 : 10_000)
-let timeout = ASB.get("timeout")
-console.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`)
-
-
-
-/**
- * log wrapper
- * @param text to be output to the console window 
- */
- const logASB = switchboardFactory()
- 
-// @ts-expect-error
-global.log = async (text: any) =>
-{
-    if (text) { //truthy value check
-        if (text===Promise){
-            console.log(`--->     WARN: Log was passed a Promise oject`)
-            console.trace()
-        }else{
-            console.log(`---> ${text}`)
-        }
-    }
-    
-}
-
-/** global helpers */
-
-(async ()=>{
-    // @ts-expect-error
-await global.log (`Starting...`)
-// @ts-expect-error
-global.helpers = require("./helpers");
-// @ts-expect-error
-await global.helpersLoaded()
-console.log (`Done.`)
-})
-
-//import type { Options } from '@wdio/types'
-
+import * as helpers from './helpers/helpers.js';
 import url from 'node:url'
 import path from 'node:path'
+const addToElement = true // 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 
+// @ts-expect-error
 export const config: WebdriverIO.Config = {
     //
     // ====================
     // Runner Configuration
     // ====================
     //
-    //
-    // =====================
-    // ts-node Configurations
-    // =====================
-    //
-    // You can write tests using TypeScript to get autocompletion and type safety.
-    // You will need typescript and ts-node installed as devDependencies.
-    // WebdriverIO will automatically detect if these dependencies are installed
-    // and will compile your config and tests for you.
-    // If you need to configure how ts-node runs please use the
-    // environment variables for ts-node or use wdio config's autoCompileOpts section.
-    //
-
-    autoCompileOpts: {
-        autoCompile: true,
-        // see https://github.com/TypeStrong/ts-node#cli-and-programmatic-options
-        // for all available options
-        tsNodeOpts: {
-            transpileOnly: true,
-            project: './specs/**/*.ts'
-        }
-        // tsconfig-paths is only used if "tsConfigPathsOpts" are provided, if you
-        // do please make sure "tsconfig-paths" is installed as dependency
-        // tsConfigPathsOpts: {
-        //     baseUrl: './'
-        // }
-    },
+    // WebdriverIO allows it to run your tests in arbitrary locations (e.g. locally or
+    // on a remote machine).
+    runner: 'local',
     //
     // ==================
     // Specify Test Files
     // ==================
     // Define which test specs should run. The pattern is relative to the directory
-    // from which `wdio` was called.
-    //
-    // The specs are defined as an array of spec files (optionally using wildcards
-    // that will be expanded). The test for each spec file will be run in a separate
-    // worker process. In order to have a group of spec files run in the same worker
-    // process simply enclose them in an array within the specs array.
-    //
-    // If you are calling `wdio` from an NPM script (see https://docs.npmjs.com/cli/run-script),
-    // then the current working directory is where your `package.json` resides, so `wdio`
-    // will be called from there.
+    // from which `wdio` was called. Notice that, if you are calling `wdio` from an
+    // NPM script (see https://docs.npmjs.com/cli/run-script) then the current working
+    // directory is where your package.json resides, so `wdio` will be called from there.
     //
     specs: [
         './test/specs/**/*.ts'
@@ -142,10 +47,6 @@ export const config: WebdriverIO.Config = {
     // from the same test should run tests.
     //
     maxInstances: 10,
-    //
-    // If you have trouble getting all important capabilities together, check out the
-    // Sauce Labs platform configurator - a great tool to configure your capabilities:
-    // https://saucelabs.com/platform/platform-configurator
     //
     capabilities: [{
 
@@ -174,15 +75,15 @@ export const config: WebdriverIO.Config = {
     // Set specific log levels per logger
     // loggers:
     // - webdriver, webdriverio
-    // - @wdio/browserstack-service, @wdio/devtools-service, @wdio/sauce-service
+    // - @wdio/applitools-service, @wdio/browserstack-service, @wdio/devtools-service, @wdio/sauce-service
     // - @wdio/mocha-framework, @wdio/jasmine-framework
-    // - @wdio/local-runner
+    // - @wdio/local-runner, @wdio/lambda-runner
     // - @wdio/sumologic-reporter
-    // - @wdio/cli, @wdio/config, @wdio/utils
+    // - @wdio/cli, @wdio/config, @wdio/sync, @wdio/utils
     // Level of logging verbosity: trace | debug | info | warn | error | silent
     // logLevels: {
     //     webdriver: 'info',
-    //     '@wdio/appium-service': 'info'
+    //     '@wdio/applitools-service': 'info'
     // },
     //
     // If you only want to run your tests until a specific amount of tests have failed use
@@ -193,27 +94,23 @@ export const config: WebdriverIO.Config = {
     // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
     // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
     // gets prepended directly.
-    baseUrl: 'http://localhost',
+    baseUrl: 'http://the-internet.herokuapp.com',
     //
     // Default timeout for all waitFor* commands.
     waitforTimeout: 10000,
     //
     // Default timeout in milliseconds for request
     // if browser driver or grid doesn't send response
-    connectionRetryTimeout: 120000,
+    connectionRetryTimeout: 90000,
     //
     // Default request retries count
     connectionRetryCount: 3,
-    //
-    // Test runner services
-    // Services take over a specific job you don't want to take care of. They enhance
-    // your test setup with almost no effort. Unlike plugins, they don't add new
-    // commands. Instead, they hook themselves up into the test process.
-    //services: ['chromedriver'],  //REMOVED
 
+    services: [],
+    //
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
-    // see also: https://webdriver.io/docs/frameworks
+    // see also: https://webdriver.io/docs/frameworks.html
     //
     // Make sure you have the wdio adapter package for the specific framework installed
     // before running any tests.
@@ -222,46 +119,26 @@ export const config: WebdriverIO.Config = {
     // The number of times to retry the entire specfile when it fails as a whole
     // specFileRetries: 1,
     //
-    // Delay in seconds between the spec file retry attempts
-    // specFileRetriesDelay: 0,
-    //
     // Whether or not retried specfiles should be retried immediately or deferred to the end of the queue
     // specFileRetriesDeferred: false,
     //
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
-    // see also: https://webdriver.io/docs/dot-reporter
-    reporters: ['spec', ['allure', { outputDir: 'allure-results' }]],
-
-
-
+    // see also: https://webdriver.io/docs/dot-reporter.html
+    reporters: ['spec'],
     //
     // Options to be passed to Jasmine.
-    jasmineOpts: {
+    jasmineNodeOpts: {
         // Jasmine default timeout
-        defaultTimeoutInterval: timeout,
+        defaultTimeoutInterval: 60000,
         //
         // The Jasmine framework allows interception of each assertion in order to log the state of the application
         // or website depending on the result. For example, it is pretty handy to take a screenshot every time
         // an assertion fails.
-        // expectationResultHandler:  function (passed, assertion)
-        // {
-        //     /**
-        //      * only take screenshot if assertion failed
-        //      */
-
-        //     if (passed)
-        //     {
-        //         return
-        //     }
-        //     //await console.log (`Jasmine screenshot of ${assertion.error.message}.`) 
-        //     //await console.log(`Waiting for ${timeout/60000} min...`) 
-        //     await browser.saveScreenshot(`assertionError_${assertion.error.message}.png`)
-        //     //await browser.pause(timeout);
-        //     //await console.log(`DEBUG wait done`) 
+        // expectationResultHandler: function(passed, assertion) {
+        //     do something
         // }
     },
-
     //
     // =====
     // Hooks
@@ -283,19 +160,10 @@ export const config: WebdriverIO.Config = {
      * @param  {String} cid      capability id (e.g 0-0)
      * @param  {[type]} caps     object containing capabilities for session that will be spawn in the worker
      * @param  {[type]} specs    specs to be run in the worker process
-     * @param  {[type]} args     object that will be merged with the main configuration once worker is initialized
+     * @param  {[type]} args     object that will be merged with the main configuration once worker is initialised
      * @param  {[type]} execArgv list of string arguments passed to the worker process
      */
     // onWorkerStart: function (cid, caps, specs, args, execArgv) {
-    // },
-    /**
-     * Gets executed just after a worker process has exited.
-     * @param  {String} cid      capability id (e.g 0-0)
-     * @param  {Number} exitCode 0 - success, 1 - fail
-     * @param  {[type]} specs    specs to be run in the worker process
-     * @param  {Number} retries  number of retries used
-     */
-    // onWorkerEnd: function (cid, exitCode, specs, retries) {
     // },
     /**
      * Gets executed just before initialising the webdriver session and test framework. It allows you
@@ -303,22 +171,29 @@ export const config: WebdriverIO.Config = {
      * @param {Object} config wdio configuration object
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {Array.<String>} specs List of spec file paths that are to be run
-     * @param {String} cid worker id (e.g. 0-0)
      */
-    // beforeSession: function (config, capabilities, specs, cid) {
+    // beforeSession: function (config, capabilities, specs) {
     // },
     /**
      * Gets executed before test execution begins. At this point you can access to all global
      * variables like `browser`. It is the perfect place to define custom commands.
      * @param {Array.<Object>} capabilities list of capabilities details
-     * @param {Array.<String>} specs        List of spec file paths that are to be run
-     * @param {Object}         browser      instance of created browser/device session
+     * @param {Array.<String>} specs List of spec file paths that are to be run
      */
+    // @ts-expect-error
     before: function (capabilities, specs) {
-        //Add commands to WebdriverIO
-        //Object.keys(commands).forEach(key => {
-        //    browser.addCommand(key, commands[key]);
-        //})
+        // @ts-expect-error
+        browser.addCommand("clickAdv", async function () {
+            // `this` is return value of $(selector)
+            //await this.waitForDisplayed()
+            try {
+                // @ts-expect-error
+                await this.click()
+                helpers.log(`Element was clicked.`)
+            } catch (error) {
+                helpers.log(`Element was not clicked.\n${error}`)
+            }
+        }, addToElement)
     },
     /**
      * Runs before a WebdriverIO command gets executed.
@@ -353,10 +228,8 @@ export const config: WebdriverIO.Config = {
      * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
      * beforeEach in Mocha)
      */
-    //beforeHook: function (test, context)
-    //{
-        // Create custom commands here
-    //},
+    // beforeHook: function (test, context) {
+    // },
     /**
      * Hook that gets executed _after_ a hook within the suite starts (e.g. runs after calling
      * afterEach in Mocha)
@@ -364,14 +237,7 @@ export const config: WebdriverIO.Config = {
     // afterHook: function (test, context, { error, result, duration, passed, retries }) {
     // },
     /**
-     * Function to be executed after a test (in Mocha/Jasmine only)
-     * @param {Object}  test             test object
-     * @param {Object}  context          scope object the test was executed with
-     * @param {Error}   result.error     error object in case the test fails, otherwise `undefined`
-     * @param {Any}     result.result    return object of test function
-     * @param {Number}  result.duration  duration of test
-     * @param {Boolean} result.passed    true if test has passed, otherwise false
-     * @param {Object}  result.retries   informations to spec related retries, e.g. `{ attempts: 0, limit: 0 }`
+     * Function to be executed after a test (in Mocha/Jasmine).
      */
 
     afterTest: async function (test, context, { error, result, duration, passed, retries })
@@ -430,9 +296,6 @@ export const config: WebdriverIO.Config = {
     * @param {String} oldSessionId session ID of the old session
     * @param {String} newSessionId session ID of the new session
     */
-    // onReload: function(oldSessionId, newSessionId) {
-    // }
-
+    //onReload: function(oldSessionId, newSessionId) {
+    //}
 }
-
- 
