@@ -219,8 +219,7 @@ export const config: WebdriverIO.Config = {
 
         // Option #2: Run browser 3/4 screen on single monitor
         // Allow VS Code Terminal visible on bottom of the screen  
-        // @ts-expect-error
-        await global.log(`Changing window size`)
+        await helpers.log(`Changing window size`)
         browser.setWindowSize(1920, 770)
 
     },
