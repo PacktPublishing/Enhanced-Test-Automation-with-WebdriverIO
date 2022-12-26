@@ -97,7 +97,7 @@ export const config: WebdriverIO.Config = {
     baseUrl: 'http://the-internet.herokuapp.com',
     //
     // Default timeout for all waitFor* commands.
-    waitforTimeout: 10000,
+    waitforTimeout: 30000,
     //
     // Default timeout in milliseconds for request
     // if browser driver or grid doesn't send response
@@ -114,7 +114,7 @@ export const config: WebdriverIO.Config = {
     //
     // Make sure you have the wdio adapter package for the specific framework installed
     // before running any tests.
-    framework: 'jasmine',
+
     //
     // The number of times to retry the entire specfile when it fails as a whole
     // specFileRetries: 1,
@@ -128,9 +128,11 @@ export const config: WebdriverIO.Config = {
     reporters: ['spec'],
     //
     // Options to be passed to Jasmine.
-    jasmineNodeOpts: {
+    framework: 'jasmine',
+    jasmineOpts: {
         // Jasmine default timeout
-        defaultTimeoutInterval: 60000,
+        defaultTimeoutInterval: 9999999,
+        
         //
         // The Jasmine framework allows interception of each assertion in order to log the state of the application
         // or website depending on the result. For example, it is pretty handy to take a screenshot every time
@@ -139,6 +141,9 @@ export const config: WebdriverIO.Config = {
         //     do something
         // }
     },
+    
+    
+
     //
     // =====
     // Hooks
@@ -190,6 +195,7 @@ export const config: WebdriverIO.Config = {
                 // @ts-expect-error
                 await this.click()
                 helpers.log(`Element was clicked.`)
+                helpers.pageSync()
             } catch (error) {
                 helpers.log(`Element was not clicked.\n${error}`)
             }
@@ -220,8 +226,7 @@ export const config: WebdriverIO.Config = {
         // Option #2: Run browser 3/4 screen on single monitor
         // Allow VS Code Terminal visible on bottom of the screen  
         await helpers.log(`Changing window size`)
-        browser.setWindowSize(1920, 770)
-
+        await browser.setWindowSize(1920, 770)
     },
     /**
      * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling

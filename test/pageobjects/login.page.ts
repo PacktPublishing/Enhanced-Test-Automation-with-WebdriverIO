@@ -26,11 +26,7 @@ class LoginPage extends Page {
      * e.g. to login using username and password
      */
     public async login (username: string, password: string) {
-        
-        helpers.log ("Write to Console window")
-        
-        //Removed await keyword
-         helpers.log (`Logging in with '${username}' and '${password}'`)
+        helpers.log (`Logging in with '${username}' and '${password}'`)
         await this.inputUsername.setValue(username);
         helpers.log (`Entered '${username}'`)
         await this.inputPassword.setValue(password);
