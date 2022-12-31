@@ -185,17 +185,16 @@ export const config: WebdriverIO.Config = {
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {Array.<String>} specs List of spec file paths that are to be run
      */
-    // @ts-expect-error
     before: function (capabilities, specs) {
         // @ts-expect-error
         browser.addCommand("clickAdv", async function () {
             // `this` is return value of $(selector)
             //await this.waitForDisplayed()
+            let locator = "ELEMENT NOT FOUND"
             try {
-                // @ts-expect-error
-                await this.click()
-                helpers.log(`Element was clicked.`)
-                helpers.pageSync()
+                await this.click({block: 'center'})
+                helpers.log(`Clicked ${this.selector}`)
+                await helpers.pageSync()
             } catch (error) {
                 helpers.log(`Element was not clicked.\n${error}`)
             }
@@ -218,7 +217,7 @@ export const config: WebdriverIO.Config = {
      * Function to be executed before a test (in Mocha/Jasmine) starts.
      */
 
-    beforeTest: async function (test, context)
+    beforeTest: async function (text:any, context:any)
     {
         //Option #1: Run browser full screen on dual monitors
         //browser.maximizeWindow();
@@ -244,7 +243,7 @@ export const config: WebdriverIO.Config = {
      * Function to be executed after a test (in Mocha/Jasmine).
      */
 
-    afterTest: async function (test, context, { error, result, duration, passed, retries })
+    afterTest: async function (test: any, context: any, { error, result, duration, passed, retries }: any)
     {
         if (!passed)
         {

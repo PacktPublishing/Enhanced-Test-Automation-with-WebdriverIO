@@ -66,6 +66,7 @@ export async function pageSync(ms: number = 25, waitOnSamePage: boolean = false)
   // Pessimistic result
   let result = false;
   let skipToEnd = false;
+
   let thisUrl = await browser.getUrl();
 
   if (waitOnSamePage === false)
@@ -83,7 +84,7 @@ export async function pageSync(ms: number = 25, waitOnSamePage: boolean = false)
     LAST_URL = thisUrl
     let visibleSpans: String = `div:not([style*="visibility: hidden"])`
     let elements: any = await $$(visibleSpans)
-
+    let exit: boolean = false
     let count: number = elements.length
     let lastCount: number = 0
     let retries: number = 3
@@ -92,7 +93,7 @@ export async function pageSync(ms: number = 25, waitOnSamePage: boolean = false)
     let start: number = Date.now();
     //let loopStart:number = start;
     let end: number = 0
-    log(`here0`)
+  
     while (retry > 0)
     {
 
@@ -110,6 +111,7 @@ export async function pageSync(ms: number = 25, waitOnSamePage: boolean = false)
       if (timeout-- === 0)
       {
         log("Page never settled")
+        exit = true
         break;
       }
 
@@ -117,33 +119,45 @@ export async function pageSync(ms: number = 25, waitOnSamePage: boolean = false)
 
       // wait 1/4 sec before next count check
       delay(ms)
-      log(`here2`)
-      try
-      {
-        elements = await $$(visibleSpans)
-      } catch (error) {
-        log(`error: ${error}`)
+
+      try {
+        elements = await $$(visibleSpans);
+      } catch (error: any) {
+        exit = true
+        switch (error.name) {
+          case "TimeoutError":
+            log(`ERROR: Timed out while trying to find visible spans.`);
+            break;
+          case "NoSuchElementError":
+            log(`ERROR: Could not find any visible spans.`);
+            break;
+          default:
+            if (error.message === `Couldn't find page handle`){
+              log(`WARN: Browser closed. (Possibly missing await)`);
+            } else {
+              log(`ERROR: ${error.name}: ${error}`);
+            }
+        }
+        // Error thrown: Exit loop
+        break;
       }
-
-      //loopStart = Date.now();
-
-      log(`here3`)
+   
       count = await elements.length
-      log(`count:${count}`)
       retry--;
-      log(`retry:${retry}`)
     }
-    log(`here4`)
+  
     end = (Date.now() - start) / 1000
 
     // Metric: Report if the page took more than 3 seconds to build
     if (ms > 3000)
     {
-      log(`     WARN: pagesync(${ms})ms completed in ${end} seconds`)
+      log(`  WARN: pageSync() completed in ${end} sec  (${ms} ms) `)
+    }else{
+      log(`  pageSync() completed in ${ms} ms`) // Optional debug messaging
     }
 
   }
-  log(`here5`)
+
   return result;
 
 }
