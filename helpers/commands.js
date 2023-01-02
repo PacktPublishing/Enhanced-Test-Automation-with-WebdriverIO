@@ -1,4 +1,4 @@
-export async function clickAdv(element) {
+export async function clickAdvOld(element) {
     //chapter-5 Custom Commands
 
     // `this` is return value of $(selector)
@@ -24,7 +24,7 @@ export async function clickAdv(element) {
 
         } catch (error) {
             global.console.log(`    ERROR: browser.clickAdv(${elementName})
-            /n        ${error}`);
+            /n        ${error.message}`);
 
             //Skip all other custom
             ASB.set(`alreadyFailed`, true);

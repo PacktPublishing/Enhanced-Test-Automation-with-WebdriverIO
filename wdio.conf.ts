@@ -1,8 +1,12 @@
 import * as helpers from './helpers/helpers.js';
+import { ASB } from './helpers/globalObjects.js'
+
 import url from 'node:url'
 import path from 'node:path'
 const addToElement = true // 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
+// Chapter 4 - Automation SwitchBoard 
+
 
 // @ts-expect-error
 export const config: WebdriverIO.Config = {
@@ -69,7 +73,7 @@ export const config: WebdriverIO.Config = {
     // Define all options that are relevant for the WebdriverIO instance here
     //
     // Level of logging verbosity: trace | debug | info | warn | error | silent
-    logLevel: 'trace',
+    logLevel: 'debug',
     outputDir: path.resolve(__dirname, 'logs'),
     //
     // Set specific log levels per logger
@@ -96,8 +100,8 @@ export const config: WebdriverIO.Config = {
     // gets prepended directly.
     baseUrl: 'http://the-internet.herokuapp.com',
     //
-    // Default timeout for all waitFor* commands.
-    waitforTimeout: 30000,
+    // Default timeout for all waitFor* commands. Reduced to 3 sec
+    waitforTimeout: 3000,
     //
     // Default timeout in milliseconds for request
     // if browser driver or grid doesn't send response
@@ -132,7 +136,7 @@ export const config: WebdriverIO.Config = {
     jasmineOpts: {
         // Jasmine default timeout
         defaultTimeoutInterval: 9999999,
-        
+
         //
         // The Jasmine framework allows interception of each assertion in order to log the state of the application
         // or website depending on the result. For example, it is pretty handy to take a screenshot every time
@@ -141,8 +145,8 @@ export const config: WebdriverIO.Config = {
         //     do something
         // }
     },
-    
-    
+
+
 
     //
     // =====
@@ -185,20 +189,75 @@ export const config: WebdriverIO.Config = {
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {Array.<String>} specs List of spec file paths that are to be run
      */
-    before: function (capabilities, specs) {
-        // @ts-expect-error
-        browser.addCommand("clickAdv", async function () {
-            // `this` is return value of $(selector)
-            //await this.waitForDisplayed()
-            let locator = "ELEMENT NOT FOUND"
-            try {
-                await this.click({block: 'center'})
-                helpers.log(`Clicked ${this.selector}`)
-                await helpers.pageSync()
-            } catch (error) {
-                helpers.log(`Element was not clicked.\n${error}`)
-            }
-        }, addToElement)
+    before: function (capabilities, specs)
+    {
+
+        //Set 
+        //helpers.log(`process.env.DEBUG: ${process.env.DEBUG}`) // ---> process.env.DEBUG: -LH:*
+
+        ASB.set("DEBUG", (process.env.DEBUG === undefined) ? false : (process.env.DEBUG === `true`))
+
+        helpers.log(`DEBUG: ${ASB.get("DEBUG")}`)
+
+        ASB.set("timeout", (ASB.get("DEBUG") === true) ? 1_000_000 : 10_000)
+        let timeout = ASB.get("timeout")
+
+        helpers.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`)
+
+        // Samples of overidding and adding custom methods.
+
+
+
+        // browser.addCommand("clickAdv", async function ()
+        // {
+        //     // `this` is return value of $(selector)
+        //     //await this.waitForDisplayed()
+        //     helpers.log(`Clicking ${this.selector} ...`)
+        //     let locator = "ELEMENT NOT FOUND"
+
+        //     try
+        //     {
+        //         if (ASB.get(`alreadyFailed`) === true)
+        //         {
+        //             helpers.log(`  SKIPPED: browser.clickAdv(${this.selector})`);
+
+        //         } else
+        //         {
+        //             await this.click({ block: 'center' })
+        //             helpers.log(`  button clicked.`)
+        //             await helpers.pageSync()
+        //         }
+        //     } catch (error)
+        //     {
+        //         helpers.log(`Element was not clicked.\n${error}`)
+        //         //Skip any remaining steps
+        //         ASB.set(`alreadyFailed`, false)
+        //     }
+        // }, addToElement)
+
+        // Override the default click command
+ 
+        // browser.overwriteCommand('click', async (element: ElementFinder) => {
+        
+        //     // Do something before clicking the element
+        //     console.log('Overwrite the intrinsic click command...');
+
+        //     // Perform the click action
+        //     try
+        //     {
+        //         helpers.log(`Clicking ${this.selector} ...`)
+        //         await this.click({ block: 'center' })
+
+        //         await helpers.pageSync()
+        //         helpers.log(`done`)
+        //     } catch (error)
+        //     {
+        //         helpers.log(`Element was not clicked.\n${error}`)
+        //     }
+
+
+        // });
+
     },
     /**
      * Runs before a WebdriverIO command gets executed.
@@ -217,7 +276,7 @@ export const config: WebdriverIO.Config = {
      * Function to be executed before a test (in Mocha/Jasmine) starts.
      */
 
-    beforeTest: async function (text:any, context:any)
+    beforeTest: async function (text: any, context: any)
     {
         //Option #1: Run browser full screen on dual monitors
         //browser.maximizeWindow();
@@ -245,6 +304,10 @@ export const config: WebdriverIO.Config = {
 
     afterTest: async function (test: any, context: any, { error, result, duration, passed, retries }: any)
     {
+        helpers.log("AFTER TEST")
+        // Check if a missing element failed the test
+       
+
         if (!passed)
         {
             await browser.takeScreenshot();
@@ -256,8 +319,9 @@ export const config: WebdriverIO.Config = {
      * Hook that gets executed after the suite has ended
      * @param {Object} suite suite details
      */
-    // afterSuite: function (suite) {
-    // },
+    afterSuite: function (suite) {
+        helpers.log("AFTER SUITE")
+    },
     /**
      * Runs after a WebdriverIO command gets executed
      * @param {String} commandName hook command name
@@ -274,16 +338,19 @@ export const config: WebdriverIO.Config = {
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {Array.<String>} specs List of spec file paths that ran
      */
-    // after: function (result, capabilities, specs) {
-    // },
+    after: function (result, capabilities, specs) {
+    helpers.log("AFTER")
+
+    },
     /**
      * Gets executed right after terminating the webdriver session.
      * @param {Object} config wdio configuration object
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {Array.<String>} specs List of spec file paths that ran
      */
-    // afterSession: function (config, capabilities, specs) {
-    // },
+    afterSession: function (config, capabilities, specs) {
+        helpers.log("AFTER SESSION")
+    },
     /**
      * Gets executed after all workers got shut down and the process is about to exit. An error
      * thrown in the onComplete hook will result in the test run failing.
@@ -292,8 +359,13 @@ export const config: WebdriverIO.Config = {
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {<Object>} results object containing test results
      */
-    // onComplete: function(exitCode, config, capabilities, results) {
-    // },
+    onComplete: function(exitCode, config, capabilities, results) {
+        helpers.log("ON COMPLETE")
+        if (ASB.get("alreadyFailed")){
+            throw new Error('Test failed');
+        }
+
+    },
     /**
     * Gets executed when a refresh happens.
     * @param {String} oldSessionId session ID of the old session
