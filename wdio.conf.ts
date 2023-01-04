@@ -3,12 +3,11 @@ import { ASB } from './helpers/globalObjects.js'
 
 import url from 'node:url'
 import path from 'node:path'
+import { browser } from '@wdio/globals';
 const addToElement = true // 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 // Chapter 4 - Automation SwitchBoard 
 
-
-// @ts-expect-error
 export const config: WebdriverIO.Config = {
     //
     // ====================
@@ -196,6 +195,7 @@ export const config: WebdriverIO.Config = {
         //helpers.log(`process.env.DEBUG: ${process.env.DEBUG}`) // ---> process.env.DEBUG: -LH:*
 
         ASB.set("DEBUG", (process.env.DEBUG === undefined) ? false : (process.env.DEBUG === `true`))
+        ASB.set("spinnerTimeoutInSeconds", 30) 
 
         helpers.log(`DEBUG: ${ASB.get("DEBUG")}`)
 

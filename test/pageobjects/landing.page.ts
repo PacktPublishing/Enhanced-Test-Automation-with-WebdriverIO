@@ -13,6 +13,9 @@ class LandingPage extends Page {
     return $("//a[normalize-space()='Typos']");
   }
 
+  public get btnDynamicLoading() {
+    return $("//a[normalize-space()='Dynamic Loading']");
+  }
 
   /**
    * a method to encapsule automation code to interact with the page
@@ -23,35 +26,12 @@ class LandingPage extends Page {
    }
 
   /**
-   * a method to unit test the failure of an button that does not exist
+   * a method to encapsule automation code to interact with the page
    * e.g. to login using username and password
    */
-  public async loginFailLast(username: string, password: string) {
-    helpers.log(`Logging in with '${username}' and '${password}'`);
-    await this.inputUsername.setValue(username);
-    helpers.log(`Entered '${username}'`);
-    await this.inputPassword.setValue(password);
-    helpers.log(`Entered '${password}' and clicking Submit with ClickAdv`);
-    
-    await helpers.clickAdv(this.btnSubmit);
-    await helpers.clickAdv(this.btnBogus);
-  }
-
-
-    /**
-   * a method to unit test the failure of an button that does not exist
-   * e.g. to login using username and password
-   */
-    public async loginFailFirst(username: string, password: string) {
-        helpers.log(`Logging in with '${username}' and '${password}'`);
-        await this.inputUsername.setValue(username);
-        helpers.log(`Entered '${username}'`);
-        await this.inputPassword.setValue(password);
-        helpers.log(`Entered '${password}' and clicking Submit with ClickAdv`);
-        await helpers.clickAdv(this.btnBogus);        
-        await helpers.clickAdv(this.btnSubmit);
-
-      }
+  public async navToDynamicLoading() {
+    await helpers.clickAdv (this.btnDynamicLoading);
+   }
 
 
       

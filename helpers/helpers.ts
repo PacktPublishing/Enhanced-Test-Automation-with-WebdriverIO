@@ -11,13 +11,17 @@ import allure from "@wdio/allure-reporter";
  * @param message
  */
 export function log(message: any): void {
-  if (typeof message === "string" || typeof message === "number") {
-    if (message) {
-      console.log(`---> ${message}`);
+  try {
+    if (typeof message === "string" || typeof message === "number") {
+      if (message) {
+        console.log(`---> ${message}`);
+      }
+    } else {
+      console.log(`--->   helpers.console() received: ${message}`);
+      console.trace();
     }
-  } else {
-    console.log(`--->   helpers.console() received: ${message}`);
-    console.trace();
+  } catch (error: any) {
+    console.log(`--->   helpers.console(): ${error.message}`);
   }
 }
 
@@ -52,15 +56,17 @@ function listFiles(relativePath: string): void {
 /**
  * pageSync - Dynamic wait for the page to stabilize.
  * Use after click
- * ms = default time wait between loops 125 = 1/8 sec 
+ * ms = default time wait between loops 125 = 1/8 sec
  *      Minimum 25 for speed / stability balance
  */
 let LAST_URL: String = "";
 
 export async function pageSync(
-  ms: number = 125,
+  ms: number = 25,
   waitOnSamePage: boolean = false
 ): Promise<boolean> {
+  await waitForSpinner();
+
   // Pessimistic result
   let result = false;
   let skipToEnd = false;
@@ -89,8 +95,6 @@ export async function pageSync(
     let timeout: number = 20; // 5 second timeout
     const startTime: number = Date.now();
 
-    
-
     while (retry > 0) {
       if (lastCount != count) {
         retry = retries; // Reset the count of attempts
@@ -110,7 +114,7 @@ export async function pageSync(
       lastCount = count;
 
       // wait 1/4 sec before next count check
-      await delay(ms);
+      await pause(ms);
 
       try {
         elements = await $$(visibleSpans);
@@ -135,22 +139,34 @@ export async function pageSync(
       count = await elements.length;
       retry--;
     }
-    
+
     // Metric: Report if the page took more than 3 seconds to build
     const endTime = Date.now();
     const duration = endTime - startTime;
-    
+
     if (duration > waitforTimeout) {
-      log(`  WARN: pageSync() completed in ${duration/1000} sec  (${duration} ms) `);
+      log(
+        `  WARN: pageSync() completed in ${
+          duration / 1000
+        } sec  (${duration} ms) `
+      );
     } else {
-      log(`  pageSync() completed in ${duration} ms`); // Optional debug messaging
+      //log(`  pageSync() completed in ${duration} ms`); // Optional debug messaging
     }
   }
 
   return result;
 }
 
-async function delay(ms: number) {
+/**
+ * Wrapper for browser.pause
+ * @param ms reports if wait is more than 1/2 second
+ */
+export async function pause(ms: number) {
+  if (ms > 500){
+  log(`  Waiting ${ms} ms...`); // Custom log
+  }
+
   const start = Date.now();
   let now = start;
   while (now - start < ms) {
@@ -163,9 +179,7 @@ export async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export default function doNothing(): void {
-  //Do nothing
-}
+
 
 export async function clickAdv(
   element: ChainablePromiseElement<WebdriverIO.Element>
@@ -176,8 +190,13 @@ export async function clickAdv(
   log(`Clicking ${SELECTOR}`);
 
   try {
-    await element.waitForDisplayed();
-    await element.scrollIntoView({ block: 'center', inline: 'center' });
+    //await element.waitForDisplayed();
+    
+    if (!await isElementInViewport(element)){
+      await element.scrollIntoView({ block: "center", inline: "center" });
+      await waitForElementToStopMoving(element)
+    }
+    await highlightOn(element);
     await element.click({ block: "center" });
     await pageSync();
     success = true;
@@ -188,4 +207,148 @@ export async function clickAdv(
   }
 
   return success;
+}
+
+export async function isElementInViewport(element: WebdriverIO.Element): Promise<boolean> {
+  let isInViewport = await element.isDisplayedInViewport();
+  return isInViewport;
+}
+
+
+export async function waitForSpinner(): Promise<boolean> {
+  let spinnerDetected: boolean = false;
+  // This spinner locator is unique to each project
+  const spinnerLocator: string = `//img[contains(@src,'loader')]`;
+  await pause(100); // Let browser begin building spinner on page
+  let spinner = await browser.$(spinnerLocator);
+  let found = await highlightOn(spinner);
+  let timeout = ASB.get("spinnerTimeoutInSeconds")
+  const start = Date.now();
+  if (found) {
+    const startTime = performance.now();
+    spinnerDetected = true;
+    try {
+      while (found) {
+        found = await highlightOn(spinner);
+        if (!found) break;
+        await pause(100);
+        found = await highlightOff(spinner);
+        if (!found) break;
+        await pause(100);
+        if  (Date.now() - start > timeout * 1000) {
+          log (`ERROR: Spinner did not close after ${timeout} seconds`)
+          break;
+        }
+      }
+    } catch (error) {
+      // Spinner no longer exists
+    }
+    log(`  Spinner Elapsed time: ${Math.floor(performance.now() - startTime)} ms`);
+  }
+  return spinnerDetected;
+}
+
+export async function highlightOn(
+  element: WebdriverIO.Element,
+  color: string = "green"
+): Promise<boolean> {
+  let elementSelector:any
+  let visible: boolean = true;
+  try {
+      elementSelector = await element.selector;
+      try {
+        await browser.execute(`arguments[0].style.border = '5px solid ${color}';`, element);
+        visible = await isElementVisible(element) 
+      } catch (error: any) {
+        // Handle stale element
+        const newElement = await browser.$(elementSelector)
+        ASB.set("element", newElement)
+        ASB.set("staleElement", true)
+        await browser.execute(`arguments[0].style.border = '5px solid ${color}';`, newElement);
+        //log (`  highlightOn ${elementSelector} refresh success`)
+      }
+  
+  } catch (error) {
+    // Element no longer exists
+    visible = false
+  }
+  return visible;
+}
+
+export async function highlightOff(element: WebdriverIO.Element): Promise<boolean> {
+  let visible: boolean = true;
+  try {
+      await browser.execute(`arguments[0].style.border = "0px";`, element);
+  } catch (error) {
+      // Element no longer exists
+      visible = false;
+  }
+  return visible;
+}
+
+export async function isElementVisible(element: WebdriverIO.Element): Promise<boolean> {
+  try {
+    const displayed = await element.isDisplayed();
+    return displayed;
+  } catch (error) {
+    return false;
+  }
+}
+
+//Resolves stale element
+async function refreshElement(element: WebdriverIO.Element): Promise<WebdriverIO.Element> {
+  return await browser.$(element.selector) 
+}
+
+async function findElement(selector: string): Promise<WebdriverIO.Element> {
+  try {
+    return await browser.$(selector);
+  } catch (error) {
+    if (error.message.includes('stale')) {
+      // element is stale, so we need to recreate it
+      return await browser.$(selector);
+    } else {
+      throw error;
+    }
+  }
+}
+
+async function isExists(element: WebdriverIO.Element) {
+  try {
+    return await element.isExisting();
+  } catch (error) {
+    return false;
+  }
+}
+
+
+export async function scrollIntoView(element: WebdriverIO.Element) {
+ await element.scrollIntoView({ block: "center", inline: "center" });
+}
+
+export async function waitForElementToStopMoving(element: WebdriverIO.Element, timeout: number = 1500): Promise<boolean> {
+  let rect = await element.getRect();
+  pause (100);
+  let isMoving = (rect !== await element.getRect())  
+  let startTime = Date.now();
+  
+  // Keep checking the element's position until it stops moving or the timeout is reached
+  while (isMoving) {
+    // If the element's position hasn't changed, it is not moving
+    if (rect === await element.getRect()) {
+      log (`  Element is static`)
+      isMoving = false;
+    }else{
+      log (`  Element is moving...`)
+      pause (100)
+    }
+    // If the timeout has been reached, stop the loop
+    if (Date.now() - startTime > timeout) {
+      break;
+    }
+    // Wait for a short amount of time before checking the element's position again
+    await pause(100);
+  }
+
+  return !isMoving;
 }
