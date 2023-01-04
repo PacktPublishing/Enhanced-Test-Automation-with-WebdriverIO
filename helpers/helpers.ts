@@ -203,7 +203,8 @@ export async function clickAdv(
   } catch (error: any) {
     log(`  ERROR: ${SELECTOR} was not clicked.\n       ${error.message}`);
     expect(`to be clickable`).toEqual(SELECTOR);
-    // Good Report / Test fails / Not soft assert
+    // Throw the error to stop the test
+    await element.click({ block: "center" });
   }
 
   return success;

@@ -53,7 +53,7 @@ describe("My Login application", () => {
     );
   });
 
-  it("Chapter 5: Fail First clickAdv with pageSync and autoscroll", async () => {
+  fit("Chapter 5: Fail First clickAdv with pageSync and autoscroll", async () => {
     // helpers.log(Promise) // Unit test log returns warning when anything but string is passsed
     await LoginPage.open();
 
