@@ -21,8 +21,12 @@ class LoginPage extends Page {
     return $('button[type="submit"]');
   }
 
+  public get lnkSubmit() {
+    return $('//a[text()="submit"]');
+  }
+
   public get btnBogus() {
-    return $('button[type="bogus"]');
+    return $('//button[type="bogus"]');
   }
 
   /**
@@ -30,11 +34,13 @@ class LoginPage extends Page {
    * e.g. to login using username and password
    */
   public async login(username: string, password: string) {
-    helpers.log(`Logging in with '${username}' and '${password}'`);
+    await helpers.log(`Logging in with '${username}' and '${password}'`);
     await this.inputUsername.setValue(username);
-    helpers.log(`Entered '${username}'`);
+    await helpers.log(`Entered '${username}'`);
     await this.inputPassword.setValue(password);
-    helpers.log(`Entered '${password}' and clicking Submit with ClickAdv`);
+    await helpers.log(
+      `Entered '${password}' and clicking Submit with ClickAdv`
+    );
     // @ts-ignore
     await this.btnSubmit.click();
   }
@@ -44,34 +50,50 @@ class LoginPage extends Page {
    * e.g. to login using username and password
    */
   public async loginFailLast(username: string, password: string) {
-    helpers.log(`Logging in with '${username}' and '${password}'`);
+    await helpers.log(`Logging in with '${username}' and '${password}'`);
     await this.inputUsername.setValue(username);
-    helpers.log(`Entered '${username}'`);
+    await helpers.log(`Entered '${username}'`);
     await this.inputPassword.setValue(password);
-    helpers.log(`Entered '${password}' and clicking Submit with ClickAdv`);
-    
+    await helpers.log(
+      `Entered '${password}' and clicking Submit with ClickAdv`
+    );
+
     await helpers.clickAdv(this.btnSubmit);
     await helpers.clickAdv(this.btnBogus);
   }
 
-
-    /**
+  /**
    * a method to unit test the failure of an button that does not exist
    * e.g. to login using username and password
    */
-    public async loginFailFirst(username: string, password: string) {
-        helpers.log(`Logging in with '${username}' and '${password}'`);
-        await this.inputUsername.setValue(username);
-        helpers.log(`Entered '${username}'`);
-        await this.inputPassword.setValue(password);
-        helpers.log(`Entered '${password}' and clicking Submit with ClickAdv`);
-        await helpers.clickAdv(this.btnBogus);        
-        await helpers.clickAdv(this.btnSubmit);
+  public async loginOld(username: string, password: string) {
+    await helpers.log(`Logging in with '${username}' and '${password}'`);
+    await this.inputUsername.setValue(username);
+    await helpers.log(`Entered '${username}'`);
+    await this.inputPassword.setValue(password);
+    await helpers.log(
+      `Entered '${password}' and clicking Submit with ClickAdv`
+    );
+    // Class switching
+    await helpers.clickAdv(this.lnkSubmit);
+  }
 
-      }
+  /**
+   * a method to unit test the failure of an button that does not exist
+   * e.g. to login using username and password
+   */
+  public async loginFailFirst(username: string, password: string) {
+    await helpers.log(`Logging in with '${username}' and '${password}'`);
+    await this.inputUsername.setValue(username);
+    await helpers.log(`Entered '${username}'`);
+    await this.inputPassword.setValue(password);
+    await helpers.log(
+      `Entered '${password}' and clicking Submit with ClickAdv`
+    );
+    await helpers.clickAdv(this.btnBogus);
+    await helpers.clickAdv(this.btnSubmit);
+  }
 
-
-      
   /**
    * overwrite specific options to adapt it to page object
    */

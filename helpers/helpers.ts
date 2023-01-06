@@ -10,47 +10,20 @@ import allure from "@wdio/allure-reporter";
  *    - Prints trace if not passed string or number
  * @param message
  */
-export function log(message: any): void {
+export async function log(message: any): Promise<void> {
   try {
     if (typeof message === "string" || typeof message === "number") {
       if (message) {
         console.log(`---> ${message}`);
+        if (message.toString().includes(`[object Promise]`)) {
+          console.log(`    Possiblly missing await statement`);
+          console.trace();
+        }
       }
-    } else {
-      console.log(`--->   helpers.console() received: ${message}`);
-      console.trace();
     }
   } catch (error: any) {
     console.log(`--->   helpers.console(): ${error.message}`);
   }
-}
-
-/**
- * Output the files or an error of a relative path
- * listFiles('./path/to/directory');
- * @param relativePath
- */
-function listFiles(relativePath: string): void {
-  // Resolve the relative path to an absolute path
-  const absolutePath = path.resolve(relativePath);
-
-  // Check if the path is valid
-  fs.exists(absolutePath, (exists: boolean) => {
-    if (exists) {
-      // If the path is valid, read the directory and output the list of files
-      fs.readdir(absolutePath, (error: Error | null, files: string[]) => {
-        if (error) {
-          console.error(`Error reading directory: ${error.message}`);
-          return;
-        }
-        console.log(`Files in directory ${relativePath}:`);
-        files.forEach((file: string) => console.log(file));
-      });
-    } else {
-      // If the path is not valid, output an error message
-      console.error(`The path ${relativePath} is not valid`);
-    }
-  });
 }
 
 /**
@@ -106,7 +79,7 @@ export async function pageSync(
       }
 
       if (timeout-- === 0) {
-        log("Page never settled");
+        await log("Page never settled");
         exit = true;
         break;
       }
@@ -122,14 +95,14 @@ export async function pageSync(
         exit = true;
         switch (error.name) {
           case "TimeoutError":
-            log(`ERROR: Timed out while trying to find visible spans.`);
+            await log(`ERROR: Timed out while trying to find visible spans.`);
             break;
           case "NoSuchElementError":
-            log(`ERROR: Could not find any visible spans.`);
+            await log(`ERROR: Could not find any visible spans.`);
             break;
           default:
             if (error.message === `Couldn't find page handle`) {
-              log(`WARN: Browser closed. (Possibly missing await)`);
+              await log(`WARN: Browser closed. (Possibly missing await)`);
             }
         }
         // Error thrown: Exit loop
@@ -145,7 +118,7 @@ export async function pageSync(
     const duration = endTime - startTime;
 
     if (duration > waitforTimeout) {
-      log(
+      await log(
         `  WARN: pageSync() completed in ${
           duration / 1000
         } sec  (${duration} ms) `
@@ -163,8 +136,8 @@ export async function pageSync(
  * @param ms reports if wait is more than 1/2 second
  */
 export async function pause(ms: number) {
-  if (ms > 500){
-  log(`  Waiting ${ms} ms...`); // Custom log
+  if (ms > 500) {
+    await log(`  Waiting ${ms} ms...`); // Custom log
   }
 
   const start = Date.now();
@@ -175,33 +148,32 @@ export async function pause(ms: number) {
 }
 
 export async function sleep(ms: number) {
-  log(`Waiting ${ms} ms...`); // Custom log
+  await log(`Waiting ${ms} ms...`);
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
-
-
 
 export async function clickAdv(
   element: ChainablePromiseElement<WebdriverIO.Element>
 ) {
   let success: boolean = false;
+  
+  element = await getValidElement(element);
   const SELECTOR = await element.selector;
-
-  log(`Clicking ${SELECTOR}`);
+  await log(`Clicking ${SELECTOR}`);
 
   try {
     //await element.waitForDisplayed();
-    
-    if (!await isElementInViewport(element)){
-      await element.scrollIntoView({ block: "center", inline: "center" });
-      await waitForElementToStopMoving(element)
+
+    if (!(await isElementInViewport(element))) {
+      await scrollIntoView(element);
+      await waitForElementToStopMoving(element);
     }
     await highlightOn(element);
     await element.click({ block: "center" });
     await pageSync();
     success = true;
   } catch (error: any) {
-    log(`  ERROR: ${SELECTOR} was not clicked.\n       ${error.message}`);
+    await log(`  ERROR: ${SELECTOR} was not clicked.\n       ${error.message}`);
     expect(`to be clickable`).toEqual(SELECTOR);
     // Throw the error to stop the test
     await element.click({ block: "center" });
@@ -210,11 +182,12 @@ export async function clickAdv(
   return success;
 }
 
-export async function isElementInViewport(element: WebdriverIO.Element): Promise<boolean> {
+export async function isElementInViewport(
+  element: WebdriverIO.Element
+): Promise<boolean> {
   let isInViewport = await element.isDisplayedInViewport();
   return isInViewport;
 }
-
 
 export async function waitForSpinner(): Promise<boolean> {
   let spinnerDetected: boolean = false;
@@ -223,7 +196,7 @@ export async function waitForSpinner(): Promise<boolean> {
   await pause(100); // Let browser begin building spinner on page
   let spinner = await browser.$(spinnerLocator);
   let found = await highlightOn(spinner);
-  let timeout = ASB.get("spinnerTimeoutInSeconds")
+  let timeout = ASB.get("spinnerTimeoutInSeconds");
   const start = Date.now();
   if (found) {
     const startTime = performance.now();
@@ -236,15 +209,17 @@ export async function waitForSpinner(): Promise<boolean> {
         found = await highlightOff(spinner);
         if (!found) break;
         await pause(100);
-        if  (Date.now() - start > timeout * 1000) {
-          log (`ERROR: Spinner did not close after ${timeout} seconds`)
+        if (Date.now() - start > timeout * 1000) {
+          await log(`ERROR: Spinner did not close after ${timeout} seconds`);
           break;
         }
       }
     } catch (error) {
       // Spinner no longer exists
     }
-    log(`  Spinner Elapsed time: ${Math.floor(performance.now() - startTime)} ms`);
+    await log(
+      `  Spinner Elapsed time: ${Math.floor(performance.now() - startTime)} ms`
+    );
   }
   return spinnerDetected;
 }
@@ -253,41 +228,50 @@ export async function highlightOn(
   element: WebdriverIO.Element,
   color: string = "green"
 ): Promise<boolean> {
-  let elementSelector:any
+  let elementSelector: any;
   let visible: boolean = true;
   try {
-      elementSelector = await element.selector;
-      try {
-        await browser.execute(`arguments[0].style.border = '5px solid ${color}';`, element);
-        visible = await isElementVisible(element) 
-      } catch (error: any) {
-        // Handle stale element
-        const newElement = await browser.$(elementSelector)
-        ASB.set("element", newElement)
-        ASB.set("staleElement", true)
-        await browser.execute(`arguments[0].style.border = '5px solid ${color}';`, newElement);
-        //log (`  highlightOn ${elementSelector} refresh success`)
-      }
-  
+    elementSelector = await element.selector;
+    try {
+      await browser.execute(
+        `arguments[0].style.border = '5px solid ${color}';`,
+        element
+      );
+      visible = await isElementVisible(element);
+    } catch (error: any) {
+      // Handle stale element
+      const newElement = await browser.$(elementSelector);
+      ASB.set("element", newElement);
+      ASB.set("staleElement", true);
+      await browser.execute(
+        `arguments[0].style.border = '5px solid ${color}';`,
+        newElement
+      );
+      //log (`  highlightOn ${elementSelector} refresh success`)
+    }
   } catch (error) {
     // Element no longer exists
-    visible = false
+    visible = false;
   }
   return visible;
 }
 
-export async function highlightOff(element: WebdriverIO.Element): Promise<boolean> {
+export async function highlightOff(
+  element: WebdriverIO.Element
+): Promise<boolean> {
   let visible: boolean = true;
   try {
-      await browser.execute(`arguments[0].style.border = "0px";`, element);
+    await browser.execute(`arguments[0].style.border = "0px";`, element);
   } catch (error) {
-      // Element no longer exists
-      visible = false;
+    // Element no longer exists
+    visible = false;
   }
   return visible;
 }
 
-export async function isElementVisible(element: WebdriverIO.Element): Promise<boolean> {
+export async function isElementVisible(
+  element: WebdriverIO.Element
+): Promise<boolean> {
   try {
     const displayed = await element.isDisplayed();
     return displayed;
@@ -297,15 +281,17 @@ export async function isElementVisible(element: WebdriverIO.Element): Promise<bo
 }
 
 //Resolves stale element
-async function refreshElement(element: WebdriverIO.Element): Promise<WebdriverIO.Element> {
-  return await browser.$(element.selector) 
+async function refreshElement(
+  element: WebdriverIO.Element
+): Promise<WebdriverIO.Element> {
+  return await browser.$(element.selector);
 }
 
 async function findElement(selector: string): Promise<WebdriverIO.Element> {
   try {
     return await browser.$(selector);
   } catch (error) {
-    if (error.message.includes('stale')) {
+    if (error.message.includes("stale")) {
       // element is stale, so we need to recreate it
       return await browser.$(selector);
     } else {
@@ -322,26 +308,28 @@ async function isExists(element: WebdriverIO.Element) {
   }
 }
 
-
 export async function scrollIntoView(element: WebdriverIO.Element) {
- await element.scrollIntoView({ block: "center", inline: "center" });
+  await element.scrollIntoView({ block: "center", inline: "center" });
 }
 
-export async function waitForElementToStopMoving(element: WebdriverIO.Element, timeout: number = 1500): Promise<boolean> {
+export async function waitForElementToStopMoving(
+  element: WebdriverIO.Element,
+  timeout: number = 1500
+): Promise<boolean> {
   let rect = await element.getRect();
-  pause (100);
-  let isMoving = (rect !== await element.getRect())  
+  pause(100);
+  let isMoving = rect !== (await element.getRect());
   let startTime = Date.now();
-  
+
   // Keep checking the element's position until it stops moving or the timeout is reached
   while (isMoving) {
     // If the element's position hasn't changed, it is not moving
-    if (rect === await element.getRect()) {
-      log (`  Element is static`)
+    if (rect === (await element.getRect())) {
+      await log(`  Element is static`);
       isMoving = false;
-    }else{
-      log (`  Element is moving...`)
-      pause (100)
+    } else {
+      await log(`  Element is moving...`);
+      pause(100);
     }
     // If the timeout has been reached, stop the loop
     if (Date.now() - startTime > timeout) {
@@ -352,4 +340,76 @@ export async function waitForElementToStopMoving(element: WebdriverIO.Element, t
   }
 
   return !isMoving;
+}
+
+export async function getValidElement(
+  element: WebdriverIO.Element
+): Promise<WebdriverIO.Element> {
+  let selector: any = await element.selector;
+  // Get a collection of matching elements
+  let found: boolean = true;
+  let newSelector: string = ""
+  let newElement: any = element;
+  let elements: WebdriverIO.Element[];
+  let elementType:string = ""
+  let elementText:string = ""
+  
+  try {
+    elements = await $$(selector);
+
+    if (elements.length === 0) {
+
+      let index: number = selector.indexOf("[");
+      elementType = selector.substring(0, index);
+    
+      switch (elementType) {
+        case "//a":
+          elementText = selector.match(/=".*"/)[0].slice(2, -1);
+          newSelector = `//button[contains(@type,'${elementText}')]`
+          
+          break;
+
+        case "//button":
+          elementText = selector.match(/=".*"/)[0].slice(2, -1);
+          newSelector =`//a[contains(text(),'${elementText}'])`
+          
+          break;
+
+        default:
+          found = false;
+          newElement = element;
+          break;
+      }
+      newElement = await $(newSelector);
+      found = await isElementVisible (newElement)
+    }
+  } catch (error) {
+    found = false;
+  }
+
+  // Successful class switch 
+  if (found) {
+    await log(
+      `  WARNING: Replaced ${selector}\n                    with ${newSelector}`
+    );
+  } else {
+    await log(`  ERROR: Unable to find ${selector}`);
+  }
+
+  return newElement;
+}
+
+async function getElementType(element: WebdriverIO.Element) {
+  
+  // get from existing element
+  let tagName = await element.getTagName();
+  
+  if (tagName === null){ 
+    // get from non existing element instead of null
+    let selector = element.selector.toString()
+    let startIndex = selector.indexOf('\\') + 1;
+    let endIndex = selector.indexOf('[');
+    tagName = selector.substring(startIndex, endIndex);
+  }
+  return tagName;
 }
