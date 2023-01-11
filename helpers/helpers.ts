@@ -152,11 +152,52 @@ export async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+export async function setValueAdv(
+  element: ChainablePromiseElement<WebdriverIO.Element>,
+  value: string
+) {
+  let success: boolean = false;
+
+  element = await getValidElement(element);
+  const SELECTOR = await element.selector;
+
+  let newValue: String = replaceTags(value);
+
+  await log(`Entering '${newValue}' into ${SELECTOR}`);
+
+  try {
+    //await element.waitForDisplayed();
+
+    if (!(await isElementInViewport(element))) {
+      await scrollIntoView(element);
+      await waitForElementToStopMoving(element);
+    }
+
+    await highlightOn(element);
+
+    // Clear existing value
+    await element.setValue(newValue);
+
+    //Check if text was entered
+
+    success = true;
+  } catch (error: any) {
+    await log(
+      `  ERROR: ${SELECTOR} was not populated with ${value}.\n       ${error.message}`
+    );
+    expect(`to be editable`).toEqual(SELECTOR);
+    // Throw the error to stop the test
+    await element.setValue(value);
+  }
+
+  return success;
+}
+
 export async function clickAdv(
   element: ChainablePromiseElement<WebdriverIO.Element>
 ) {
   let success: boolean = false;
-  
+
   element = await getValidElement(element);
   const SELECTOR = await element.selector;
   await log(`Clicking ${SELECTOR}`);
@@ -348,31 +389,42 @@ export async function getValidElement(
   let selector: any = await element.selector;
   // Get a collection of matching elements
   let found: boolean = true;
-  let newSelector: string = ""
+  let newSelector: string = "";
   let newElement: any = element;
   let elements: WebdriverIO.Element[];
-  let elementType:string = ""
-  let elementText:string = ""
-  
+  let elementType: string = "";
+  let elementText: string = "";
+
   try {
     elements = await $$(selector);
 
     if (elements.length === 0) {
-
       let index: number = selector.indexOf("[");
       elementType = selector.substring(0, index);
-    
+
       switch (elementType) {
         case "//a":
           elementText = selector.match(/=".*"/)[0].slice(2, -1);
-          newSelector = `//button[contains(@type,'${elementText}')]`
-          
+          newSelector = `//button[contains(@type,'${elementText}')]`;
+
           break;
 
         case "//button":
           elementText = selector.match(/=".*"/)[0].slice(2, -1);
-          newSelector =`//a[contains(text(),'${elementText}'])`
-          
+          newSelector = `//a[contains(text(),'${elementText}'])`;
+          found = await isElementVisible(await $(newSelector));
+          break;
+
+        case "//input":
+          elementText = selector.match(/=".*"/)[0].slice(2, -1);
+
+          newSelector = `//input[contains(@id,'${elementText}'])`;
+          found = await isElementVisible(await $(newSelector));
+
+          if (!found) {
+            newSelector = `//input[contains(@name,'${elementText}'])`;
+            await isElementVisible(await $(newSelector));
+          }
           break;
 
         default:
@@ -381,18 +433,19 @@ export async function getValidElement(
           break;
       }
       newElement = await $(newSelector);
-      found = await isElementVisible (newElement)
+      found = await isElementVisible(newElement);
+      // Successful class switch
+      if (found) {
+        await log(
+          `  WARNING: Replaced ${selector}\n                    with ${newSelector}`
+        );
+      }
     }
   } catch (error) {
     found = false;
   }
 
-  // Successful class switch 
-  if (found) {
-    await log(
-      `  WARNING: Replaced ${selector}\n                    with ${newSelector}`
-    );
-  } else {
+  if (!found) {
     await log(`  ERROR: Unable to find ${selector}`);
   }
 
@@ -400,16 +453,164 @@ export async function getValidElement(
 }
 
 async function getElementType(element: WebdriverIO.Element) {
-  
   // get from existing element
   let tagName = await element.getTagName();
-  
-  if (tagName === null){ 
+
+  if (tagName === null) {
     // get from non existing element instead of null
-    let selector = element.selector.toString()
-    let startIndex = selector.indexOf('\\') + 1;
-    let endIndex = selector.indexOf('[');
+    let selector = element.selector.toString();
+    let startIndex = selector.indexOf("\\") + 1;
+    let endIndex = selector.indexOf("[");
     tagName = selector.substring(startIndex, endIndex);
   }
   return tagName;
+}
+
+let TAGS: string[];
+
+function replaceTags(text: string) {
+  //check if the passed tag is in the format of "<someTag>"
+  let newText: string = text;
+  // Capture anything that is not a space
+  let match = newText.match(/\<(.*?)\>/);
+
+  while (match) {
+    let tag = match[0].toLowerCase();
+    let tagType = match[1].toLowerCase();
+
+    switch (true) {
+      case tag.includes("<today"):
+        let format: string = tagType.split(" ")[1] ? tagType.split(" ")[1] : "";
+        let days: number = 0;
+
+        const match = tag.match(/[+-](\d+)/);
+        if (tag.match(/([+-]\d+)/)) {
+          days = parseInt(match[0]);
+        }
+
+        newText = newText.replace(tag, getToday(days, format));
+        break;
+
+      //case tagLower.includes("<otherTag"):
+      // Tage replacemente code here
+      // break;
+
+      default:
+        log(`ERROR: Unknown tag <${tag}>`);
+        break;
+    }
+    match = newText.match(/\<(.*?)\>/);
+  }
+
+  if (newText !== text) {
+    log(`    Replaced tags in '${text}' with '${newText}'`);
+  }
+
+  return newText;
+}
+
+function maskPassword(password: string): string {
+  return password.replace(
+    /^(.{2})(.*)(.{2})$/,
+    "$1" + "*".repeat(password.length - 4) + "$3"
+  );
+}
+
+// async function replaceTag(text: string, tag:string) {
+// tag = tag.toString()
+// if (text in TAGS){
+//   do {
+//   text = text.replace(tag, TAGS[tag])
+
+//   } while (text.includes(tag)
+//   await log (`    Replaced "${tag}" with "${TAGS[tag]}"`)
+//   return text
+
+//   }
+
+//   let origTag:string = tag
+//   tag = tag.replace("$","")
+//   tag = tag.replace("{","")
+//   tag = tag.replace("}","")
+
+//   if tag.includes("today"){
+//     tag = replaceToday(text, origTag)
+//   }
+//   return text
+
+// }
+
+// async function replaceToday(text: string, tag:string) {
+//   let origTag = tag
+//   let arrDateOffset
+//   let formatting = ""
+//   let today = ""
+
+//   // Extract date formatting
+//   if (await tag.includes(" ")){
+//     formatting = tag.split(" ")[1]
+//     text = await text.replace(" " + formatting, "") + "}"
+
+//   } else {
+//     formatting = formatting.replace(/\>/g, "").replace(/\//g, "")
+//   }
+
+//   // Extract offset
+//   arrDateOffset = tag.split[/[-+]/)
+
+//   if (await arrDateOffset.length ===1 {
+//     today = await getToday (0, formatting)
+//   } else if await tag.includes("+"){
+//     today = await getToday (parseInt(arrDateOffset[1].replace(">", "")), formatting) // Future date
+//   } else {
+//     today = await getToday (parseInt(-arrDateOffset[1].replace(">", "")), formatting) // Past date
+//   }
+
+//   TAGS[origTag] = today
+
+//   await log (`    Replaced "${tag}" with "${TAGS[tag]}"`)
+
+// }
+
+// const REGEX_TAGS = /\$\{[^\}|\}\})]*\}/g
+
+// async function getTagsItterator(text: string) {
+// const arrTags = []
+// const itrTags = await text.replaceAll(REGEX_TAGS)
+// for (const tag of itrTags){
+//   arrTags.push(tag)
+// }
+
+// }
+
+/**
+ * Returns the current date plus or minus a specified number of days in a specified format.
+ * @param offset  Number of days to add or subtract from the current date. Default is 0.
+ * @param format The format of the returned date string. Default is "yyyy-MM-dd".
+ * @return The current date plus or minus the specified number of days in the specified format.
+Format options:
+"yyyy" or "yy" - to represent the 4 or 2 digit year, respectively.
+"MM" or "M" - to represent the month with leading zero or without leading zero respectively
+"dd" or "d" - to represent the date with leading zero or without leading zero respectively
+
+// helpers.log(getToday());  // returns current date in MM-dd-yyyy format
+// helpers.log(getToday("+5", "d/M/yyyy"));  // returns current date plus 5 days in d/M/yyyy format
+// helpers.log(getToday("-3", "yyyy/MM/dd"));  // returns current date minus 3 days in yyyy/MM/dd format
+*/
+export function getToday(offset: number = 0, format: string = "MM-dd-yyyy") {
+  const currentDate = new Date();
+  currentDate.setDate(currentDate.getDate() + offset);
+  return currentDate.toLocaleDateString(undefined, {
+    year: format.includes("yyyy") ? "numeric" : undefined,
+    month: format.includes("MM")
+      ? "2-digit"
+      : format.includes("M")
+      ? "numeric"
+      : undefined,
+    day: format.includes("dd")
+      ? "2-digit"
+      : format.includes("d")
+      ? "numeric"
+      : undefined,
+  });
 }

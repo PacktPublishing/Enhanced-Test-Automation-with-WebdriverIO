@@ -2,6 +2,7 @@
 import LoginPage from "../pageobjects/login.page.js";
 import SecurePage from "../pageobjects/secure.page.js";
 import LandingPage from "../pageobjects/landing.page.js";
+import KeyPressesPage from "../pageobjects/Inputs.page.js";
 import TyposPage from "../pageobjects/typos.page.js";
 import * as helpers from "../../helpers/helpers.js";
 import dynamicLoadingPage from "../pageobjects/dynamicLoading.page.js";
@@ -75,8 +76,7 @@ describe("My Login application", () => {
     await helpers.highlightOff(dynamicLoadingPage.txtHelloWorld);
   });
 
-
-  fit("Chapter 5: Self-healing Link", async () => {
+  it("Chapter 5: Self-healing Link", async () => {
     // await helpers.log(Promise) // Unit test log returns warning when anything but string is passsed
     await LoginPage.open();
 
@@ -85,6 +85,20 @@ describe("My Login application", () => {
     await expect(SecurePage.flashAlert).toHaveTextContaining(
       "You logged into a secure area!"
     );
+  });
+
+  fit("Chapter 6: setValue Wrapper", async () => {
+    // await helpers.log(Promise) // Unit test log returns warning when anything but string is passsed
+
+    console.log(await helpers.getToday()); // returns current date in MM-dd-yyyy format
+    console.log(await helpers.getToday(7, "d/M/yyyy")); // returns current date plus 5 days in d/M/yyyy format
+    console.log(await helpers.getToday(-30, "yyyy/MM/dd")); // returns current date minus 3 days in yyyy/MM/dd format
+
+    await LoginPage.open();
+    await LoginPage.loginSetValueAdv("tomsmith", "SuperSecretPassword!");
+    
+    await LoginPage.open("key_presses");
+    await KeyPressesPage.enterDateTags();
   });
 
   it("should login with valid credentials", async () => {
