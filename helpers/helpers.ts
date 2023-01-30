@@ -4,6 +4,7 @@ import { ASB } from "./globalObjects.js";
 import { expect as expectChai } from "chai";
 import { assert as assertChai } from "chai";
 import allure from "@wdio/allure-reporter";
+import { Key } from "webdriverio";
 /**
  * Console.log wrapper
  *    - Does not print if string is empty / null
@@ -152,42 +153,62 @@ export async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+
+function isEmpty(text: string | null): boolean {
+  if (!text || text === "") {
+    return true;
+  }
+  return false;
+}
+
+
 export async function setValueAdv(
-  element: ChainablePromiseElement<WebdriverIO.Element>,
-  value: string
+  inputField: ChainablePromiseElement<WebdriverIO.Element>,
+  text: string
 ) {
   let success: boolean = false;
 
-  element = await getValidElement(element);
-  const SELECTOR = await element.selector;
+  inputField = await getValidElement(inputField, "field");
 
-  let newValue: String = replaceTags(value);
+  const SELECTOR = await inputField.selector;
+
+  let newValue: String = replaceTags(text);
 
   await log(`Entering '${newValue}' into ${SELECTOR}`);
 
   try {
     //await element.waitForDisplayed();
 
-    if (!(await isElementInViewport(element))) {
-      await scrollIntoView(element);
-      await waitForElementToStopMoving(element);
+    if (!(await isElementInViewport(inputField))) {
+      await scrollIntoView(inputField);
+      await waitForElementToStopMoving(inputField);
     }
 
-    await highlightOn(element);
+    await highlightOn(inputField);
 
-    // Clear existing value
-    await element.setValue(newValue);
+    
 
     //Check if text was entered
+    // Clear input field
+    await inputField.click();
+
+    // Do we need to clear the field?
+    if (inputField.getValue() )
+    await inputField.setValue(newValue);
+
+    // Send text to input field
+    for (const letter of text) {
+      await inputField.addValue(letter);
+    }
 
     success = true;
   } catch (error: any) {
     await log(
-      `  ERROR: ${SELECTOR} was not populated with ${value}.\n       ${error.message}`
+      `  ERROR: ${SELECTOR} was not populated with ${text}.\n       ${error.message}`
     );
     expect(`to be editable`).toEqual(SELECTOR);
     // Throw the error to stop the test
-    await element.setValue(value);
+    await inputField.setValue(text);
   }
 
   return success;
@@ -198,7 +219,7 @@ export async function clickAdv(
 ) {
   let success: boolean = false;
 
-  element = await getValidElement(element);
+  element = await getValidElement(element, "button");
   const SELECTOR = await element.selector;
   await log(`Clicking ${SELECTOR}`);
 
@@ -384,7 +405,8 @@ export async function waitForElementToStopMoving(
 }
 
 export async function getValidElement(
-  element: WebdriverIO.Element
+  element: WebdriverIO.Element,
+  elementType: string
 ): Promise<WebdriverIO.Element> {
   let selector: any = await element.selector;
   // Get a collection of matching elements
@@ -392,15 +414,19 @@ export async function getValidElement(
   let newSelector: string = "";
   let newElement: any = element;
   let elements: WebdriverIO.Element[];
-  let elementType: string = "";
   let elementText: string = "";
 
   try {
     elements = await $$(selector);
 
     if (elements.length === 0) {
-      let index: number = selector.indexOf("[");
-      elementType = selector.substring(0, index);
+      // Extract the element type if not provided
+      if (elementType === "") {
+        let index: number = selector.indexOf("[");
+        elementType = selector.substring(0, index);
+      } else {
+        elementText = normalizeElementType(elementType);
+      }
 
       switch (elementType) {
         case "//a":
@@ -427,9 +453,14 @@ export async function getValidElement(
           }
           break;
 
+        case "//*":
+          elementText = selector.match(/=".*"/)[0].slice(2, -1);
+          newSelector = `//*[contains(@id,'${elementText}'])`;
+          found = await isElementVisible(await $(newSelector));
+          break;
+
         default:
           found = false;
-          newElement = element;
           break;
       }
       newElement = await $(newSelector);
@@ -450,6 +481,33 @@ export async function getValidElement(
   }
 
   return newElement;
+}
+
+function normalizeElementType(elementType: string) {
+  // Pessimistic: return all elements if explicit type is unknown
+  let elementText = "//*";
+
+  switch (elementType) {
+    case "link":
+      elementText = "//a";
+      break;
+    case "button":
+      elementText = "//button";
+      break;
+    case "field":
+    case "input":
+      elementText = "//input";
+      break;
+    case "list":
+      elementText = "//select";
+      break;
+    case "text":
+      elementText = "//p";
+      break;
+    default:
+      log(`WARNING: Unable to normalize element type ${elementType}`);
+  }
+  return elementText;
 }
 
 async function getElementType(element: WebdriverIO.Element) {
@@ -480,6 +538,7 @@ function replaceTags(text: string) {
 
     switch (true) {
       case tag.includes("<today"):
+
         let format: string = tagType.split(" ")[1] ? tagType.split(" ")[1] : "";
         let days: number = 0;
 
