@@ -451,10 +451,10 @@ function replaceTags(text: string) {
         let days: number = 0;
 
         const match = tag.match(/[+-](\d+)/);
-        if (tag.match(/([+-]\d+)/)) {
-          days = parseInt(match[0]);
+        if (match) {
+          const days = parseInt(match[0]);
         }
-
+        
         newText = newText.replace(tag, getToday(days, format));
         break;
 
