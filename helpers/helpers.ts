@@ -140,6 +140,36 @@ async function getElementType(element: WebdriverIO.Element) {
   return tagName;
 }
 
+
+/** 
+* Returns the first non-null property from the prioritized list: 'name', 'id', 'type', and 'class'. 
+* Can be amended to add other attributes such as “aria-label”  
+* @param {WebdriverIO.Element} element - The WebdriverIO element to get the name of the field 
+* @returns {string | null} The field name, or null if no properties have a value 
+*/ 
+
+async function getFieldName(element: WebdriverIO.Element) { 
+// Add any custom properties here, e.g.: 
+// const customPropertyName = await element.getAttribute("aria-label"); 
+// if (customPropertyName) return custom; 
+
+// Get the 'name' property of the element 
+  const name = await element.getAttribute("name"); 
+  if (name) return name; 
+ 
+  // Get the 'id' property of the element 
+  const id = await element.getAttribute("id"); 
+  if (id) return id; 
+
+  // Get the 'type' property of the element 
+  const type = await element.getAttribute("type"); 
+  if (type) return type; 
+
+  // Return the 'class' property of the element if others are empty 
+  const className = await element.getAttribute("class"); 
+  return className; 
+} 
+
 /**
  * Returns the current date plus or minus a specified number of days in a specified format.
  * @param offset  Number of days to add or subtract from the current date. Default is 0.
@@ -271,11 +301,18 @@ export async function log(message: any): Promise<void> {
   }
 }
 
-function maskPassword(password: string): string {
-  return password.replace(
-    /^(.{2})(.*)(.{2})$/,
-    "$1" + "*".repeat(password.length - 4) + "$3"
-  );
+
+/**
+ * Masks the middle of the string with asterisks
+ * @param str unmasked string
+ * @returns masked string
+ * let originalString = 'SuperSecretPassword!';
+ * let maskedString = maskString(originalString);
+ * console.log(originalString); // Output: 'SuperSecretPassword!'
+ * console.log(maskedString); // Output: 'Su****************d!'
+ */
+function maskValue(str: string): string {
+  return str.slice(0, 2) + str.slice(2, -2).replace(/./g, '*') + str.slice(-2);
 }
 
 function normalizeElementType(elementType: string) {
@@ -481,6 +518,7 @@ function replaceTags(text: string) {
 export async function scrollIntoView(element: WebdriverIO.Element) {
   await element.scrollIntoView({ block: "center", inline: "center" });
 }
+
 export async function sleep(ms: number) {
   await log(`Waiting ${ms} ms...`);
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -495,12 +533,19 @@ export async function setValueAdv(
   let success: boolean = false;
 
   inputField = await getValidElement(inputField, "field");
-
+  
   const SELECTOR = await inputField.selector;
 
   let newValue: string = replaceTags(text);
+  let scrubbedValue: string = newValue
+  let fieldName: string = await getFieldName(inputField)
+  
+  //Mask Passwords in output
+  if (fieldName.includes("ssword") ){
+    scrubbedValue = maskValue(scrubbedValue)
+  }
 
-  await log(`Entering '${newValue}' into ${SELECTOR}`);
+  await log(`Entering '${scrubbedValue}' into ${SELECTOR}`);
 
   try {
     //await element.waitForDisplayed();
@@ -527,11 +572,11 @@ export async function setValueAdv(
     success = true;
   } catch (error: any) {
     await log(
-      `  ERROR: ${SELECTOR} was not populated with ${text}.\n       ${error.message}`
+      `  ERROR: ${SELECTOR} was not populated with ${scrubbedValue}.\n       ${error.message}`
     );
     expect(`to be editable`).toEqual(SELECTOR);
-    // Throw the error to stop the test
-    await inputField.setValue(text);
+    // Throw the error to stop the test, still masking password
+    await inputField.setValue(scrubbedValue);
   }
 
   return success;

@@ -98,13 +98,13 @@ class LoginPage extends Page {
    * a method to unit test the failure of an button that does not exist
    * e.g. to login using username and password
    */
-  public async loginSetValueAdv(username: string, password: string) {
-    await helpers.log(`Logging in with '${username}' and '${password}'`);
+  public async loginSetValue(username: string, password: string) {
+    await helpers.log(`Logging in with user role '${username}'`);
     await helpers.setValueAdv(this.inputUsername, username);
-    await helpers.setValueAdv(this.inputPassword, password);
+    // Automatcally Mask the Password
+    await helpers.setValueAdv(this.inputPassword, password); 
     await helpers.clickAdv(this.btnSubmit);
   }
-
 
   /**
    * overwrite specific options to adapt it to page object
