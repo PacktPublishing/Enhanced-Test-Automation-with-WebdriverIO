@@ -486,6 +486,58 @@ export async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+export async function selectAdv(
+  list: WebdriverIO.Element,
+  text: string
+) {
+  let listItem : WebdriverIO.Element
+  let success: boolean = false;
+
+  list = await getValidElement(list, "list");
+
+  const SELECTOR = await list.selector;
+
+  let newValue: string = replaceTags(text);
+
+  await log(`Selecting '${newValue}' in ${SELECTOR}`);
+
+  try {
+    //await element.waitForDisplayed();
+
+    if (!(await isElementInViewport(list))) {
+      await scrollIntoView(list);
+      await waitForElementToStopMoving(list);
+    }
+
+    await highlightOn(list);
+
+    //Check if text was entered
+    // Open the list
+    await list.click();
+
+    await list.selectByVisibleText(text);
+
+    // Determine if this is a combobox
+
+    // Send text to combobox field
+    for (const letter of text) {
+      await list.addValue(letter);
+    }
+
+   listItem = await getValidElement(list, "ListItem");
+  
+    success  = true;
+  } catch (error: any) {
+    await log(
+      `  ERROR: ${SELECTOR} list did not contain '${text}'.\n       ${error.message}`
+    );
+    expect(`to be editable`).toEqual(SELECTOR);
+    // Throw the error to stop the test
+    await list.selectByVisibleText(text);
+  }
+
+  return success;
+}
 
 
 export async function setValueAdv(
