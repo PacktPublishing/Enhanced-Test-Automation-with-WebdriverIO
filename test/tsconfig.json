@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "moduleResolution": "node",
+        "types": [
+            "node",
+            "@wdio/jasmine-framework",
+            "expect-webdriverio"
+        ],
+        "target": "es2019"
+    }
+}

@@ -2,9 +2,9 @@
 import LoginPage from "../pageobjects/login.page.js";
 import SecurePage from "../pageobjects/secure.page.js";
 import LandingPage from "../pageobjects/landing.page.js";
-import TyposPage from "../pageobjects/typos.page.js";
 import * as helpers from "../../helpers/helpers.js";
 import dynamicLoadingPage from "../pageobjects/dynamicLoading.page.js";
+import { expect as expectWebdriverIO } from 'expect-webdriverio';
 
 describe("My Login application", () => {
   it("Chapter 3:Cybernetic Enhancements Custom Logging", async () => {
@@ -31,7 +31,7 @@ describe("My Login application", () => {
     // console.log(`1`);
   });
 
-  it("Chapter 5: Fail Last clickAdv with pageSync and autoscroll", async () => {
+  fit("Chapter 5: Fail Last clickAdv with pageSync and autoscroll", async () => {
     // await helpers.log(Promise) // Unit test log returns warning when anything but string is passsed
     await LoginPage.open();
 
