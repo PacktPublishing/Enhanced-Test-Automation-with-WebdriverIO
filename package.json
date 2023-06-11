@@ -11,7 +11,7 @@
     "wdio-docker": "DEBUG=false wdio run test/wdio.conf.ts && allure generate report allure-results --clean"
   },
   "keywords": [],
-  "author": "",
+  "author": "Paul Grossman",
   "license": "ISC",
   "devDependencies": {
     "@types/jasmine": "^4.3.1",
