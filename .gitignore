@@ -1,6 +1,9 @@
 node_modules
 allure-report
 allure-results
+.DS_Store
+logs
+package-lock.json
 all-logs
 driver-logs
 *.png
