@@ -4,7 +4,10 @@
     "description": "",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "wdio": "wdio run wdio.conf.ts"
+        "wdio": "wdio run wdio.conf.ts",
+        "ch1": "cross-env TS_NODE_PROJECT=tsconfig.json wdio run wdio.conf.ts --spec ./test/specs/ch1.ts"
+        
+             
     },
     "keywords": [],
     "author": "Paul Grossman",
