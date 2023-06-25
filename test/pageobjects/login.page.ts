@@ -26,17 +26,9 @@ class LoginPage extends Page {
      * e.g. to login using username and password
      */
     public async login (username: string, password: string) {
-        
-        console.log ("Write to Console window")
-        
-        //Removed await keyword
-        await global.log (`Logging in with '${username}' and '${password}'`)
         await this.inputUsername.setValue(username);
-        await global.log (`Entered '${username}'`)
         await this.inputPassword.setValue(password);
-        await global.log (`Entered '${password}' and clicking Submit`)
         await this.btnSubmit.click();
-        await global.log ("Submit clicked!")
     }
 
     /**
