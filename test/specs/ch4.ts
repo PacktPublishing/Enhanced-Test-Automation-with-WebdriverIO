@@ -2,7 +2,7 @@ import LoginPage from '../pageobjects/login.page';
 import SecurePage from '../pageobjects/secure.page';
 
 describe("Ch4: Super Speed – Time Travel Paradoxes and Broken Promises", () => {
-    it('should report text in order 1,2,3', async () => {
+    fit('should report text in order 1,2,3', async () => {
         // Microtasks, Macrotasks and Main thread
         Promise.resolve().then(_ => console.log(`2: Promise Microtask - First line of code executes second!`)); //Microtask
         setTimeout(_ => console.log(`3: SetTimeout Macrotask - Second Line of code executes third!`), 0); // Macrotask
@@ -19,6 +19,15 @@ describe("Ch4: Super Speed – Time Travel Paradoxes and Broken Promises", () =>
             'You logged into a secure area!');
     });
 
-});
 
+    fit('Should PASS to login because await statements exist', async () => {
+        await LoginPage.open();
 
+        await LoginPage.login("tomsmith", "SuperSecretPassword!");
+        await expect(SecurePage.flashAlert).toBeExisting();
+        await expect(SecurePage.flashAlert).toHaveTextContaining(
+            "You logged into a secure area!"
+            );
+
+        });
+      });
