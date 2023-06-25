@@ -11,3 +11,4 @@ driver-logs
 screenshots
 logs
 package-lock.json
+*.log
