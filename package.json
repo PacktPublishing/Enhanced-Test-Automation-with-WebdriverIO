@@ -1,6 +1,7 @@
 {
+
   "name": "wdio",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -11,16 +12,17 @@
     "ch2": "wdio run test/ch2/ch2.ts"
   },
   "keywords": [],
-  "author": "",
+  "author": "Paul Grossman",
   "license": "ISC",
   "devDependencies": {
+    "@types/jasmine": "^4.3.1",
     "@wdio/allure-reporter": "^8.10.4",
     "@wdio/cli": "^8.10.5",
     "@wdio/jasmine-framework": "^8.10.5",
     "@wdio/local-runner": "^8.10.5",
-    "@wdio/mocha-framework": "^8.10.4",
     "@wdio/spec-reporter": "^8.10.5",
-    "chromedriver": "^113.0.0",
+    "chromedriver": "^114.0.2",
+    "cross-env": "^7.0.3",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4",
     "wdio-allure-reporter": "^0.8.3",
