@@ -1,6 +1,6 @@
 {
   "name": "wdio",
-  "version": "1.0.0",
+  "version": "5.0.0",
   "author": "Paul M. Grossman <darkartswizard@gmail.com",
   "description": "WDIO v7.0 upgraded to v.8 with Jasmine",
   "license": "ISC",
@@ -19,7 +19,13 @@
     "wdio": "wdio run wdio.conf.ts",
     "debug": "cross-env set DEBUG=true && wdio run test/wdio.conf.ts",
     "report": "cross-env DEBUG=false wdio run test/wdio.conf.ts && allure generate report allure-results --clean && allure open",
-    "wdio-docker": "DEBUG=false wdio run test/wdio.conf.ts && allure generate report allure-results --clean"
+    "wdio-docker": "DEBUG=false wdio run test/wdio.conf.ts && allure generate report allure-results --clean",
+
+    "ch1": "cross-env TS_NODE_PROJECT=tsconfig.json wdio run wdio.conf.ts --spec ./test/specs/ch1.ts",
+    "ch2": "cross-env TS_NODE_PROJECT=tsconfig.json wdio run wdio.conf.ts --spec ./test/specs/ch2.ts",
+    "ch3": "cross-env TS_NODE_PROJECT=tsconfig.json wdio run wdio.conf.ts --spec ./test/specs/ch3.ts",
+    "ch4": "cross-env TS_NODE_PROJECT=tsconfig.json wdio run wdio.conf.ts --spec ./test/specs/ch4.ts",
+    "ch5": "cross-env TS_NODE_PROJECT=tsconfig.json wdio run wdio.conf.ts --spec ./test/specs/ch5.ts"
   },
   "devDependencies": {
     "@types/chai": "^4.3.4",
