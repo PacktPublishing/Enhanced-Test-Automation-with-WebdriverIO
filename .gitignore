@@ -5,3 +5,4 @@ all-logs
 driver-logs
 *.png
 .DS_Store
+*.log
