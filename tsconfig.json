@@ -27,6 +27,6 @@
             "@wdio/jasmine-framework"
         ],
         "target": "es2022",
-        "module": "commonjs"
+        "module": "ESNext"
     }
 }
