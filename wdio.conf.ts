@@ -1,4 +1,4 @@
-import type { Options } from "@wdio/types";
+
 import { Browser } from "webdriverio";
 
 const DEBUG =
@@ -8,7 +8,7 @@ console.log(`DEBUG: ${DEBUG}`);
 let timeout = DEBUG === true ? 1_000_000 : 10_000;
 console.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`);
 
-export const config: Options.Testrunner = {
+export const config = {
   autoCompileOpts: {
     autoCompile: true,
     tsNodeOpts: {
