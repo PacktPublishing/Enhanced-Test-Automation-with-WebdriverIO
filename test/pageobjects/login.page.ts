@@ -26,6 +26,7 @@ class LoginPage extends Page {
      * e.g. to login using username and password
      */
     public async login (username: string, password: string) {
+        await global.log(`Logging in with '${username}' and '${password}'`)
         await this.inputUsername.setValue(username);
         await this.inputPassword.setValue(password);
         await this.btnSubmit.click();
@@ -34,8 +35,8 @@ class LoginPage extends Page {
     /**
      * overwrite specific options to adapt it to page object
      */
-    public open () {
-        return super.open('login');
+    public async open () {
+        return await super.open('login');
     }
 }
 
