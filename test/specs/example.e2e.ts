@@ -10,10 +10,6 @@ describe('My Login application', () => {
         expect(SecurePage.flashAlert).toHaveTextContaining(
             'You logged into a secure area!');
 
-        // Chapter 4
-        Promise.resolve().then( _ => console.log(`2`));
-        setTimeout( _ => console.log(`3`),0);
-        console.log(`1`);
     });
 });
 

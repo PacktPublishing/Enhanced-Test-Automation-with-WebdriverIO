@@ -20,6 +20,12 @@ describe("Ch4: Super Speed – Time Travel Paradoxes and Broken Promises", () =>
     });
 
 
+    it('Demonstrates the order of execution for microtasks, macrotasks and thread events', async () => {
+        Promise.resolve().then( _ => console.log(`2`));
+        setTimeout( _ => console.log(`3`),0);
+        console.log(`1`);
+    });
+
     fit('Should PASS to login because await statements exist to ensure code executes in sequence', async () => {
         await LoginPage.open();
 
