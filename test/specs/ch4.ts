@@ -23,25 +23,14 @@ describe("Ch4: Super Speed : Login with Await", () => {
     });
 })
 
-describe("Ch4: Super Speed : Login without await", () => {
-    it('Should FAIL to login because await statements are missing and executes out of order', async () => {
+describe("Ch4: Super Speed : Login fails without await", () => {
+    it('Should FAIL to login because await statements are missing in login_sync and executes out of order', async () => {
         global.log(`1. Open browser without await`);
-        LoginPage.open();
-        // Removed await keywords - Time Travel
-        global.log(`2. Global log without await`);
-        global.log(`3. Login browser without await`);
-        LoginPage.login('tomsmith1', 'SuperSecretPassword!');
-        global.log(`4. Expect flashAlert without await`);
-        expect(SecurePage.flashAlert).toBeExisting();
-
-        global.log(`5. Expect flashAlert contains text without await`);
-        expect(SecurePage.flashAlert).toHaveTextContaining(
+        await LoginPage.open();
+        // Removed await keywords - Demonstrates potential "Time Travel" issue when .click executes before .setValue in login_sync
+        await LoginPage.login_sync('tomsmith1', 'SuperSecretPassword!');
+        await expect(SecurePage.flashAlert).toBeExisting();
+        await expect(SecurePage.flashAlert).toHaveTextContaining(
             'You logged into a secure area!');
-        global.log(`6. PASS assetion without await`);
-        expect(true).toBeTruthy();
-
-        global.log(`7. PASS assetion with await`);
-        expect(true).toBeTruthy();
-        global.log(`8. "Invalid session id" is about to be thrown here because the session has already been closed.`);
     })
 })
