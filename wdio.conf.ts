@@ -182,17 +182,20 @@ export const config: Options.Testrunner = {
       /**
        * only take screenshot if assertion failed
        */
-
       if (passed) {
         return;
       }
-      //await console.log (`Jasmine screenshot of ${assertion.error.message}.`)
-      //await console.log(`Waiting for ${timeout/60000} min...`)
-      await browser.saveScreenshot(
-        `assertionError_${assertion.error.message}.png`
-      );
-      //await browser.pause(timeout);
-      //await console.log(`DEBUG wait done`)
+
+      try {
+        await console.log (`Jasmine screenshot of ${assertion.error.message}.`)
+        await console.log (`Waiting for ${timeout/60000} min...`)
+        await browser.saveScreenshot(
+            `assertionError_${assertion.error.message}.png`);
+        await browser.pause(timeout);
+        await console.log(`DEBUG wait done`)
+      } catch (error) {
+            await console.log(`The screen capture failed. Check for a missing await statement. ${error}`)
+      }
     },
   },
 
