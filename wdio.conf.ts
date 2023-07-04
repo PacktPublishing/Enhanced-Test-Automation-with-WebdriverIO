@@ -143,9 +143,67 @@ export const config: WebdriverIO.Config = {
         // expectationResultHandler: function(passed, assertion) {
         //     do something
         // }
+    // The Jasmine framework allows interception of each assertion in order to log the state of the application
+    // or website depending on the result. For example, it is pretty handy to take a screenshot every time
+    // an assertion fails.
+    expectationResultHandler: async function (passed, assertion) {
+      /**
+       * only take screenshot if assertion failed
+       */
+      if (passed) {
+        return;
+      }
+
+      try {
+        await console.log (`Jasmine screenshot of ${assertion.error.message}.`)
+        await console.log (`Waiting for ${timeout/60000} min...`)
+        await browser.saveScreenshot(
+            `assertionError_${assertion.error.message}.png`);
+        await browser.pause(timeout);
+        await console.log(`DEBUG wait done`)
+      } catch (error) {
+            await console.log(`The screen capture failed. Check for a missing await statement. ${error}`)
+      }
     },
 
 
+    // Option #2: Run browser 3/4 screen on single monitor
+    // Allow VS Code Terminal visible on bottom of the screen
+    await global.log(`Changing window size`);
+    await browser.setWindowSize(1920, 770);
+  },
+  /**
+   * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
+   * beforeEach in Mocha)
+   */
+  beforeHook: function (test, context) {
+    // Create custom commands here
+  },
+  /**
+   * Hook that gets executed _after_ a hook within the suite starts (e.g. runs after calling
+   * afterEach in Mocha)
+   */
+  // afterHook: function (test, context, { error, result, duration, passed, retries }) {
+  // },
+  /**
+   * Function to be executed after a test (in Mocha/Jasmine only)
+   * @param {Object}  test             test object
+   * @param {Object}  context          scope object the test was executed with
+   * @param {Error}   result.error     error object in case the test fails, otherwise `undefined`
+   * @param {Any}     result.result    return object of test function
+   * @param {Number}  result.duration  duration of test
+   * @param {Boolean} result.passed    true if test has passed, otherwise false
+   * @param {Object}  result.retries   informations to spec related retries, e.g. `{ attempts: 0, limit: 0 }`
+   */
+  afterTest: async function (
+    test,
+    context,
+    { error, result, duration, passed, retries }
+  ) {
+    if (!passed) {
+      await browser.takeScreenshot();
+    }
+  },
 
     //
     // =====
