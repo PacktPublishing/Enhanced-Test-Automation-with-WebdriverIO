@@ -6,30 +6,8 @@ import * as helpers from "../../helpers/helpers.js";
 import dynamicLoadingPage from "../pageobjects/dynamicLoading.page.js";
 import { expect as expectWebdriverIO } from 'expect-webdriverio';
 
-describe("My Login application", () => {
-  it("Chapter 3:Cybernetic Enhancements Custom Logging", async () => {
-    // Chapter 3
-    console.log(`Hello, World!`); // Intrinsic log
-    await helpers.log(`Hello, World!`); // Custom log
-    await helpers.sleep(1000); // Wait 1 sec
-    await helpers.log(`DONE!`); // Custom log
-  });
+describe("Chapter 5: Fail Last clickAdv with pageSync and autoscrolln", () => {
 
-  it("Chapter 4: Super Speed - Time Travel Paradoxes and Broken Promises", async () => {
-    await helpers.log(`Hello, World!`);
-    await helpers.log(
-      `PASS: You are never too old to set another goal or to dream a new dream. -- C.S. Lewis`
-    );
-    await helpers.log(`FAIL: It's never too late to go back to bed.`);
-    await helpers.log(`WARN: Earth is mostly harmless`);
-    await helpers.log(``); // Does not print
-    await helpers.log(null); // Does not print
-    await helpers.log(Promise); // Adds trace back
-
-    // Promise.resolve().then( _ => console.log(`2`));
-    // setTimeout( _ => console.log(`3`),0);
-    // console.log(`1`);
-  });
 
   fit("Chapter 5: Fail Last clickAdv with pageSync and autoscroll", async () => {
     // await helpers.log(Promise) // Unit test log returns warning when anything but string is passsed
