@@ -2,6 +2,9 @@
     "name": "wdio",
     "version": "1.0.0",
     "description": "",
+    "keywords": [],
+    "author": "Paul Grossman",
+    "license": "ISC",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "wdio": "wdio run wdio.conf.ts",
@@ -11,10 +14,7 @@
         "ch4": "wdio run wdio.conf.ts --spec ./test/specs/ch4.ts",
         "ch5": "wdio run wdio.conf.ts --spec ./test/specs/ch5.ts"
     },
-    "keywords": [],
-    "author": "Paul Grossman",
-    "license": "ISC",
-    "devDependencies": {
+    "dependencies": {
         "@types/jasmine": "^4.3.5",
         "@types/webdriverio": "^5.0.0",
         "@wdio/allure-reporter": "^8.11.0",
@@ -25,10 +25,8 @@
         "chromedriver": "^114.0.2",
         "ts-node": "^10.9.1",
         "typescript": "^5.1.6",
+        "utility-types": "^3.10.0",
         "wdio-chromedriver-service": "^8.1.1",
         "webdriverio": "^8.11.2"
     },
-    "dependencies": {
-      "utility-types": "^3.10.0"
-    }
 }
