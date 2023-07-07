@@ -7,5 +7,6 @@ package-lock.json
 all-logs
 driver-logs
 *.png
-.DS_Store
 *.log
+.vscode
+.idea

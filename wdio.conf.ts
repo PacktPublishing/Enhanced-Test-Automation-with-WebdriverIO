@@ -62,7 +62,10 @@ export const config = {
     //
     capabilities: [{
         // capabilities for local browser web tests
-        browserName: 'chrome' // or "firefox", "microsoftedge", "safari"
+        browserName: 'chrome', // or "firefox", "microsoftedge", "safari"
+        'goog:chromeOptions': {
+            args: ['--disable-gpu', '--enable-automation', '--disable-infobars', '--disable-notifications'] },
+        acceptInsecureCerts: true,
     }],
     //
     // ===================
