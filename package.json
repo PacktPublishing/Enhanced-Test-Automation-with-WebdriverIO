@@ -11,7 +11,7 @@
     "keywords": [],
     "author": "Paul Grossman",
     "license": "ISC",
-    "devDependencies": {
+    "dependencies": {
         "@types/jasmine": "^4.3.5",
         "@wdio/allure-reporter": "^8.11.0",
         "@wdio/cli": "^8.11.2",
