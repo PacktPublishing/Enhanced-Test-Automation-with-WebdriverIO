@@ -1,8 +1,8 @@
 import * as fs from "fs";
 import * as path from "path";
 import { ASB } from "./globalObjects.js";
-import { expect as expectChai } from "chai";
-import { assert as assertChai } from "chai";
+//import { expect as expectChai } from "chai";
+//import { assert as assertChai } from "chai";
 import allure from "@wdio/allure-reporter";
 /**
  * Console.log wrapper
@@ -58,8 +58,9 @@ export async function pageSync(
   if (skipToEnd === false) {
     LAST_URL = thisUrl;
     const waitforTimeout = browser.options.waitforTimeout;
-    let visibleSpans: String = `div:not([style*="visibility: hidden"])`;
-    let elements: any = await $$(visibleSpans);
+    let visibleSpans: string = 'div:not([style*="visibility: hidden"])';
+    let elements: ElementArrayType = await $$(visibleSpans);
+    
     let exit: boolean = false;
     let count: number = elements.length;
     let lastCount: number = 0;
@@ -290,14 +291,17 @@ async function refreshElement(
 async function findElement(selector: string): Promise<WebdriverIO.Element> {
   try {
     return await browser.$(selector);
-  } catch (error) {
-    if (error.message.includes("stale")) {
-      // element is stale, so we need to recreate it
-      return await browser.$(selector);
-    } else {
-      throw error;
+  } catch (error: unknown) {
+    if (typeof error === 'object' && error !== null && 'message' in error) {
+      const errorMessage = (error as Error).message;
+      if (errorMessage.includes('stale')) {
+        // Element is stale, so we need to recreate it
+        return await browser.$(selector);
+      }
     }
+    throw error;
   }
+  
 }
 
 async function isExists(element: WebdriverIO.Element) {
@@ -312,35 +316,36 @@ export async function scrollIntoView(element: WebdriverIO.Element) {
   await element.scrollIntoView({ block: "center", inline: "center" });
 }
 
-export async function waitForElementToStopMoving(
-  element: WebdriverIO.Element,
-  timeout: number = 1500
-): Promise<boolean> {
-  let rect = await element.getRect();
-  pause(100);
-  let isMoving = rect !== (await element.getRect());
-  let startTime = Date.now();
 
-  // Keep checking the element's position until it stops moving or the timeout is reached
-  while (isMoving) {
-    // If the element's position hasn't changed, it is not moving
-    if (rect === (await element.getRect())) {
-      await log(`  Element is static`);
-      isMoving = false;
-    } else {
-      await log(`  Element is moving...`);
-      pause(100);
-    }
-    // If the timeout has been reached, stop the loop
-    if (Date.now() - startTime > timeout) {
-      break;
-    }
-    // Wait for a short amount of time before checking the element's position again
-    await pause(100);
-  }
 
-  return !isMoving;
+async function waitForElementToStopMoving(element: WebdriverIO , timeout: number): Promise<void> {
+
+  const initialLocation = await element.getLocation();
+
+  return new Promise((resolve, reject) => {
+    let intervalId: NodeJS.Timeout;
+
+    const checkMovement = () => {
+      element.getLocation().then((currentLocation) => {
+        if (
+          currentLocation.x === initialLocation.x &&
+          currentLocation.y === initialLocation.y
+        ) {
+          clearInterval(intervalId);
+          resolve();
+        }
+      });
+    };
+
+    intervalId = setInterval(checkMovement, 100);
+
+    setTimeout(() => {
+      clearInterval(intervalId);
+      reject(new Error(`Timeout: Element did not stop moving within ${timeout}ms`));
+    }, timeout);
+  });
 }
+
 
 export async function getValidElement(
   element: WebdriverIO.Element

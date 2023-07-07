@@ -5,7 +5,7 @@ import url from 'node:url'
 import path from 'node:path'
 import { browser } from '@wdio/globals';
 const addToElement = true // 
-const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
+//const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 // Chapter 4 - Automation SwitchBoard 
 
 export const config: WebdriverIO.Config = {
@@ -73,7 +73,7 @@ export const config: WebdriverIO.Config = {
     //
     // Level of logging verbosity: trace | debug | info | warn | error | silent
     logLevel: 'debug',
-    outputDir: path.resolve(__dirname, 'logs'),
+    //outputDir: path.resolve(__dirname, 'logs'),
     //
     // Set specific log levels per logger
     // loggers:
