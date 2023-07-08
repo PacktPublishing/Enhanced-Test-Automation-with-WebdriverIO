@@ -28,5 +28,5 @@
         "utility-types": "^3.10.0",
         "wdio-chromedriver-service": "^8.1.1",
         "webdriverio": "^8.11.2"
-    },
+    }
 }
