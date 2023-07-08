@@ -1,4 +1,4 @@
-import { ChainablePromiseElement } from "webdriverio";
+
 import * as helpers from "../../helpers/helpers.js";
 import Page from "./page.js";
 
