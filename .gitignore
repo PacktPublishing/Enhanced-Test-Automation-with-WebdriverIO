@@ -11,3 +11,4 @@ screenshots
 *.log
 .idea
 .vscode
+yarn.lock
