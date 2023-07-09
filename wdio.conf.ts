@@ -1,8 +1,6 @@
 import type { Options } from '@wdio/types';
-import {browser, $, $$, expect } from '@wdio/globals';
-import * as helpers from './helpers/helpers';
+import { browser, $, $$, expect } from '@wdio/globals';
 import {ASB} from './helpers/globalObjects';
-
 
 const DEBUG =
     process.env.DEBUG === undefined ? true : process.env.DEBUG === `true`;
@@ -40,7 +38,7 @@ export const config = {
         // for all available options
         tsNodeOpts: {
             transpileOnly: true,
-            project: "test/tsconfig.json",
+            project: "./tsconfig.json",
         },
         // tsconfig-paths is only used if "tsConfigPathsOpts" are provided, if you
         // do please make sure "tsconfig-paths" is installed as dependency
@@ -99,7 +97,8 @@ export const config = {
         // maxInstances can get overwritten per capability. So if you have an in-house Selenium
         // grid with only 5 firefox instances available you can make sure that not more than
         // 5 instances get started at a time.
-        browserName: 'chrome', // or "firefox", "microsoftedge", "safari"
+        browserName: 'chrome',
+        // or "firefox", "microsoftedge", "safari"
         'goog:chromeOptions': {
             args: ['--disable-gpu', '--enable-automation', '--disable-infobars', '--disable-notifications'] },
         acceptInsecureCerts: true,
@@ -264,12 +263,12 @@ export const config = {
         ASB.set("DEBUG", (process.env.DEBUG === undefined) ? false : (process.env.DEBUG === `true`))
         ASB.set("spinnerTimeoutInSeconds", 30)
 
-        helpers.log(`DEBUG: ${ASB.get("DEBUG")}`)
+        global.log(`DEBUG: ${ASB.get("DEBUG")}`)
 
         ASB.set("timeout", (ASB.get("DEBUG") === true) ? 1_000_000 : 10_000)
         let timeout = ASB.get("timeout")
 
-        helpers.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`)
+        global.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`)
 
         // Samples of overidding and adding custom methods.
 
@@ -384,7 +383,7 @@ export const config = {
      * @param {Object} suite suite details
      */
     afterSuite: function (suite) {
-        helpers.log("AFTER SUITE")
+        global.log("AFTER SUITE")
     },
     /**
      * Runs after a WebdriverIO command gets executed
@@ -403,7 +402,7 @@ export const config = {
      * @param {Array.<String>} specs List of spec file paths that ran
      */
     after: function (result, capabilities, specs) {
-        helpers.log("AFTER")
+        global.log("AFTER")
     },
     /**
      * Gets executed right after terminating the webdriver session.
@@ -412,7 +411,7 @@ export const config = {
      * @param {Array.<String>} specs List of spec file paths that ran
      */
     afterSession: function (config, capabilities, specs) {
-        helpers.log("AFTER SESSION")
+        global.log("AFTER SESSION")
     },
     /**
      * Gets executed after all workers got shut down and the process is about to exit. An error
@@ -423,7 +422,7 @@ export const config = {
      * @param {<Object>} results object containing test results
      */
     onComplete: function (exitCode, config, capabilities, results) {
-        helpers.log("ON COMPLETE")
+        global.log("ON COMPLETE")
         if (ASB.get("alreadyFailed")) {
             throw new Error('Test failed');
         }
