@@ -1,7 +1,7 @@
 
 import * as helpers from "../../helpers/helpers.js";
 import Page from "./page.js";
-
+import { $ } from '@wdio/globals';
 /**
  * sub page containing specific selectors and methods for a specific page
  */
@@ -43,7 +43,7 @@ class LoginPage extends Page {
    * a method to encapsule automation code to interact with the page
    * e.g. to login using username and password
    */
-  public async login(username: string, password: string) {
+  public async loginAdv(username: string, password: string) {
     await helpers.log(`Logging in with '${username}' and '${password}'`);
     await this.inputUsername.setValue(username);
     await helpers.log(`Entered '${username}'`);
@@ -90,7 +90,7 @@ class LoginPage extends Page {
 
   /**
    * a method to unit test the failure of an button that does not exist
-   * e.g. to login using username and password
+   * e.g. btnBogus is a non-existant element on ant page
    */
   public async loginFailFirst(username: string, password: string) {
     await helpers.log(`Logging in with '${username}' and '${password}'`);

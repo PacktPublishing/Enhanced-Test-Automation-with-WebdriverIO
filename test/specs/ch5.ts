@@ -4,7 +4,7 @@ import SecurePage from "../pageobjects/secure.page.js";
 import LandingPage from "../pageobjects/landing.page.js";
 import * as helpers from "../../helpers/helpers.js";
 import dynamicLoadingPage from "../pageobjects/dynamicLoading.page.js";
-import { expect as expectWebdriverIO } from 'expect-webdriverio';
+import { expect } from 'expect-webdriverio';
 
 describe("Chapter 5: Fail Last clickAdv with pageSync and autoscrolln", () => {
 
@@ -58,7 +58,7 @@ describe("Chapter 5: Fail Last clickAdv with pageSync and autoscrolln", () => {
     // await helpers.log(Promise) // Unit test log returns warning when anything but string is passsed
     await LoginPage.open();
 
-    await LoginPage.loginOld("tomsmith", "SuperSecretPassword!");
+    await LoginPage.login("tomsmith", "SuperSecretPassword!");
     await expect(SecurePage.flashAlert).toBeExisting();
     await expect(SecurePage.flashAlert).toHaveTextContaining(
       "You logged into a secure area!"
@@ -72,7 +72,7 @@ describe("Chapter 5: Fail Last clickAdv with pageSync and autoscrolln", () => {
     // console.log (`Entering password`) // Intrinsic log
     // await global.log (`Entering password`) // Custom log
 
-    await LoginPage.login("tomsmith", "SuperSecretPassword!");
+    await LoginPage.loginAdv("tomsmith", "SuperSecretPassword!");
     await expect(SecurePage.flashAlert).toBeExisting();
     await expect(SecurePage.flashAlert).toHaveTextContaining(
       "You logged into a secure area!"
