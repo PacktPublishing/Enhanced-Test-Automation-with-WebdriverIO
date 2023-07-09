@@ -16,7 +16,6 @@
     },
     "dependencies": {
         "@types/jasmine": "^4.3.5",
-        "@types/webdriverio": "^5.0.0",
         "@wdio/allure-reporter": "^8.11.0",
         "@wdio/cli": "^8.11.2",
         "@wdio/globals": "^8.11.3",
