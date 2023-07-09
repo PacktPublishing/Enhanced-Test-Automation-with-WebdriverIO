@@ -1,4 +1,4 @@
-import { Browser } from "@wdio/globals";
+
 import type { Options } from "@wdio/types";
 
 const DEBUG =
