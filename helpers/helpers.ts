@@ -1,4 +1,4 @@
-// import {browser, $} from '@wdio/globals';
+import {browser, $, $$} from '@wdio/globals';
 import * as fs from "fs";
 import * as path from "path";
 import { ASB } from "./globalObjects";
