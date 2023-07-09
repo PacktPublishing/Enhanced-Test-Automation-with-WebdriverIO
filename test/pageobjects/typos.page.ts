@@ -1,4 +1,4 @@
-import { ChainablePromiseElement } from 'webdriverio';
+// import { ChainablePromiseElement } from 'webdriverio';
 
 import Page from './page.js';
 

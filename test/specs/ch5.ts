@@ -1,9 +1,9 @@
 "strict mode";
-import LoginPage from "../pageobjects/login.page.js";
-import SecurePage from "../pageobjects/secure.page.js";
-import LandingPage from "../pageobjects/landing.page.js";
-import * as helpers from "../../helpers/helpers.js";
-import dynamicLoadingPage from "../pageobjects/dynamicLoading.page.js";
+import LoginPage from "../pageobjects/login.page";
+import SecurePage from "../pageobjects/secure.page";
+import LandingPage from "../pageobjects/landing.page";
+import * as helpers from "../../helpers/helpers";
+import dynamicLoadingPage from "../pageobjects/dynamicLoading.page";
 import { expect as expectWebdriverIO } from 'expect-webdriverio';
 
 describe("Chapter 5: Fail Last clickAdv with pageSync and autoscrolln", () => {

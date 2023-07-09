@@ -1,6 +1,7 @@
-import { ChainablePromiseElement } from "webdriverio";
-import * as helpers from "../../helpers/helpers.js";
-import Page from "./page.js";
+// import { ChainablePromiseElement } from "webdriverio";
+import {browser, $} from '@wdio/globals';
+import * as helpers from "../../helpers/helpers";
+import Page from "./page";
 
 /**
  * sub page containing specific selectors and methods for a specific page
@@ -28,12 +29,12 @@ class LoginPage extends Page {
      * a method to encapsule automation code to interact with the page
      * e.g. to login using username and password
      */
-    public async login (username: string, password: string) {
-        await global.log(`Logging in with '${username}' and '${password}'`)
-        await this.inputUsername.setValue(username);
-        await this.inputPassword.setValue(password);
-        await this.btnSubmit.click();
-    }
+    // public async login (username: string, password: string) {
+    //     await global.log(`Logging in with '${username}' and '${password}'`)
+    //     await this.inputUsername.setValue(username);
+    //     await this.inputPassword.setValue(password);
+    //     await this.btnSubmit.click();
+    // }
 
   public get btnBogus() {
     return $('//button[type="bogus"]');
