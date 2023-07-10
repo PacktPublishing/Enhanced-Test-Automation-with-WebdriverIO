@@ -248,6 +248,34 @@ export const config = {
      */
     // beforeSession: function (config, capabilities, specs, cid) {
     // },
+
+ /**
+     * Gets executed just before initialising the webdriver session and test framework. It allows you
+     * to manipulate configurations depending on the capability or spec.
+     * @param {commandName} wdio command
+     * @param {args} arguments passed to the command
+     */
+    beforeCommand: function (commandName, args) {
+        if (commandName === '$') {
+          const selector = args[0];
+          // Modify the selector or add additional functionality as needed
+          // For example, you can add a prefix to the selector
+          global.log (`BEFORE $ COMMAND: Selector ${selector} sent to ABS(elementSelector)`);
+          // Pass the locator to the switchboard
+          ASB.set("elementSelector", selector)
+        }
+
+        if (commandName === '$$') {
+            const selector = args[0];
+            // Modify the selector or add additional functionality as needed
+            // For example, you can add a prefix to the selector
+            global.log (`BEFORE $$ COMMAND: Selector ${selector} sent to ABS(elementsSelector)`);
+            // Pass the locator to the switchboard
+            ASB.set("elementsSelector", selector)
+          }
+
+      },
+
     /**
      * Gets executed before test execution begins. At this point you can access to all global
      * variables like `browser`. It is the perfect place to define custom commands.

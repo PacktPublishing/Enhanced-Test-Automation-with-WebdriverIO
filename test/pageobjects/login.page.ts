@@ -46,6 +46,7 @@ class LoginPage extends Page {
    */
   public async login(username: string, password: string) {
     await helpers.log(`Logging in with '${username}' and '${password}'`);
+    let selector = await this.inputUsername.selector;
     await this.inputUsername.setValue(username);
     await helpers.log(`Entered '${username}'`);
     await this.inputPassword.setValue(password);
@@ -70,6 +71,10 @@ class LoginPage extends Page {
     );
 
     await helpers.clickAdv(await this.btnSubmit);
+    
+    // This button does not exist - failing the test
+    let selector = await this.btnBogus.selector;
+    await helpers.log (`${selector}`)
     await helpers.clickAdv(await this.btnBogus);
   }
 
