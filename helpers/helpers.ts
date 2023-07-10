@@ -1,4 +1,3 @@
-import {browser, $, $$} from '@wdio/globals';
 import * as fs from "fs";
 import * as path from "path";
 import { ASB } from "./globalObjects";
@@ -157,8 +156,8 @@ export async function sleep(ms: number) {
 }
 
 export async function clickAdv(
-    element: ChainablePromiseElement<WebdriverIO.Element>
-) {
+  element: WebdriverIO.Element): Promise<Boolean>
+ {
   let success: boolean = false;
 
   element = await getValidElement(element);
@@ -172,14 +171,16 @@ export async function clickAdv(
       await scrollIntoView(element);
       await waitForElementToStopMoving(element, waitforTimeout);
     }
+    
     await highlightOn(element);
+    //@ts-ignore 
     await element.click({block: "center"});
     await pageSync();
     success = true;
   } catch (error: any) {
     await log(`  ERROR: ${SELECTOR} was not clicked.\n       ${error.message}`);
     expect(`to be clickable`).toEqual(SELECTOR);
-    // Throw the error to stop the test
+    //@ts-ignore Throw the error to stop the test
     await element.click({block: "center"});
   }
 
@@ -320,7 +321,7 @@ export async function scrollIntoView(element: WebdriverIO.Element) {
 }
 
 
-export async function waitForElementToStopMoving(element: WebdriverIO, timeout: number): Promise<void> {
+export async function waitForElementToStopMoving(element: WebdriverIO.Element, timeout: number): Promise<void> {
 
   const initialLocation = await element.getLocation();
 

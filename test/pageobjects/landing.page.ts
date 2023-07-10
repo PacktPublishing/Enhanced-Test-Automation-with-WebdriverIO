@@ -22,7 +22,7 @@ class LandingPage extends Page {
    * e.g. to login using username and password
    */
   public async navToTypos() {
-    await helpers.clickAdv (this.btnTypos);
+    await helpers.clickAdv (await this.btnTypos);
    }
 
   /**
@@ -30,7 +30,7 @@ class LandingPage extends Page {
    * e.g. to login using username and password
    */
   public async navToDynamicLoading() {
-    await helpers.clickAdv (this.btnDynamicLoading);
+    await helpers.clickAdv (await this.btnDynamicLoading);
    }
 
 

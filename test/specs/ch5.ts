@@ -48,9 +48,9 @@ describe("Chapter 5: Fail Last clickAdv with pageSync and autoscrolln", () => {
     await expect(dynamicLoadingPage.txtHelloWorld).toHaveTextContaining(
       "Hello World"
     );
-    await helpers.highlightOn(dynamicLoadingPage.txtHelloWorld);
+    await helpers.highlightOn(await dynamicLoadingPage.txtHelloWorld);
     await helpers.pause(5000);
-    await helpers.highlightOff(dynamicLoadingPage.txtHelloWorld);
+    await helpers.highlightOff(await dynamicLoadingPage.txtHelloWorld);
   });
 
 
@@ -68,10 +68,6 @@ describe("Chapter 5: Fail Last clickAdv with pageSync and autoscrolln", () => {
   it("should login with valid credentials", async () => {
     // await helpers.log(Promise) // Unit test log returns warning when anything but string is passsed
     await LoginPage.open();
-    // Chapter 3
-    // console.log (`Entering password`) // Intrinsic log
-    // await global.log (`Entering password`) // Custom log
-
     await LoginPage.login("tomsmith", "SuperSecretPassword!");
     await expect(SecurePage.flashAlert).toBeExisting();
     await expect(SecurePage.flashAlert).toHaveTextContaining(

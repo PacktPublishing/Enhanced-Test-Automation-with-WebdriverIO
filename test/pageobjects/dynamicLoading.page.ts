@@ -29,8 +29,8 @@ verifyHelloWorld();
    * e.g. to login using username and password
    */
   public async navToSpinner() {
-    await helpers.clickAdv(this.btnHiddenElement);
-    await helpers.clickAdv(this.btnStart);
+    await helpers.clickAdv(await this.btnHiddenElement);
+    await helpers.clickAdv(await this.btnStart);
   }
   /**
    * overwrite specific options to adapt it to page object

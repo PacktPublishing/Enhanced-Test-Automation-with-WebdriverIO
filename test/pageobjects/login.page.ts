@@ -69,8 +69,8 @@ class LoginPage extends Page {
       `Entered '${password}' and clicking Submit with ClickAdv`
     );
 
-    await helpers.clickAdv(this.btnSubmit);
-    await helpers.clickAdv(this.btnBogus);
+    await helpers.clickAdv(await this.btnSubmit);
+    await helpers.clickAdv(await this.btnBogus);
   }
 
   /**
@@ -86,7 +86,7 @@ class LoginPage extends Page {
       `Entered '${password}' and clicking Submit with ClickAdv`
     );
     // Class switching
-    await helpers.clickAdv(this.lnkSubmit);
+    await helpers.clickAdv(await this.lnkSubmit);
   }
 
   /**
@@ -101,8 +101,8 @@ class LoginPage extends Page {
     await helpers.log(
       `Entered '${password}' and clicking Submit with ClickAdv`
     );
-    await helpers.clickAdv(this.btnBogus);
-    await helpers.clickAdv(this.btnSubmit);
+    await helpers.clickAdv(await this.btnBogus);
+    await helpers.clickAdv(await this.btnSubmit);
   }
 
     /**
