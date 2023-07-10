@@ -54,7 +54,7 @@ describe("Chapter 5: Fail Last clickAdv with pageSync and autoscrolln", () => {
   });
 
 
-  fit("Chapter 5: Self-healing Link", async () => {
+  it("Chapter 5: Self-healing Link", async () => {
     // await helpers.log(Promise) // Unit test log returns warning when anything but string is passsed
     await LoginPage.open();
 
