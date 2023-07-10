@@ -1,5 +1,4 @@
 import type { Options } from '@wdio/types';
-import { browser, $, $$, expect } from '@wdio/globals';
 import {ASB} from './helpers/globalObjects';
 
 const DEBUG =
