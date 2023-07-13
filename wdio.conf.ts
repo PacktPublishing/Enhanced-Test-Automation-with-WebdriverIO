@@ -191,10 +191,10 @@ export const config = {
             }
 
             try {
-                await console.log (`Jasmine screenshot of ${assertion.error.message}.`)
+                await console.log (`Jasmine screenshot of ${await assertion.error.message}.`)
                 await console.log (`Waiting for ${timeout/60000} min...`)
                 await browser.saveScreenshot(
-                    `assertionError_${assertion.error.message}.png`);
+                    `assertionError_${await assertion.error.message}.png`);
                 await browser.pause(timeout);
                 await console.log(`DEBUG wait done`)
             } catch (error) {
