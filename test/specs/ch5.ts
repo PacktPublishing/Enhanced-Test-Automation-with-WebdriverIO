@@ -61,6 +61,18 @@ describe("Chapter 5: Fail Last clickAdv with pageSync and autoscrolln", () => {
     );
   });
 
+
+  it("Chapter 5: Self-healing Link", async () => {
+    // await helpers.log(Promise) // Unit test log returns warning when anything but string is passsed
+    await LoginPage.open();
+
+    await LoginPage.loginOld("tomsmith", "SuperSecretPassword!");
+    await expect(SecurePage.flashAlert).toBeExisting();
+    await expect(SecurePage.flashAlert).toHaveTextContaining(
+      "You logged into a secure area!"
+    );
+  });
+
   it("should login with valid credentials", async () => {
     // await helpers.log(Promise) // Unit test log returns warning when anything but string is passsed
     await LoginPage.open();
