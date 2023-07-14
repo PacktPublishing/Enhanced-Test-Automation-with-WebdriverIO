@@ -6,3 +6,4 @@ driver-logs
 *.png
 .DS_Store
 logs
+yarn.lock
