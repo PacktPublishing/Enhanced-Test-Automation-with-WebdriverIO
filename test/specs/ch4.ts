@@ -25,7 +25,7 @@ describe("Ch4: Super Speed : Login with Await", () => {
 
 describe("Ch4: Super Speed : Login fails without await", () => {
     it('Should FAIL to login because await statements are missing in login_sync and executes out of order', async () => {
-        global.log(`1. Open browser without await`);
+        await global.log(`1. Open browser without await`);
         await LoginPage.open();
         // Removed await keywords - Demonstrates potential "Time Travel" issue when .click executes before .setValue in login_sync
         await LoginPage.login_sync('tomsmith1', 'SuperSecretPassword!');
