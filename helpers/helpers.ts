@@ -57,10 +57,10 @@ export async function pageSync(
 
   if (skipToEnd === false) {
     LAST_URL = thisUrl;
-
+    const waitforTimeout = browser.options.waitforTimeout;
     let visibleSpans: string = 'div:not([style*="visibility: hidden"])';
     let elements: ElementArrayType = await $$(visibleSpans);
-
+    
     let exit: boolean = false;
     let count: number = elements.length;
     let lastCount: number = 0;
@@ -117,13 +117,15 @@ export async function pageSync(
     // Metric: Report if the page took more than 3 seconds to build
     const endTime = Date.now();
     const duration = endTime - startTime;
-    const waitForTimeout = 3000
 
-    if (duration > waitForTimeout) {
+    if (duration > waitforTimeout) {
       await log(
-        `  WARN: pageSync() completed in ${duration / 1000
+        `  WARN: pageSync() completed in ${
+          duration / 1000
         } sec  (${duration} ms) `
       );
+    } else {
+      //log(`  pageSync() completed in ${duration} ms`); // Optional debug messaging
     }
   }
 
@@ -151,40 +153,30 @@ export async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export async function clickAdv( element: WebdriverIO.Element) {
-  
-  // Pessimistic success flag
+export async function clickAdv(
+  element: ChainablePromiseElement<WebdriverIO.Element>
+) {
   let success: boolean = false;
-
-  // Self-healing object code
+  
   element = await getValidElement(element);
   const SELECTOR = await element.selector;
-  
-  // Log the element detail in the console for debugging
   await log(`Clicking ${SELECTOR}`);
 
   try {
-    // Don't wast time on this if element is off screen
     //await element.waitForDisplayed();
 
-    // Scroll the element into view for screen capture
     if (!(await isElementInViewport(element))) {
       await scrollIntoView(element);
-      await waitForElementToStopMoving(element, 3000);
+      await waitForElementToStopMoving(element);
     }
-
     await highlightOn(element);
-    // Center the center of the object
-    // @ts-ignore not assignable to parameter clickOptions
     await element.click({ block: "center" });
     await pageSync();
     success = true;
-
   } catch (error: any) {
     await log(`  ERROR: ${SELECTOR} was not clicked.\n       ${error.message}`);
     expect(`to be clickable`).toEqual(SELECTOR);
     // Throw the error to stop the test
-    // @ts-ignore not assignable to parameter clickOptions
     await element.click({ block: "center" });
   }
 
@@ -309,7 +301,7 @@ async function findElement(selector: string): Promise<WebdriverIO.Element> {
     }
     throw error;
   }
-
+  
 }
 
 async function isExists(element: WebdriverIO.Element) {
@@ -326,7 +318,7 @@ export async function scrollIntoView(element: WebdriverIO.Element) {
 
 
 
-async function waitForElementToStopMoving(element: WebdriverIO.Element, timeout: number): Promise<void> {
+async function waitForElementToStopMoving(element: WebdriverIO , timeout: number): Promise<void> {
 
   const initialLocation = await element.getLocation();
 
@@ -364,9 +356,9 @@ export async function getValidElement(
   let newSelector: string = ""
   let newElement: any = element;
   let elements: WebdriverIO.Element[];
-  let elementType: string = ""
-  let elementText: string = ""
-
+  let elementType:string = ""
+  let elementText:string = ""
+  
   try {
     elements = await $$(selector);
 
@@ -374,18 +366,18 @@ export async function getValidElement(
 
       let index: number = selector.indexOf("[");
       elementType = selector.substring(0, index);
-
+    
       switch (elementType) {
         case "//a":
           elementText = selector.match(/=".*"/)[0].slice(2, -1);
           newSelector = `//button[contains(@type,'${elementText}')]`
-
+          
           break;
 
         case "//button":
           elementText = selector.match(/=".*"/)[0].slice(2, -1);
-          newSelector = `//a[contains(text(),'${elementText}'])`
-
+          newSelector =`//a[contains(text(),'${elementText}'])`
+          
           break;
 
         default:
@@ -394,7 +386,7 @@ export async function getValidElement(
           break;
       }
       newElement = await $(newSelector);
-      found = await isElementVisible(newElement)
+      found = await isElementVisible (newElement)
     }
   } catch (error) {
     found = false;
@@ -413,11 +405,11 @@ export async function getValidElement(
 }
 
 async function getElementType(element: WebdriverIO.Element) {
-
+  
   // get from existing element
   let tagName = await element.getTagName();
-
-  if (tagName === null) {
+  
+  if (tagName === null){ 
     // get from non existing element instead of null
     let selector = element.selector.toString()
     let startIndex = selector.indexOf('\\') + 1;
