@@ -1,4 +1,4 @@
-import { $ } from '@wdio/globals';
+import { ChainablePromiseElement } from 'webdriverio';
 
 import Page from './page';
 
