@@ -1,21 +1,18 @@
 "strict mode";
-import LoginPage from "../pageobjects/login.page.js";
-import SecurePage from "../pageobjects/secure.page.js";
-import LandingPage from "../pageobjects/landing.page.js";
-import * as helpers from "../../helpers/helpers.js";
-import dynamicLoadingPage from "../pageobjects/dynamicLoading.page.js";
-import { expect as expectWebdriverIO } from 'expect-webdriverio';
-
+import LoginPage from "../pageobjects/login.page";
+import SecurePage from "../pageobjects/secure.page";
+import LandingPage from "../pageobjects/landing.page";
+import * as helpers from "../../helpers/helpers";
+import dynamicLoadingPage from "../pageobjects/dynamicLoading.page";
 describe("Chapter 5: Fail Last clickAdv with pageSync and autoscrolln", () => {
 
-
-  fit("Chapter 5: Fail Last clickAdv with pageSync and autoscroll", async () => {
+  it("Chapter 5: Fail Last clickAdv with pageSync and autoscroll", async () => {
     // await helpers.log(Promise) // Unit test log returns warning when anything but string is passsed
     await LoginPage.open();
 
     await LoginPage.loginFailLast("tomsmith", "SuperSecretPassword!");
-    await expect(SecurePage.flashAlert).toBeExisting();
-    await expect(SecurePage.flashAlert).toHaveTextContaining(
+    await expect(await SecurePage.flashAlert).toBeExisting();
+    await expect(await SecurePage.flashAlert).toHaveTextContaining(
       "You logged into a secure area!"
     );
   });
@@ -48,13 +45,24 @@ describe("Chapter 5: Fail Last clickAdv with pageSync and autoscrolln", () => {
     await expect(dynamicLoadingPage.txtHelloWorld).toHaveTextContaining(
       "Hello World"
     );
-    await helpers.highlightOn(dynamicLoadingPage.txtHelloWorld);
+    await helpers.highlightOn(await dynamicLoadingPage.txtHelloWorld);
     await helpers.pause(5000);
-    await helpers.highlightOff(dynamicLoadingPage.txtHelloWorld);
+    await helpers.highlightOff(await dynamicLoadingPage.txtHelloWorld);
+  });
+
+  it("Chapter 5: Self-healing Link", async () => {
+    // await helpers.log(Promise) // Unit test log returns warning when anything but string is passsed
+    await LoginPage.open();
+
+    await LoginPage.loginOld("tomsmith", "SuperSecretPassword!");
+    await expect(SecurePage.flashAlert).toBeExisting();
+    await expect(SecurePage.flashAlert).toHaveTextContaining(
+      "You logged into a secure area!"
+    );
   });
 
 
-  fit("Chapter 5: Self-healing Link", async () => {
+  it("Chapter 5: Self-healing Link", async () => {
     // await helpers.log(Promise) // Unit test log returns warning when anything but string is passsed
     await LoginPage.open();
 
@@ -68,10 +76,6 @@ describe("Chapter 5: Fail Last clickAdv with pageSync and autoscrolln", () => {
   it("should login with valid credentials", async () => {
     // await helpers.log(Promise) // Unit test log returns warning when anything but string is passsed
     await LoginPage.open();
-    // Chapter 3
-    // console.log (`Entering password`) // Intrinsic log
-    // await global.log (`Entering password`) // Custom log
-
     await LoginPage.login("tomsmith", "SuperSecretPassword!");
     await expect(SecurePage.flashAlert).toBeExisting();
     await expect(SecurePage.flashAlert).toHaveTextContaining(

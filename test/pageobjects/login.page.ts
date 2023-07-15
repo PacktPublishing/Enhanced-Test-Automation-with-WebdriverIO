@@ -1,6 +1,7 @@
-import { ChainablePromiseElement } from "webdriverio";
-import * as helpers from "../../helpers/helpers.js";
-import Page from "./page.js";
+// import { ChainablePromiseElement } from "webdriverio";
+import {browser, $} from '@wdio/globals';
+import * as helpers from "../../helpers/helpers";
+import Page from "./page";
 
 /**
  * sub page containing specific selectors and methods for a specific page
@@ -28,12 +29,12 @@ class LoginPage extends Page {
      * a method to encapsule automation code to interact with the page
      * e.g. to login using username and password
      */
-    public async login (username: string, password: string) {
-        await global.log(`Logging in with '${username}' and '${password}'`)
-        await this.inputUsername.setValue(username);
-        await this.inputPassword.setValue(password);
-        await this.btnSubmit.click();
-    }
+    // public async login (username: string, password: string) {
+    //     await global.log(`Logging in with '${username}' and '${password}'`)
+    //     await this.inputUsername.setValue(username);
+    //     await this.inputPassword.setValue(password);
+    //     await this.btnSubmit.click();
+    // }
 
   public get btnBogus() {
     return $('//button[type="bogus"]');
@@ -45,6 +46,7 @@ class LoginPage extends Page {
    */
   public async login(username: string, password: string) {
     await helpers.log(`Logging in with '${username}' and '${password}'`);
+    let selector = await this.inputUsername.selector;
     await this.inputUsername.setValue(username);
     await helpers.log(`Entered '${username}'`);
     await this.inputPassword.setValue(password);
@@ -68,8 +70,12 @@ class LoginPage extends Page {
       `Entered '${password}' and clicking Submit with ClickAdv`
     );
 
-    await helpers.clickAdv(this.btnSubmit);
-    await helpers.clickAdv(this.btnBogus);
+    await helpers.clickAdv(await this.btnSubmit);
+    
+    // This button does not exist - failing the test
+    let selector = await this.btnBogus.selector;
+    await helpers.log (`${selector}`)
+    await helpers.clickAdv(await this.btnBogus);
   }
 
   /**
@@ -85,7 +91,7 @@ class LoginPage extends Page {
       `Entered '${password}' and clicking Submit with ClickAdv`
     );
     // Class switching
-    await helpers.clickAdv(this.lnkSubmit);
+    await helpers.clickAdv(await this.lnkSubmit);
   }
 
   /**
@@ -100,8 +106,8 @@ class LoginPage extends Page {
     await helpers.log(
       `Entered '${password}' and clicking Submit with ClickAdv`
     );
-    await helpers.clickAdv(this.btnBogus);
-    await helpers.clickAdv(this.btnSubmit);
+    await helpers.clickAdv(await this.btnBogus);
+    await helpers.clickAdv(await this.btnSubmit);
   }
 
     /**

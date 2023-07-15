@@ -1,6 +1,6 @@
-import { ChainablePromiseElement } from 'webdriverio';
-
-import Page from './page.js';
+// import { ChainablePromiseElement } from 'webdriverio';
+import {browser, $} from '@wdio/globals';
+import Page from './page';
 
 /**
  * sub page containing specific selectors and methods for a specific page
