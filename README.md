@@ -23,17 +23,14 @@
 This is a demonstration project of advanced Typescript WebdriverIO helper methods.  
 ## Features
 -   Configured to run browser and see console output on a single monitor 
--   TypeScript
--   Custom Debugging
--   Custom global.log
+-   TypeScript 
 -   [Expect-webdriverio](https://github.com/webdriverio/expect-webdriverio)
--   ESlint
--   Prettier
--   cross-env 
--   Allure report (screenshots on failure)
+-   ESlint - Static code analysis tool
+-   Prettier - Code formatting tool
+-   cross-env - used to set environment variables in a consistent behavior across Windows / Mac and Linux 
+-   Allure setup 
 
 ## Requirements
-
 -   node >= 16.13.x - [how to install Node](https://nodejs.org/en/download/)
 -   npm >= 8.1.x - [how to install NPM](https://www.npmjs.com/get-npm)
 

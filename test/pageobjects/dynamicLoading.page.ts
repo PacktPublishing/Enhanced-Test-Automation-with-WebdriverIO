@@ -1,6 +1,6 @@
 import { ChainablePromiseElement } from "webdriverio";
-import * as helpers from "../../helpers/helpers.js";
-import Page from "./page.js";
+import * as helpers from "../../helpers/helpers";
+import Page from "./page";
 
 /**
  * sub page containing specific selectors and methods for a specific page
@@ -29,8 +29,8 @@ verifyHelloWorld();
    * e.g. to login using username and password
    */
   public async navToSpinner() {
-    await helpers.clickAdv(this.btnHiddenElement);
-    await helpers.clickAdv(this.btnStart);
+    await helpers.clickAdv(await this.btnHiddenElement);
+    await helpers.clickAdv(await this.btnStart);
   }
   /**
    * overwrite specific options to adapt it to page object

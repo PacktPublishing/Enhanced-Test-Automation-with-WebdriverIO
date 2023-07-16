@@ -1,8 +1,8 @@
 import * as fs from "fs";
 import * as path from "path";
-import { ASB } from "./globalObjects.js";
-import { expect as expectChai } from "chai";
-import { assert as assertChai } from "chai";
+import { ASB } from "./globalObjects";
+//import { expect as expectChai } from "chai";
+//import { assert as assertChai } from "chai";
 import allure from "@wdio/allure-reporter";
 import { Key } from "webdriverio";
 
@@ -21,6 +21,7 @@ export async function clickAdv(element: WebdriverIO.Element) {
       await waitForElementToStopMoving(element);
     }
     await highlightOn(element);
+    //@ts-ignore
     await element.click({ block: "center" });
     await pageSync();
     success = true;
@@ -28,6 +29,7 @@ export async function clickAdv(element: WebdriverIO.Element) {
     await log(`  ERROR: ${SELECTOR} was not clicked.\n       ${error.message}`);
     expect(`to be clickable`).toEqual(SELECTOR);
     // Throw the error to stop the test
+    //@ts-ignore
     await element.click({ block: "center" });
   }
 
@@ -204,29 +206,6 @@ export async function highlightOn(
   return visible;
 }
 
-export async function highlightOff(
-  element: WebdriverIO.Element
-): Promise<boolean> {
-  let visible: boolean = true;
-  try {
-    await browser.execute(`arguments[0].style.border = "0px";`, element);
-  } catch (error) {
-    // Element no longer exists
-    visible = false;
-  }
-  return visible;
-}
-
-export async function isElementVisible(
-  element: WebdriverIO.Element
-): Promise<boolean> {
-  try {
-    const displayed = await element.isDisplayed();
-    return displayed;
-  } catch (error) {
-    return false;
-  }
-}
 function isEmpty(text: string | null): boolean {
   if (!text || text === "") {
     return true;
@@ -255,21 +234,21 @@ async function isExists(element: WebdriverIO.Element) {
  *    - Prints trace if not passed string or number
  * @param message
  */
-export async function log(message: any): Promise<void> {
-  try {
-    if (typeof message === "string" || typeof message === "number") {
-      if (message) {
-        console.log(`---> ${message}`);
-        if (message.toString().includes(`[object Promise]`)) {
-          console.log(`    Possiblly missing await statement`);
-          console.trace();
+  export async function log(message: any): Promise<void> {
+    try {
+      if (typeof message === "string" || typeof message === "number") {
+        if (message) {
+          console.log(`---> ${message}`);
+          if (message.toString().includes(`[object Promise]`)) {
+            console.log(`    Possiblly missing await statement`);
+            console.trace();
+          }
         }
       }
+    } catch (error: any) {
+      console.log(`--->   helpers.console(): ${error.message}`);
     }
-  } catch (error: any) {
-    console.log(`--->   helpers.console(): ${error.message}`);
   }
-}
 
 function maskPassword(password: string): string {
   return password.replace(
@@ -305,17 +284,18 @@ function normalizeElementType(elementType: string) {
   return elementText;
 }
 
-/**
- * pageSync - Dynamic wait for the page to stabilize.
- * Use after click
- * ms = default time wait between loops 125 = 1/8 sec
- *      Minimum 25 for speed / stability balance
- */
-let LAST_URL: String = "";
+  /**
+   * pageSync - Dynamic wait for the page to stabilize.
+   * Use after click
+   * ms = default time wait between loops 125 = 1/8 sec
+   *      Minimum 25 for speed / stability balance
+   */
+  let LAST_URL: String = "";
+  let waitforTimeout = browser.options.waitforTimeout;
 
 export async function pageSync(
-  ms: number = 25,
-  waitOnSamePage: boolean = false
+    ms: number = 25,
+    waitOnSamePage: boolean = false
 ): Promise<boolean> {
   await waitForSpinner();
 
@@ -336,9 +316,10 @@ export async function pageSync(
 
   if (skipToEnd === false) {
     LAST_URL = thisUrl;
-    const waitforTimeout = browser.options.waitforTimeout;
-    let visibleSpans: string = `div:not([style*="visibility: hidden"])`;
-    let elements: any = await $$(visibleSpans);
+    // const waitforTimeout = browser.options.waitforTimeout;
+    let visibleSpans: string = 'div:not([style*="visibility: hidden"])';
+    let elements: ElementArrayType = await $$(visibleSpans);
+
     let exit: boolean = false;
     let count: number = elements.length;
     let lastCount: number = 0;
@@ -398,9 +379,9 @@ export async function pageSync(
 
     if (duration > timeout) {
       await log(
-        `  WARN: pageSync() completed in ${
-          duration / 1000
-        } sec  (${duration} ms) `
+          `  WARN: pageSync() completed in ${
+              duration / 1000
+          } sec  (${duration} ms) `
       );
     } else {
       //log(`  pageSync() completed in ${duration} ms`); // Optional debug messaging
@@ -478,9 +459,6 @@ function replaceTags(text: string) {
 
 
 
-export async function scrollIntoView(element: WebdriverIO.Element) {
-  await element.scrollIntoView({ block: "center", inline: "center" });
-}
 export async function sleep(ms: number) {
   await log(`Waiting ${ms} ms...`);
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -501,43 +479,6 @@ export async function selectAdv(
 
   await log(`Selecting '${newValue}' in ${SELECTOR}`);
 
-  try {
-    //await element.waitForDisplayed();
-
-    if (!(await isElementInViewport(list))) {
-      await scrollIntoView(list);
-      await waitForElementToStopMoving(list);
-    }
-
-    await highlightOn(list);
-
-    //Check if text was entered
-    // Open the list
-    await list.click();
-
-    await list.selectByVisibleText(text);
-
-    // Determine if this is a combobox
-
-    // Send text to combobox field
-    for (const letter of text) {
-      await list.addValue(letter);
-    }
-
-   listItem = await getValidElement(list, "ListItem");
-  
-    success  = true;
-  } catch (error: any) {
-    await log(
-      `  ERROR: ${SELECTOR} list did not contain '${text}'.\n       ${error.message}`
-    );
-    expect(`to be editable`).toEqual(SELECTOR);
-    // Throw the error to stop the test
-    await list.selectByVisibleText(text);
-  }
-
-  return success;
-}
 
 
 export async function setValueAdv(
@@ -587,7 +528,7 @@ export async function setValueAdv(
   }
 
   return success;
-}
+
 
 
 
@@ -620,41 +561,114 @@ export async function waitForSpinner(): Promise<boolean> {
       // Spinner no longer exists
     }
     await log(
-      `  Spinner Elapsed time: ${Math.floor(performance.now() - startTime)} ms`
+        `  Spinner Elapsed time: ${Math.floor(performance.now() - startTime)} ms`
     );
   }
   return spinnerDetected;
 }
 
-
-
-export async function waitForElementToStopMoving(
-  element: WebdriverIO.Element,
-  timeout: number = 1500
+export async function highlightOff(
+    element: WebdriverIO.Element
 ): Promise<boolean> {
-  let rect = await browser.options.waitforTimeout;
-  pause(100);
-  let isMoving = rect !== (await browser.options.waitforTimeout);
-  let startTime = Date.now();
-
-  // Keep checking the element's position until it stops moving or the timeout is reached
-  while (isMoving) {
-    // If the element's position hasn't changed, it is not moving
-    if (rect === (await browser.options.waitforTimeout)) {
-      await log(`  Element is static`);
-      isMoving = false;
-    } else {
-      await log(`  Element is moving...`);
-      pause(100);
-    }
-    // If the timeout has been reached, stop the loop
-    if (Date.now() - startTime > timeout) {
-      break;
-    }
-    // Wait for a short amount of time before checking the element's position again
-    await pause(100);
+  let visible: boolean = true;
+  try {
+    await browser.execute(`arguments[0].style.border = "0px";`, element);
+  } catch (error) {
+    // Element no longer exists
+    visible = false;
   }
-
-  return !isMoving;
+  return visible;
 }
 
+export async function isElementVisible(
+    element: WebdriverIO.Element
+): Promise<boolean> {
+  try {
+    const displayed = await element.isDisplayed();
+    return displayed;
+  } catch (error) {
+    return false;
+  }
+}
+
+//Resolves stale element
+export async function refreshElement(
+    element: WebdriverIO.Element
+): Promise<WebdriverIO.Element> {
+  return await browser.$(element.selector);
+}
+
+async function findElement(selector: string): Promise<WebdriverIO.Element> {
+  try {
+    return await browser.$(selector);
+  } catch (error: unknown) {
+    if (typeof error === 'object' && error !== null && 'message' in error) {
+      const errorMessage = (error as Error).message;
+      if (errorMessage.includes('stale')) {
+        // Element is stale, so we need to recreate it
+        return await browser.$(selector);
+      }
+    }
+    throw error;
+  }
+
+}
+
+export async function isExists(element: WebdriverIO.Element) {
+  try {
+    return await element.isExisting();
+  } catch (error) {
+    return false;
+  }
+}
+
+export async function scrollIntoView(element: WebdriverIO.Element) {
+  await element.scrollIntoView({block: "center", inline: "center"});
+}
+
+
+export async function waitForElementToStopMoving(element: WebdriverIO.Element, timeout: number): Promise<void> {
+
+  const initialLocation = await element.getLocation();
+
+  return new Promise((resolve, reject) => {
+    let intervalId: NodeJS.Timeout;
+
+    const checkMovement = () => {
+      element.getLocation().then((currentLocation) => {
+        if (
+            currentLocation.x === initialLocation.x &&
+            currentLocation.y === initialLocation.y
+        ) {
+          clearInterval(intervalId);
+          resolve();
+        }
+      });
+    };
+
+    intervalId = setInterval(checkMovement, 100);
+
+    setTimeout(() => {
+      clearInterval(intervalId);
+      reject(new Error(`Timeout: Element did not stop moving within ${timeout}ms`));
+    }, timeout);
+  });
+}
+
+
+
+
+export async function getElementType(element: WebdriverIO.Element) {
+
+  // get from existing element
+  let tagName = await element.getTagName();
+
+  if (tagName === null) {
+    // get from non existing element instead of null
+    let selector = element.selector.toString()
+    let startIndex = selector.indexOf('\\') + 1;
+    let endIndex = selector.indexOf('[');
+    tagName = selector.substring(startIndex, endIndex);
+  }
+  return tagName;
+}
