@@ -1,9 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { ASB } from "./globalObjects";
-//import { expect as expectChai } from "chai";
-//import { assert as assertChai } from "chai";
-import allure from "@wdio/allure-reporter";
+import allureReporter from "@wdio/allure-reporter";
 
 /**
  * Console.log wrapper
@@ -420,4 +418,105 @@ export async function getElementType(element: WebdriverIO.Element) {
     tagName = selector.substring(startIndex, endIndex);
   }
   return tagName;
+}
+
+// export async function assertAdv(actual, assertionType, expected){
+//   function Expect(actual: any, assertionType: string, expected?: any, description: string = 'A description of this assertion is recommended.', softAssert: boolean = false): boolean {
+//     let result;
+//     let elem;
+//     const softExpect = expect;
+//     const step = allureReporter.startStep(description);
+//
+//     try {
+//       switch (assertionType) {
+//         case 'exists':
+//           result = softExpect(elem).toExist();
+//           break;
+//
+//         case 'does not exist':
+//           result = softExpect(elem).not.toExist();
+//           break;
+//
+//         case 'contains':
+//           result = softExpect(elem).toContain(expected);
+//           break;
+//
+//         case 'does not contain':
+//           result = softExpect(elem).not.toContain(expected);
+//           break;
+//
+//         case 'enabled':
+//           result = softExpect(elem).toBeEnabled();
+//           break;
+//
+//         case 'is disabled':
+//           result = softExpect(elem).toBeDisabled();
+//           break;
+//
+//         case 'equals':
+//           result = softExpect(elem).toEqual(expected);
+//
+//         case '=':
+//           result = softExpect(elem).toEqual(expected);
+//           break;
+//
+//         default:
+//           console.log('Invalid assertion type.');
+//           break;
+//       }
+//
+//       const passFail = result ? 'PASS: ' : 'FAIL: ';
+//       const output = passFail + description;
+//
+//       if (result) {
+//         console.log('This is the assertion output ', output);
+//         allureReporter.addAttachment('Assertion Failure', output, 'text/plain');
+//       }
+//
+//     } catch (error) {
+//       allureReporter.addAttachment('Assertion Error', error.stack, 'text/plain');
+//       throw error;
+//     } finally {
+//       allureReporter.endStep();
+//     }
+//
+//     if (!result && !softAssert) {
+//       throw new Error();
+//     }
+//     return result;
+//   }
+// }
+
+// export async function expectAdv(actual, assertionType, expected) {
+  export async function expectAdv(actual: any, assertionType: string, expected?: any) {
+  const softAssert = expect;
+  let result ;
+
+  try {
+    switch (assertionType) {
+      case 'equals':
+        result = await softAssert(actual).toEqual(expected);
+        console.log('this si the result of ', result);
+        break;
+
+      default:
+        console.log('Invalid assertion type.');
+        break;
+    }
+    const passFail = result ? 'PASS: ' : 'FAIL: ';
+    const output = passFail;
+    if (output) {
+      console.log('This is the assertion output ', output);
+      await allureReporter.addAttachment('Assertion Failure', output, 'text/plain');
+    } else {
+      throw new Error();
+    }
+  } catch (error) {
+      await allureReporter.addAttachment('Assertion Error', error.stack, 'text/plain');
+      throw error;
+    } finally {
+      await allureReporter.endStep();
+    }
+
+  return result;
 }
