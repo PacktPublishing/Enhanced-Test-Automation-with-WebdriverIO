@@ -1,10 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { ASB } from "./globalObjects";
-//import { expect as expectChai } from "chai";
-//import { assert as assertChai } from "chai";
-import allure from "@wdio/allure-reporter";
-import { Key } from "webdriverio";
+import allureReporter from "@wdio/allure-reporter";
 
 export async function clickAdv(element: WebdriverIO.Element) {
   let success: boolean = false;
@@ -18,7 +15,7 @@ export async function clickAdv(element: WebdriverIO.Element) {
 
     if (!(await isElementInViewport(element))) {
       await scrollIntoView(element);
-      await waitForElementToStopMoving(element);
+      await waitForElementToStopMoving(element, 1000);
     }
     await highlightOn(element);
     //@ts-ignore
@@ -36,18 +33,18 @@ export async function clickAdv(element: WebdriverIO.Element) {
   return success;
 }
 
-async function findElement(selector: string): Promise<WebdriverIO.Element> {
-  try {
-    return await browser.$(selector);
-  } catch (error: any) {
-    if (error.message.includes("stale")) {
-      // element is stale, so we need to recreate it
-      return await browser.$(selector);
-    } else {
-      throw error;
-    }
-  }
-}
+// async function findElement(selector: string): Promise<WebdriverIO.Element> {
+//   try {
+//     return await browser.$(selector);
+//   } catch (error: any) {
+//     if (error.message.includes("stale")) {
+//       // element is stale, so we need to recreate it
+//       return await browser.$(selector);
+//     } else {
+//       throw error;
+//     }
+//   }
+// }
 
 export async function getValidElement(
   element: WebdriverIO.Element,
@@ -408,11 +405,11 @@ export async function pause(ms: number) {
 }
 
 //Resolves stale element
-async function refreshElement(
-  element: WebdriverIO.Element
-): Promise<WebdriverIO.Element> {
-  return await browser.$(element.selector);
-}
+// async function refreshElement(
+//   element: WebdriverIO.Element
+// ): Promise<WebdriverIO.Element> {
+//   return await browser.$(element.selector);
+// }
 
 let TAGS: string[];
 
@@ -468,7 +465,7 @@ export async function selectAdv(
   list: WebdriverIO.Element,
   text: string
 ) {
-  let listItem : WebdriverIO.Element
+  let listItem: WebdriverIO.Element
   let success: boolean = false;
 
   list = await getValidElement(list, "list");
@@ -478,7 +475,7 @@ export async function selectAdv(
   let newValue: string = replaceTags(text);
 
   await log(`Selecting '${newValue}' in ${SELECTOR}`);
-
+}
 
 
 export async function setValueAdv(
@@ -500,7 +497,7 @@ export async function setValueAdv(
 
     if (!(await isElementInViewport(inputField))) {
       await scrollIntoView(inputField);
-      await waitForElementToStopMoving(inputField);
+      await waitForElementToStopMoving(inputField, 3000);
     }
 
     await highlightOn(inputField);
@@ -520,7 +517,7 @@ export async function setValueAdv(
     success = true;
   } catch (error: any) {
     await log(
-      `  ERROR: ${SELECTOR} was not populated with ${text}.\n       ${error.message}`
+        `  ERROR: ${SELECTOR} was not populated with ${text}.\n       ${error.message}`
     );
     expect(`to be editable`).toEqual(SELECTOR);
     // Throw the error to stop the test
@@ -528,7 +525,7 @@ export async function setValueAdv(
   }
 
   return success;
-
+}
 
 
 
@@ -611,16 +608,15 @@ async function findElement(selector: string): Promise<WebdriverIO.Element> {
     }
     throw error;
   }
-
 }
 
-export async function isExists(element: WebdriverIO.Element) {
-  try {
-    return await element.isExisting();
-  } catch (error) {
-    return false;
-  }
-}
+// export async function isExists(element: WebdriverIO.Element) {
+//   try {
+//     return await element.isExisting();
+//   } catch (error) {
+//     return false;
+//   }
+// }
 
 export async function scrollIntoView(element: WebdriverIO.Element) {
   await element.scrollIntoView({block: "center", inline: "center"});
@@ -655,20 +651,69 @@ export async function waitForElementToStopMoving(element: WebdriverIO.Element, t
   });
 }
 
+// export async function getElementType(element: WebdriverIO.Element) {
+//   // get from existing element
+//   let tagName = await element.getTagName();
+//
+//   if (tagName === null) {
+//     // get from non existing element instead of null
+//     let selector = element.selector.toString()
+//     let startIndex = selector.indexOf('\\') + 1;
+//     let endIndex = selector.indexOf('[');
+//     tagName = selector.substring(startIndex, endIndex);
+//   }
+//   return tagName;
+// }
 
 
+export async function expectAdv(actual, assertionType, expected) {
+  const softAssert = expect;
+  let output = assertionType;
 
-export async function getElementType(element: WebdriverIO.Element) {
+  try {
+    switch (assertionType) {
+      case 'equals':
+        await softAssert(actual).toEqual(expected);
+        break;
 
-  // get from existing element
-  let tagName = await element.getTagName();
+      case 'exists':
+        softAssert(actual).toExist();
+        break;
 
-  if (tagName === null) {
-    // get from non existing element instead of null
-    let selector = element.selector.toString()
-    let startIndex = selector.indexOf('\\') + 1;
-    let endIndex = selector.indexOf('[');
-    tagName = selector.substring(startIndex, endIndex);
-  }
-  return tagName;
+      case 'does not exist':
+        softAssert(actual).not.toExist();
+        break;
+
+      case 'contains':
+        softAssert(actual).toContain(expected);
+        break;
+
+      case 'does not contain':
+        softAssert(actual).not.toContain(expected);
+        break;
+
+      case 'enabled':
+        softAssert(actual).toBeEnabled();
+        break;
+
+      case 'is disabled':
+        softAssert(actual).toBeDisabled();
+        break;
+
+      default:
+        console.log('Invalid assertion type: ', output);
+        break;
+    }
+
+    if (assertionType !== 'equals' || assertionType !== 'exists' || assertionType !== 'does not exist' ||
+        assertionType !== 'contains' ){
+      let output = assertionType;
+      allureReporter.addAttachment('Assertion Failure: ', `Invalid Assertion Type passed = ${output}`, 'text/plain');
+    }
+  } catch (error) {
+      allureReporter.addAttachment('Assertion Error: ', error, 'text/plain');
+      throw error;
+    } finally {
+      allureReporter.endStep();
+    }
 }

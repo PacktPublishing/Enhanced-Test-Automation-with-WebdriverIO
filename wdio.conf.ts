@@ -171,7 +171,11 @@ export const config = {
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
-    reporters: ["spec", ["allure", { outputDir: "allure-results" }]],
+    reporters: ["spec", ["allure",
+        { outputDir: "allure-results",
+          disableWebdriverStepsReporting: true,
+          disableWebdriverScreenshotsReporting: true,
+    }]],
 
     //
     // Options to be passed to Jasmine.
@@ -186,21 +190,14 @@ export const config = {
             /**
              * only take screenshot if assertion failed
              */
-            if (passed) {
-                return;
-            }
-
-            try {
-                await console.log (`Jasmine screenshot of ${await assertion.error.message}.`)
-                await console.log (`Waiting for ${timeout/60000} min...`)
-                await browser.saveScreenshot(
-                    `assertionError_${await assertion.error.message}.png`);
+            if (!passed) {
+                console.log (`Jasmine screenshot of ${assertion}.`)
+                console.log (`Waiting for ${timeout/60000} min...`)
+                await browser.takeScreenshot();
                 await browser.pause(timeout);
-                await console.log(`DEBUG wait done`)
-            } catch (error) {
-                await console.log(`The screen capture failed. Check for a missing await statement. ${error}`)
+                console.log(`DEBUG wait done`);
             }
-        },
+        }
     },
 
     //
