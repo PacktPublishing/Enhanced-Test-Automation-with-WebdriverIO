@@ -12,7 +12,8 @@ const addToElement = true //
 //const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 // Chapter 4 - Automation SwitchBoard
 
-export const config = {
+// export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
+export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     //
     // ====================
     // Runner Configuration
@@ -30,7 +31,6 @@ export const config = {
     // If you need to configure how ts-node runs please use the
     // environment variables for ts-node or use wdio config's autoCompileOpts section.
     //
-
     autoCompileOpts: {
         autoCompile: true,
         // see https://github.com/TypeStrong/ts-node#cli-and-programmatic-options
@@ -88,20 +88,20 @@ export const config = {
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
     // https://saucelabs.com/platform/platform-configurator
     //
-    injectGlobals: true,
+    // injectGlobals: true,
     // Inserts WebdriverIO's globals (e.g. `browser`, `$` and `$$`) into the global environment.
     // If you set to `false`, you should import from `@wdio/globals`. Note: WebdriverIO doesn't
     // handle injection of test framework specific globals.
-    capabilities: [{
-        // maxInstances can get overwritten per capability. So if you have an in-house Selenium
-        // grid with only 5 firefox instances available you can make sure that not more than
-        // 5 instances get started at a time.
-        browserName: 'chrome',
-        // or "firefox", "microsoftedge", "safari"
-        'goog:chromeOptions': {
-            args: ['--disable-gpu', '--enable-automation', '--disable-infobars', '--disable-notifications'] },
-        acceptInsecureCerts: true,
-    }],
+    // capabilities: [{
+    //     // maxInstances can get overwritten per capability. So if you have an in-house Selenium
+    //     // grid with only 5 firefox instances available you can make sure that not more than
+    //     // 5 instances get started at a time.
+    //     browserName: 'chrome',
+    //     // or "firefox", "microsoftedge", "safari"
+    //     'goog:chromeOptions': {
+    //         args: ['--disable-gpu', '--enable-automation', '--disable-infobars', '--disable-notifications'] },
+    //     acceptInsecureCerts: true,
+    // }],
     //
     // ===================
     // Test Configurations
@@ -149,7 +149,7 @@ export const config = {
     // Services take over a specific job you don't want to take care of. They enhance
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
-    services: ["chromedriver"],
+    // services: ["chromedriver"],
 
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
@@ -172,10 +172,11 @@ export const config = {
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
     reporters: ["spec", ["allure",
-        { outputDir: "allure-results",
-          disableWebdriverStepsReporting: true,
-          disableWebdriverScreenshotsReporting: true,
-    }]],
+        {
+            outputDir: "allure-results",
+            disableWebdriverStepsReporting: true,
+            disableWebdriverScreenshotsReporting: true,
+        }]],
 
     //
     // Options to be passed to Jasmine.
@@ -191,8 +192,8 @@ export const config = {
              * only take screenshot if assertion failed
              */
             if (!passed) {
-                console.log (`Jasmine screenshot of ${assertion}.`)
-                console.log (`Waiting for ${timeout/60000} min...`)
+                console.log(`Jasmine screenshot of ${assertion}.`);
+                console.log(`Waiting for ${timeout / 60000} min...`);
                 await browser.takeScreenshot();
                 await browser.pause(timeout);
                 console.log(`DEBUG wait done`);
@@ -213,8 +214,8 @@ export const config = {
      * @param {Object} config wdio configuration object
      * @param {Array.<Object>} capabilities list of capabilities details
      */
-    // onPrepare: function (config, capabilities) {
-    // },
+    onPrepare: function (config, capabilities) {
+    },
     /**
      * Gets executed before a worker process is spawned and can be used to initialise specific service
      * for that worker as well as modify runtime environments in an async fashion.
@@ -245,8 +246,7 @@ export const config = {
      */
     // beforeSession: function (config, capabilities, specs, cid) {
     // },
-
- /**
+    /**
      * Gets executed just before initialising the webdriver session and test framework. It allows you
      * to manipulate configurations depending on the capability or spec.
      * @param {commandName} wdio command
@@ -254,24 +254,24 @@ export const config = {
      */
     beforeCommand: function (commandName, args) {
         if (commandName === '$') {
-          const selector = args[0];
-          // Modify the selector or add additional functionality as needed
-          // For example, you can add a prefix to the selector
-          global.log (`BEFORE $ COMMAND: Selector ${selector} sent to ABS(elementSelector)`);
-          // Pass the locator to the switchboard
-          ASB.set("elementSelector", selector)
+            const selector = args[0];
+            // Modify the selector or add additional functionality as needed
+            // For example, you can add a prefix to the selector
+            global.log(`BEFORE $ COMMAND: Selector ${selector} sent to ABS(elementSelector)`);
+            // Pass the locator to the switchboard
+            ASB.set("elementSelector", selector);
         }
 
         if (commandName === '$$') {
             const selector = args[0];
             // Modify the selector or add additional functionality as needed
             // For example, you can add a prefix to the selector
-            global.log (`BEFORE $$ COMMAND: Selector ${selector} sent to ABS(elementsSelector)`);
+            global.log(`BEFORE $$ COMMAND: Selector ${selector} sent to ABS(elementsSelector)`);
             // Pass the locator to the switchboard
-            ASB.set("elementsSelector", selector)
-          }
+            ASB.set("elementsSelector", selector);
+        }
 
-      },
+    },
 
     /**
      * Gets executed before test execution begins. At this point you can access to all global
@@ -283,32 +283,28 @@ export const config = {
     before: function (capabilities, specs) {
         //Set
         //helpers.log(`process.env.DEBUG: ${process.env.DEBUG}`) // ---> process.env.DEBUG: -LH:*
+        ASB.set("DEBUG", (process.env.DEBUG === undefined) ? false : (process.env.DEBUG === `true`));
+        ASB.set("spinnerTimeoutInSeconds", 30);
 
-        ASB.set("DEBUG", (process.env.DEBUG === undefined) ? false : (process.env.DEBUG === `true`))
-        ASB.set("spinnerTimeoutInSeconds", 30)
+        global.log(`DEBUG: ${ASB.get("DEBUG")}`);
 
-        global.log(`DEBUG: ${ASB.get("DEBUG")}`)
+        ASB.set("timeout", (ASB.get("DEBUG") === true) ? 1000000 : 10000);
+        let timeout = ASB.get("timeout");
 
-        ASB.set("timeout", (ASB.get("DEBUG") === true) ? 1_000_000 : 10_000)
-        let timeout = ASB.get("timeout")
-
-        global.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`)
+        global.log(`timeout = ${Math.ceil(timeout / 60000)} min.`);
 
         // Samples of overidding and adding custom methods.
-
         // browser.addCommand("clickAdv", async function ()
         // {
         //     // `this` is return value of $(selector)
         //     //await this.waitForDisplayed()
         //     helpers.log(`Clicking ${this.selector} ...`)
         //     let locator = "ELEMENT NOT FOUND"
-
         //     try
         //     {
         //         if (ASB.get(`alreadyFailed`) === true)
         //         {
         //             helpers.log(`  SKIPPED: browser.clickAdv(${this.selector})`);
-
         //         } else
         //         {
         //             await this.click({ block: 'center' })
@@ -322,27 +318,21 @@ export const config = {
         //         ASB.set(`alreadyFailed`, false)
         //     }
         // }, addToElement)
-
         // Override the default click command
-
         // browser.overwriteCommand('click', async (element: ElementFinder) => {
-
         //     // Do something before clicking the element
         //     console.log('Overwrite the intrinsic click command...');
-
         //     // Perform the click action
         //     try
         //     {
         //         helpers.log(`Clicking ${this.selector} ...`)
         //         await this.click({ block: 'center' })
-
         //         await helpers.pageSync()
         //         helpers.log(`done`)
         //     } catch (error)
         //     {
         //         helpers.log(`Element was not clicked.\n${error}`)
         //     }
-
         // })
     },
     /**
@@ -364,7 +354,6 @@ export const config = {
     beforeTest: async function (test, context) {
         //Option #1: Run browser full screen on dual monitors
         //browser.maximizeWindow();
-
         // Option #2: Run browser 3/4 screen on single monitor
         // Allow VS Code Terminal visible on bottom of the screen
         await global.log(`Changing window size`);
@@ -396,7 +385,7 @@ export const config = {
     afterTest: async function (
         test,
         context,
-        { error, result, duration, passed, retries }
+        {error, result, duration, passed, retries}
     ) {
         if (!passed) {
             await browser.takeScreenshot();
@@ -407,7 +396,7 @@ export const config = {
      * @param {Object} suite suite details
      */
     afterSuite: function (suite) {
-        global.log("AFTER SUITE")
+        global.log("AFTER SUITE");
     },
     /**
      * Runs after a WebdriverIO command gets executed
@@ -426,7 +415,7 @@ export const config = {
      * @param {Array.<String>} specs List of spec file paths that ran
      */
     after: function (result, capabilities, specs) {
-        global.log("AFTER")
+        global.log("AFTER");
     },
     /**
      * Gets executed right after terminating the webdriver session.
@@ -435,7 +424,7 @@ export const config = {
      * @param {Array.<String>} specs List of spec file paths that ran
      */
     afterSession: function (config, capabilities, specs) {
-        global.log("AFTER SESSION")
+        global.log("AFTER SESSION");
     },
     /**
      * Gets executed after all workers got shut down and the process is about to exit. An error
@@ -446,19 +435,13 @@ export const config = {
      * @param {<Object>} results object containing test results
      */
     onComplete: function (exitCode, config, capabilities, results) {
-        global.log("ON COMPLETE")
+        global.log("ON COMPLETE");
         if (ASB.get("alreadyFailed")) {
             throw new Error('Test failed');
         }
 
     },
-    /**
-     * Gets executed when a refresh happens.
-     * @param {String} oldSessionId session ID of the old session
-     * @param {String} newSessionId session ID of the new session
-     */
-    // onReload: function(oldSessionId, newSessionId) {
-    // }
+    // capabilities: undefined
 };
 
 /**
