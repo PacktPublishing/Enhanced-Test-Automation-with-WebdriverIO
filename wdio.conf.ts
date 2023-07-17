@@ -190,22 +190,12 @@ export const config = {
             /**
              * only take screenshot if assertion failed
              */
-            // const world = this;
             if (!passed) {
-            //     return;
-            // } else {
-            //     try {
                 console.log (`Jasmine screenshot of ${assertion}.`)
                 console.log (`Waiting for ${timeout/60000} min...`)
-                await browser.takeScreenshot().then((screenShot) => {
-                    // this.attach(screenShot, 'image/png');
-                    // `assertionError_${assertion.error}.png`
-                });
+                await browser.takeScreenshot();
                 await browser.pause(timeout);
-                console.log(`DEBUG wait done`)
-            } else {
-            // catch (error) {
-            //     console.log(`The screen capture failed. Check for a missing await statement. ${Error}`)
+                console.log(`DEBUG wait done`);
             }
         }
     },
