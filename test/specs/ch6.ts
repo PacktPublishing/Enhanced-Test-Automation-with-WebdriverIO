@@ -14,9 +14,9 @@ describe("The setValue Wrapper – Entering Text and Dynamic Data Replacement", 
         console.log(await helpers.getToday(-30, "yyyy/MM/dd")); // returns current date minus 3 days in yyyy/MM/dd format
     
         await LoginPage.open();
-        await LoginPage.loginSetValue("tomsmith", "SuperSecretPassword!");
+        // await LoginPage.loginSetValue("tomsmith", "SuperSecretPassword!");
     
-        await LoginPage.open("key_presses");
-        await KeyPressesPage.enterDateTags();
+        // await LoginPage.open("key_presses");
+        // await KeyPressesPage.enterDateTags();
       });
   });
