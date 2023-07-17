@@ -487,36 +487,54 @@ export async function getElementType(element: WebdriverIO.Element) {
 //   }
 // }
 
-// export async function expectAdv(actual, assertionType, expected) {
-  export async function expectAdv(actual: any, assertionType: string, expected?: any) {
+export async function expectAdv(actual, assertionType, expected) {
   const softAssert = expect;
-  let result ;
+  let output = assertionType;
 
   try {
     switch (assertionType) {
       case 'equals':
-        result = await softAssert(actual).toEqual(expected);
-        console.log('this si the result of ', result);
+        await softAssert(actual).toEqual(expected);
+        break;
+
+      case 'exists':
+        softAssert(actual).toExist();
+        break;
+
+      case 'does not exist':
+        softAssert(actual).not.toExist();
+        break;
+
+      case 'contains':
+        softAssert(actual).toContain(expected);
+        break;
+
+      case 'does not contain':
+        softAssert(actual).not.toContain(expected);
+        break;
+
+      case 'enabled':
+        softAssert(actual).toBeEnabled();
+        break;
+
+      case 'is disabled':
+        softAssert(actual).toBeDisabled();
         break;
 
       default:
-        console.log('Invalid assertion type.');
+        console.log('Invalid assertion type: ', output);
         break;
     }
-    const passFail = result ? 'PASS: ' : 'FAIL: ';
-    const output = passFail;
-    if (output) {
-      console.log('This is the assertion output ', output);
-      await allureReporter.addAttachment('Assertion Failure', output, 'text/plain');
-    } else {
-      throw new Error();
+
+    if (assertionType !== 'equals' || assertionType !== 'exists' || assertionType !== 'does not exist' ||
+        assertionType !== 'contains' ){
+      let output = assertionType;
+      allureReporter.addAttachment('Assertion Failure: ', `Invalid Assertion Type passed = ${output}`, 'text/plain');
     }
   } catch (error) {
-      await allureReporter.addAttachment('Assertion Error', error.stack, 'text/plain');
+      allureReporter.addAttachment('Assertion Error: ', error, 'text/plain');
       throw error;
     } finally {
-      await allureReporter.endStep();
+      allureReporter.endStep();
     }
-
-  return result;
 }
