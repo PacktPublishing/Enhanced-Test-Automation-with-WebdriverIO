@@ -22,7 +22,7 @@ describe("Chapter 8: The expect / assert / Should wrapper", () => {
     await LoginPage.open();
     let elem = await browser.$('#login > button > i');
     let bnText = await elem.getText();
-    await helpers.expectAdv(bnText, 'contains', 'Login');
+    await helpers.expectAdv(bnText, 'equals', 'Login');
   });
 
 });
