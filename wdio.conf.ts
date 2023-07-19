@@ -8,9 +8,7 @@ console.log(`DEBUG: ${DEBUG}`);
 let timeout = DEBUG === true ? 1_000_000 : 10_000;
 console.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`);
 
-const addToElement = true //
-//const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
-// Chapter 4 - Automation SwitchBoard
+const addToElement = true
 
 export const config = {
     //
@@ -172,7 +170,7 @@ export const config = {
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
     reporters: ["spec", ["allure",
-        { outputDir: "allure-results",
+        { outputDir: "./reports/allure-results",
           disableWebdriverStepsReporting: true,
           disableWebdriverScreenshotsReporting: true,
     }]],

@@ -12,3 +12,4 @@ screenshots
 .vscode
 .idea
 yarn.lock
+.env

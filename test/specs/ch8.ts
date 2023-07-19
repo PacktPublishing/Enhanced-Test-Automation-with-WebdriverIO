@@ -5,6 +5,8 @@ import LandingPage from "../pageobjects/landing.page";
 import * as helpers from "../../helpers/helpers";
 import dynamicLoadingPage from "../pageobjects/dynamicLoading.page";
 
+import allureReporter from "@wdio/allure-reporter";
+
 describe("Chapter 8: The expect / assert / Should wrapper", () => {
 
   it("Chapter 8: Ensuring that soft assert works correctly", async () => {

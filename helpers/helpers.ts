@@ -665,55 +665,61 @@ export async function waitForElementToStopMoving(element: WebdriverIO.Element, t
 //   return tagName;
 // }
 
-
-export async function expectAdv(actual, assertionType, expected) {
+export async function expectAdv(actual: any, assertionType: string, expected: unknown) {
   const softAssert = expect;
   let output = assertionType;
 
   try {
-    switch (assertionType) {
-      case 'equals':
+    switch (true) {
+      case assertionType === 'equals':
         await softAssert(actual).toEqual(expected);
+        console.info('Valid assertion type: ', output);
         break;
 
-      case 'exists':
-        softAssert(actual).toExist();
+      case assertionType === 'exist':
+        await softAssert(actual).toExist();
         break;
 
-      case 'does not exist':
-        softAssert(actual).not.toExist();
+      case assertionType === 'does not exist':
+        await softAssert(actual).not.toExist();
         break;
 
-      case 'contains':
-        softAssert(actual).toContain(expected);
+      case assertionType === 'contains':
+        await softAssert(actual).toContain(expected);
         break;
 
-      case 'does not contain':
-        softAssert(actual).not.toContain(expected);
+      case assertionType === 'does not contain':
+        await softAssert(actual).not.toContain(expected);
         break;
 
-      case 'enabled':
-        softAssert(actual).toBeEnabled();
+      case assertionType === 'enabled':
+        await softAssert(actual).toBeEnabled();
         break;
 
-      case 'is disabled':
-        softAssert(actual).toBeDisabled();
+      case assertionType === 'is disabled':
+        await softAssert(actual).toBeDisabled();
         break;
 
       default:
-        console.log('Invalid assertion type: ', output);
+        console.info('Invalid assertion type: ', output);
+        allureReporter.addAttachment('Assertion Error: ', console.error, 'text/plain');
         break;
-    }
 
-    if (assertionType !== 'equals' || assertionType !== 'exists' || assertionType !== 'does not exist' ||
-        assertionType !== 'contains' ){
-      let output = assertionType;
-      allureReporter.addAttachment('Assertion Failure: ', `Invalid Assertion Type passed = ${output}`, 'text/plain');
     }
   } catch (error) {
-      allureReporter.addAttachment('Assertion Error: ', error, 'text/plain');
-      throw error;
-    } finally {
-      allureReporter.endStep();
-    }
+    allureReporter.addAttachment('Assertion Error: ', error, 'text/plain');
+    throw error;
+  } finally {
+    allureReporter.endStep();
+  }
+
+  if (assertionType !== 'equals' ){
+    allureReporter.addAttachment('Assertion Failure: ', `Invalid Assertion Type = ${output}`, 'text/plain');
+  }
+
+  allureReporter.addAttachment('Assertion Passes: ', `Valid Assertion Type = ${output}`, 'text/plain');
+
+  allureReporter.endStep();
 }
+
+// https://github.com/webdriverio/expect-webdriverio/blob/main/docs/API.md
