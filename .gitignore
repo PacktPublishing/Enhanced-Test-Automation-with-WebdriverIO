@@ -11,3 +11,4 @@ screenshots
 *.log
 .vscode
 .idea
+.env

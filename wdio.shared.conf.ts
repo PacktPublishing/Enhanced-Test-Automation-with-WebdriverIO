@@ -1,5 +1,6 @@
 import type { Options } from '@wdio/types';
 import {ASB} from './helpers/globalObjects';
+require('dotenv').config();
 
 const DEBUG =
     process.env.DEBUG === undefined ? true : process.env.DEBUG === `true`;
@@ -8,11 +9,8 @@ console.log(`DEBUG: ${DEBUG}`);
 let timeout = DEBUG === true ? 1_000_000 : 10_000;
 console.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`);
 
-const addToElement = true //
-//const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
-// Chapter 4 - Automation SwitchBoard
+const addToElement = true
 
-// export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
 export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     //
     // ====================
@@ -35,10 +33,9 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
         autoCompile: true,
         // see https://github.com/TypeStrong/ts-node#cli-and-programmatic-options
         // for all available options
-        tsNodeOpts: {
-            transpileOnly: true,
-            project: "./tsconfig.json",
-        },
+        // tsNodeOpts: {
+        //     transpileOnly: true,
+        // },
         // tsconfig-paths is only used if "tsConfigPathsOpts" are provided, if you
         // do please make sure "tsconfig-paths" is installed as dependency
         // tsConfigPathsOpts: {
@@ -149,7 +146,11 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     // Services take over a specific job you don't want to take care of. They enhance
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
-    // services: ["chromedriver"],
+    services: [
+        "chromedriver",
+        "geckodriver",
+        // ["lambdatest", {tunnel: true}]
+    ],
 
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
@@ -173,7 +174,7 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     // see also: https://webdriver.io/docs/dot-reporter
     reporters: ["spec", ["allure",
         {
-            outputDir: "allure-results",
+            outputDir: "./reports/allure-results",
             disableWebdriverStepsReporting: true,
             disableWebdriverScreenshotsReporting: true,
         }]],
@@ -192,11 +193,8 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
              * only take screenshot if assertion failed
              */
             if (!passed) {
-                console.log(`Jasmine screenshot of ${assertion}.`);
-                console.log(`Waiting for ${timeout / 60000} min...`);
-                await browser.takeScreenshot();
-                await browser.pause(timeout);
-                console.log(`DEBUG wait done`);
+                // await browser.takeScreenshot();
+                browser.saveScreenshot(`./reports/assertionError_${assertion.error}.png`)
             }
         }
     },
@@ -441,7 +439,6 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
         }
 
     },
-    // capabilities: undefined
 };
 
 /**

@@ -1,32 +1,39 @@
-import { config as sharedConfig } from './wdio.shared.conf'
+import { config as sharedConfig } from './wdio.shared.conf';
 
-// @ts-ignore
-export const config: WebdriverIO.Config = {
+export const config = {
     ...sharedConfig,
     ...{
+        services: [
+            ["lambdatest",
+                {
+                    tunnel: false,
+                    lambdatestOpts: {
+                        logFile: "tunnel.log"
+                    }
+                }
+            ]
+        ],
         user: process.env.LT_USERNAME,
         key: process.env.LT_ACCESS_KEY,
-        services: [
-            ['lambdatest', {
-                tunnel: true
-            }]
+
+        capabilities: [
+            {
+                "LT:Options": {
+                    browserName: "firefox",
+                    version: "latest",
+                    name: "Test WebdriverIO Single",
+                    build: "WebDriver Selenium Sample"
+                }
+            }
         ],
-        capabilities: [{
-            // "platform": "Windows 10",
-            // "browserName": "firefox",
-            // "browserVersion": 'latest',
-            // "version": "106.0",
-            // "resolution": "1280x1024",
-            // "selenium_version": "4.0.0",
-            // "console": true,
-            // "chrome.driver": "108.0"
-            // "network": true,
-            // "visual": true,
-            // "terminal": true,
-            maxInstances: 5,
-            browserName: 'firefox',
-            browserVersion: 'latest',
-            platformName: 'Windows 10',
-        }]
+        logLevel: "info",
+        coloredLogs: true,
+        screenshotPath: "./errorShots/",
+        waitforTimeout: 100000,
+        connectionRetryTimeout: 90000,
+        connectionRetryCount: 1,
+        path: "/wd/hub",
+        hostname: process.env.LT_HOST_URL,
+        port: 80,
     }
 }
