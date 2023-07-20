@@ -1,6 +1,5 @@
 import type { Options } from '@wdio/types';
 import {ASB} from './helpers/globalObjects';
-require('dotenv').config();
 
 const DEBUG =
     process.env.DEBUG === undefined ? true : process.env.DEBUG === `true`;
@@ -11,7 +10,7 @@ console.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`);
 
 const addToElement = true
 
-export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
+export const config: WebdriverIO.Config = {
     //
     // ====================
     // Runner Configuration
@@ -33,9 +32,9 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
         autoCompile: true,
         // see https://github.com/TypeStrong/ts-node#cli-and-programmatic-options
         // for all available options
-        // tsNodeOpts: {
-        //     transpileOnly: true,
-        // },
+        tsNodeOpts: {
+            transpileOnly: true,
+        },
         // tsconfig-paths is only used if "tsConfigPathsOpts" are provided, if you
         // do please make sure "tsconfig-paths" is installed as dependency
         // tsConfigPathsOpts: {
@@ -85,20 +84,21 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
     // https://saucelabs.com/platform/platform-configurator
     //
-    // injectGlobals: true,
+    injectGlobals: true,
     // Inserts WebdriverIO's globals (e.g. `browser`, `$` and `$$`) into the global environment.
     // If you set to `false`, you should import from `@wdio/globals`. Note: WebdriverIO doesn't
     // handle injection of test framework specific globals.
-    // capabilities: [{
-    //     // maxInstances can get overwritten per capability. So if you have an in-house Selenium
-    //     // grid with only 5 firefox instances available you can make sure that not more than
-    //     // 5 instances get started at a time.
-    //     browserName: 'chrome',
-    //     // or "firefox", "microsoftedge", "safari"
-    //     'goog:chromeOptions': {
-    //         args: ['--disable-gpu', '--enable-automation', '--disable-infobars', '--disable-notifications'] },
-    //     acceptInsecureCerts: true,
-    // }],
+    capabilities: [{
+        // maxInstances can get overwritten per capability. So if you have an in-house Selenium
+        // grid with only 5 firefox instances available you can make sure that not more than
+        // 5 instances get started at a time.
+        browserName: 'chrome',
+        // or "firefox", "microsoftedge", "safari"
+        'goog:chromeOptions': {
+            args: ['--disable-gpu', '--enable-automation', '--disable-infobars', '--disable-notifications']
+        },
+        // acceptInsecureCerts: true,
+    }],
     //
     // ===================
     // Test Configurations
@@ -146,11 +146,11 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     // Services take over a specific job you don't want to take care of. They enhance
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
-    services: [
-        "chromedriver",
-        "geckodriver",
-        // ["lambdatest", {tunnel: true}]
-    ],
+    // services: [
+    //     "chromedriver",
+    //     "geckodriver",
+    //     // ["lambdatest", {tunnel: true}]
+    // ],
 
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
