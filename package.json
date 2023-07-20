@@ -13,7 +13,7 @@
             "github": "https://github.com/klassijs"
         }
     ],
-    "license": "ISC",
+    "license": "MIT",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "report": "node_modules/.bin/allure generate --clean ./reports/allure-results && allure open -p 5050",
