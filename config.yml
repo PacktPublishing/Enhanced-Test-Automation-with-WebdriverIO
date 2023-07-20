@@ -17,14 +17,6 @@ references:
           - develop # git flow develop branch
           - /testfix\/.*/ # testfix branches with testfix/ prefix. e.g. testfix/foo
 
-  filter_only_releasable_branches: &filter_only_releasable_branches
-    filters:
-      branches:
-        only:
-          - main # git flow main branch
-          - /hotfix\/.*/ # git flow hotfix branches
-          - /release\/.*/ # git flow release branches
-
   filter_only_testable_branches: &filter_only_testable_branches
     filters:
       branches:
@@ -40,7 +32,7 @@ jobs:
     docker:
       - image: cimg/node:18.12.1-browsers
     resource_class: small
-    working_directory: ~/oup-oaf
+    working_directory: ~/klassijs
 
     steps:
       - run:
@@ -48,36 +40,32 @@ jobs:
           command: mkdir ~/.ssh/ && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
 
       - run:
-          name: Remove the old projectName Repo
-          command: rm -rf ~/oup-oaf/projectName
-
-      - run:
           name: Checkout the projectName framework repo
-          command: git clone git@github.com:OUP/projectName.git
+          command: git clone git@github.com:klassijs/projectName.git
 
       - run:
           name: Check out the working branch
-          path: ~/oup-oaf/projectName
+          path: ~/klassijs/projectName
           command: git checkout ${CIRCLE_BRANCH}
 
       - run:
           name: Generate dependency cache key
-          command: cat ~/oup-oaf/projectName/yarn.lock > CACHE_KEY
+          command: cat ~/klassijs/projectName/yarn.lock > CACHE_KEY
 
       - restore_cache:
-          key: oaf-yarn-cache-v0-{{ checksum "CACHE_KEY" }}
+          key: klassijs-yarn-cache-v0-{{ checksum "CACHE_KEY" }}
 
       - run:
           name: Install the projectName framework dependencies
-          path: ~/oup-oaf/projectName
+          path: ~/klassijs/projectName
           command: |            
             git config --global url."git@github.com:".insteadOf "https://github.com/" 
-            yarn install --network-concurrency 1 || true 
+            yarn install
 
       - save_cache:
           paths:
             - ~/.cache/yarn
-          key: oaf-yarn-cache-v0-{{ checksum "CACHE_KEY" }}
+          key: klassijs-yarn-cache-v0-{{ checksum "CACHE_KEY" }}
 
       - persist_to_workspace:
           root: ./
@@ -117,10 +105,6 @@ jobs:
       <<: *integration_test_run
       environment: { BROWSER: 'chrome', STAGE: 'dev' }
 
-    dev_integration_test_firefox:
-      <<: *integration_test_run
-      environment: { BROWSER: 'firefox', STAGE: 'dev' }
-
 ### Workflow ###
 workflows:
   version: 2
@@ -128,17 +112,11 @@ workflows:
   build_and_test:
     jobs:
       - build_and_install:
-          context: oaf-framework
+          context: klassijs-framework
           <<: *filter_only_testable_branches
 
       - dev_integration_test_chrome:
-          context: oaf-framework
-          requires:
-            - build_and_install
-          <<: *filter_only_integration_branches
-
-      - dev_integration_test_firefox:
-          context: oaf-framework
+          context: klassijs-framework
           requires:
             - build_and_install
           <<: *filter_only_integration_branches

@@ -666,54 +666,38 @@ export async function waitForElementToStopMoving(element: WebdriverIO.Element, t
 // }
 
 
-export async function expectAdv(actual, assertionType, expected) {
+/**
+ * This is the function for doign asserts and passing the results to the allure report
+ * @param actual
+ * @param assertionType
+ * @param expected
+ */
+export async function expectAdv(actual:any, assertionType:any, expected:unknown) {
   const softAssert = expect;
-  let output = assertionType;
 
-  try {
-    switch (assertionType) {
-      case 'equals':
-        await softAssert(actual).toEqual(expected);
-        break;
+  const getAssertionType = {
+    equals: () => (softAssert(actual).toEqual(expected)),
+    contains: () => (softAssert(actual).toContain(expected)),
+    exist: () => (softAssert(actual).toBeExisting()),
+    isEnabled: () => (softAssert(actual).toBeEnabled()),
+    isDisabled: () => (softAssert(actual).toBeDisabled()),
+    doesNotExist: () => (softAssert(actual).not.toBeExisting()),
+    doesNotContain: () => (softAssert(actual).not.toContain(expected)),
 
-      case 'exists':
-        softAssert(actual).toExist();
-        break;
+    default: () => (console.info('Invalid assertion type: ', assertionType)),
+  };
+  (getAssertionType[assertionType] || getAssertionType['default'])();
 
-      case 'does not exist':
-        softAssert(actual).not.toExist();
-        break;
+  if (!getAssertionType[assertionType]){
+    console.info('assertion type failure : =======>>>>>>>>>>> ', assertionType)
+    allureReporter.addAttachment('Assertion Failure: ', `Invalid Assertion Type = ${assertionType}`, 'text/plain');
+    allureReporter.addAttachment('Assertion Error: ', console.error, 'text/plain');
+  } else {
+    allureReporter.addAttachment('Assertion Passes: ', `Valid Assertion Type = ${assertionType}`, 'text/plain');
+    console.info('assertion type passed : =======>>>>>>>>>>> ', assertionType)
+  }
 
-      case 'contains':
-        softAssert(actual).toContain(expected);
-        break;
-
-      case 'does not contain':
-        softAssert(actual).not.toContain(expected);
-        break;
-
-      case 'enabled':
-        softAssert(actual).toBeEnabled();
-        break;
-
-      case 'is disabled':
-        softAssert(actual).toBeDisabled();
-        break;
-
-      default:
-        console.log('Invalid assertion type: ', output);
-        break;
-    }
-
-    if (assertionType !== 'equals' || assertionType !== 'exists' || assertionType !== 'does not exist' ||
-        assertionType !== 'contains' ){
-      let output = assertionType;
-      allureReporter.addAttachment('Assertion Failure: ', `Invalid Assertion Type passed = ${output}`, 'text/plain');
-    }
-  } catch (error) {
-      allureReporter.addAttachment('Assertion Error: ', error, 'text/plain');
-      throw error;
-    } finally {
-      allureReporter.endStep();
-    }
+  allureReporter.endStep();
 }
+
+// https://github.com/webdriverio/expect-webdriverio/blob/main/docs/API.md

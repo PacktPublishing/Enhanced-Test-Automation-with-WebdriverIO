@@ -3,7 +3,16 @@
     "version": "1.0.0",
     "description": "",
     "keywords": [],
-    "authors": "Paul Grossman",
+    "authors": [
+        {
+            "name": "Paul Grossman",
+            "github": "https://github.com/darkartswizard"
+        },
+        {
+            "name": "Larry Goddard",
+            "github": "https://github.com/klassijs"
+        }
+    ],
     "license": "ISC",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
