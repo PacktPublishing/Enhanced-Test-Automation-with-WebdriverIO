@@ -671,7 +671,7 @@ export async function waitForElementToStopMoving(element: WebdriverIO.Element, t
  * @param assertionType
  * @param expected
  */
-export async function expectAdv(actual, assertionType, expected) {
+export async function expectAdv(actual:any, assertionType:any, expected:unknown) {
   const softAssert = expect;
 
   const getAssertionType = {
