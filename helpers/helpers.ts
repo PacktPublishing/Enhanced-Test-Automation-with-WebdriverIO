@@ -665,6 +665,12 @@ export async function waitForElementToStopMoving(element: WebdriverIO.Element, t
 //   return tagName;
 // }
 
+/**
+ * This is the function for doign asserts and passing the results to the allure report
+ * @param actual
+ * @param assertionType
+ * @param expected
+ */
 export async function expectAdv(actual, assertionType, expected) {
   const softAssert = expect;
 
@@ -677,7 +683,7 @@ export async function expectAdv(actual, assertionType, expected) {
     doesNotExist: () => (softAssert(actual).not.toBeExisting()),
     doesNotContain: () => (softAssert(actual).not.toContain(expected)),
 
-    default: () => (console.info('Invalid assertion type: =======>>>>>>>>>>> ', assertionType)),
+    default: () => (console.info('Invalid assertion type: ', assertionType)),
   };
   (getAssertionType[assertionType] || getAssertionType['default'])();
 
