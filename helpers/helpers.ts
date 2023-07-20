@@ -665,59 +665,30 @@ export async function waitForElementToStopMoving(element: WebdriverIO.Element, t
 //   return tagName;
 // }
 
-export async function expectAdv(actual: any, assertionType: string, expected: unknown) {
+export async function expectAdv(actual, assertionType, expected) {
   const softAssert = expect;
-  let output = assertionType;
 
-  try {
-    switch (true) {
-      case assertionType === 'equals':
-        await softAssert(actual).toEqual(expected);
-        console.info('Valid assertion type: ', output);
-        break;
+  const getAssertionType = {
+    equals: () => (softAssert(actual).toEqual(expected)),
+    contains: () => (softAssert(actual).toContain(expected)),
+    exist: () => (softAssert(actual).toBeExisting()),
+    isEnabled: () => (softAssert(actual).toBeEnabled()),
+    isDisabled: () => (softAssert(actual).toBeDisabled()),
+    doesNotExist: () => (softAssert(actual).not.toBeExisting()),
+    doesNotContain: () => (softAssert(actual).not.toContain(expected)),
 
-      case assertionType === 'exist':
-        await softAssert(actual).toExist();
-        break;
+    default: () => (console.info('Invalid assertion type: =======>>>>>>>>>>> ', assertionType)),
+  };
+  (getAssertionType[assertionType] || getAssertionType['default'])();
 
-      case assertionType === 'does not exist':
-        await softAssert(actual).not.toExist();
-        break;
-
-      case assertionType === 'contains':
-        await softAssert(actual).toContain(expected);
-        break;
-
-      case assertionType === 'does not contain':
-        await softAssert(actual).not.toContain(expected);
-        break;
-
-      case assertionType === 'enabled':
-        await softAssert(actual).toBeEnabled();
-        break;
-
-      case assertionType === 'is disabled':
-        await softAssert(actual).toBeDisabled();
-        break;
-
-      default:
-        console.info('Invalid assertion type: ', output);
-        allureReporter.addAttachment('Assertion Error: ', console.error, 'text/plain');
-        break;
-
-    }
-  } catch (error) {
-    allureReporter.addAttachment('Assertion Error: ', error, 'text/plain');
-    throw error;
-  } finally {
-    allureReporter.endStep();
+  if (!getAssertionType[assertionType]){
+    console.info('assertion type failure : =======>>>>>>>>>>> ', assertionType)
+    allureReporter.addAttachment('Assertion Failure: ', `Invalid Assertion Type = ${assertionType}`, 'text/plain');
+    allureReporter.addAttachment('Assertion Error: ', console.error, 'text/plain');
+  } else {
+    allureReporter.addAttachment('Assertion Passes: ', `Valid Assertion Type = ${assertionType}`, 'text/plain');
+    console.info('assertion type passed : =======>>>>>>>>>>> ', assertionType)
   }
-
-  if (assertionType !== 'equals' ){
-    allureReporter.addAttachment('Assertion Failure: ', `Invalid Assertion Type = ${output}`, 'text/plain');
-  }
-
-  allureReporter.addAttachment('Assertion Passes: ', `Valid Assertion Type = ${output}`, 'text/plain');
 
   allureReporter.endStep();
 }
