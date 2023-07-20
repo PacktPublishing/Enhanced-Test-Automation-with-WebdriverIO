@@ -23,6 +23,7 @@
         "ch4": "wdio wdio.local.conf.ts --spec ./test/specs/ch4.ts",
         "ch5": "wdio wdio.local.conf.ts --spec ./test/specs/ch5.ts",
         "ch8": "wdio wdio.local.conf.ts --spec ./test/specs/ch8.ts",
+        "ch12": "wdio wdio.local.conf.ts --spec ./test/specs/ch12.ts",
         "ch14": "wdio wdio.lambdatest.conf.ts --spec ./test/specs/ch8.ts"
     },
     "dependencies": {
