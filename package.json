@@ -23,7 +23,8 @@
         "ch4": "wdio wdio.conf.ts --spec ./test/specs/ch4.ts",
         "ch5": "wdio wdio.conf.ts --spec ./test/specs/ch5.ts",
         "ch8": "wdio wdio.conf.ts --spec ./test/specs/ch8.ts",
-        "ch12": "wdio wdio.conf.ts --spec ./test/specs/ch12.ts"
+        "ch12": "wdio wdio.conf.ts --spec ./test/specs/ch12.ts",
+        "ch13": "wdio wdio.conf.ts --spec ./test/specs/ch13.ts"
     },
     "dependencies": {
         "@types/jasmine": "^4.3.5",
@@ -36,9 +37,11 @@
         "allure-commandline": "^2.23.0",
         "chromedriver": "^114.0.2",
         "expect-webdriverio": "^4.2.7",
+        "geckodriver": "^4.0.5",
         "ts-node": "^10.9.1",
         "typescript": "^5.1.6",
         "utility-types": "^3.10.0",
-        "wdio-chromedriver-service": "^8.1.1"
+        "wdio-chromedriver-service": "^8.1.1",
+        "wdio-geckodriver-service": "^5.0.2"
     }
 }

@@ -88,17 +88,22 @@ export const config: WebdriverIO.Config = {
     // Inserts WebdriverIO's globals (e.g. `browser`, `$` and `$$`) into the global environment.
     // If you set to `false`, you should import from `@wdio/globals`. Note: WebdriverIO doesn't
     // handle injection of test framework specific globals.
-    capabilities: [{
+    capabilities: [
+        {
         // maxInstances can get overwritten per capability. So if you have an in-house Selenium
         // grid with only 5 firefox instances available you can make sure that not more than
         // 5 instances get started at a time.
-        browserName: 'chrome',
-        // or "firefox", "microsoftedge", "safari"
-        'goog:chromeOptions': {
-            args: ['--disable-gpu', '--enable-automation', '--disable-infobars', '--disable-notifications']
+            browserName: 'chrome',
+            // or "firefox", "microsoftedge", "safari"
+            'goog:chromeOptions': {
+                args: ['--disable-gpu', '--enable-automation', '--disable-infobars', '--disable-notifications']
+            }
         },
+        {
+            browserName: 'firefox'
+        }
         // acceptInsecureCerts: true,
-    }],
+    ],
     //
     // ===================
     // Test Configurations
@@ -146,11 +151,10 @@ export const config: WebdriverIO.Config = {
     // Services take over a specific job you don't want to take care of. They enhance
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
-    // services: [
-    //     "chromedriver",
-    //     "geckodriver",
-    //     // ["lambdatest", {tunnel: true}]
-    // ],
+    services: [
+        "chromedriver",
+        "geckodriver",
+    ],
 
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
