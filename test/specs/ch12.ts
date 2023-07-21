@@ -1,5 +1,6 @@
 import LoginPage from "../pageobjects/login.page";
 import SecurePage from "../pageobjects/secure.page";
+import * as helpers from "../../helpers/helpers";
 import * as Data from "../../shared-data/userData.json";
 
 describe("Ch12: Using Data files to pass values", () => {
@@ -7,9 +8,7 @@ describe("Ch12: Using Data files to pass values", () => {
     await LoginPage.open();
 
     await LoginPage.login(Data.userData.username, Data.userData.password);
-    await expect(SecurePage.flashAlert).toBeExisting();
-    await expect(SecurePage.flashAlert).toHaveTextContaining(
-      "You logged into a secure area!"
-    );
+    await helpers.expectAdv(SecurePage.flashAlert, 'exists', null);
+    await helpers.expectAdv(SecurePage.flashAlert, 'toHaveTextContaining', (["You logged into a secure area!"]));
   });
 });

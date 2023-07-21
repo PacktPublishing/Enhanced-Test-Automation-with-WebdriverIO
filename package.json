@@ -15,16 +15,18 @@
     ],
     "license": "MIT",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
         "report": "node_modules/.bin/allure generate --clean ./reports/allure-results && allure open -p 5050",
-        "wdio": "wdio wdio.conf.ts",
-        "ch2": "wdio wdio.conf.ts --spec ./test/specs/ch2.ts",
-        "ch3": "wdio wdio.conf.ts --spec ./test/specs/ch3.ts",
-        "ch4": "wdio wdio.conf.ts --spec ./test/specs/ch4.ts",
-        "ch5": "wdio wdio.conf.ts --spec ./test/specs/ch5.ts",
-        "ch8": "wdio wdio.conf.ts --spec ./test/specs/ch8.ts",
-        "ch12": "wdio wdio.conf.ts --spec ./test/specs/ch12.ts",
-        "ch13": "wdio wdio.conf.ts --spec ./test/specs/ch13.ts"
+        "wdio": "BASE_ENV=test wdio wdio.conf.ts",
+        "ch2": "yarn wdio --spec ./test/specs/ch2.ts",
+        "ch3": "yarn wdio --spec ./test/specs/ch3.ts",
+        "ch4": "yarn wdio --spec ./test/specs/ch4.ts",
+        "ch5": "yarn wdio --spec ./test/specs/ch5.ts",
+        "ch8": "yarn wdio --spec ./test/specs/ch8.ts",
+        "ch12": "yarn wdio --spec ./test/specs/ch12.ts",
+        "ch13": "yarn wdio --spec ./test/specs/ch13.ts",
+        "dev": "BASE_ENV=development yarn wdio --spec ./test/specs/ch13.ts",
+        "test": "BASE_ENV=test yarn wdio --spec ./test/specs/ch3.ts",
+        "prod": "BASE_ENV=production yarn wdio --spec ./test/specs/ch2.ts"
     },
     "dependencies": {
         "@types/jasmine": "^4.3.5",

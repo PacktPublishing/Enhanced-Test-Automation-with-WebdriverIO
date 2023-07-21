@@ -10,6 +10,18 @@ console.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`);
 
 const addToElement = true
 
+const environments = {
+    development: {
+        baseUrl: 'http://localhost', // Your development server URL
+    },
+    test: {
+        baseUrl: 'http://localhost', // Your test environment URL
+    },
+    production: {
+        baseUrl: 'http://localhost', // Your production environment URL
+    },
+}
+
 export const config: WebdriverIO.Config = {
     //
     // ====================
@@ -135,7 +147,7 @@ export const config: WebdriverIO.Config = {
     // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
     // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
     // gets prepended directly.
-    baseUrl: "http://localhost",
+    baseUrl: environments[process.env.BASE_ENV].baseUrl,
     //
     // Default timeout for all waitFor* commands.
     waitforTimeout: 10000,
