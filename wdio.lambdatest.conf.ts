@@ -35,5 +35,6 @@ export const config = {
         path: "/wd/hub",
         hostname: process.env.LT_HOST_URL,
         port: 80,
+        framework: "jasmine"
     }
 }
