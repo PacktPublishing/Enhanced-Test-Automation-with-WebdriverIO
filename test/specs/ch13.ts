@@ -3,7 +3,7 @@ import SecurePage from "../pageobjects/secure.page";
 import * as helpers from "../../helpers/helpers";
 import * as Data from "../../shared-data/userData.json";
 
-describe("Ch13: Cross Browser Testing", () => {
+describe("Ch13: Cross Browser and Cross Environment Testing", () => {
   it("should login with valid credentials", async () => {
     await LoginPage.open();
 
