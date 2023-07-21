@@ -24,6 +24,14 @@ export const config = {
                     name: "Test WebdriverIO Single",
                     build: "WebDriver Selenium Sample"
                 }
+            },
+            {
+                "LT:Options": {
+                    browserName: "chrome",
+                    version: "latest",
+                    name: "Test WebdriverIO Single",
+                    build: "WebDriver Selenium Sample"
+                }
             }
         ],
         logLevel: "info",
@@ -34,7 +42,6 @@ export const config = {
         connectionRetryCount: 1,
         path: "/wd/hub",
         hostname: process.env.LT_HOST_URL,
-        port: 80,
-        framework: "jasmine"
+        port: 80
     }
 }

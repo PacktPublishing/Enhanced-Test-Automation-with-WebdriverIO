@@ -12,10 +12,8 @@ describe("Chapter 8: The expect / assert / Should wrapper", () => {
 
     await LoginPage.loginFailLast("tomsmith", "SuperSecretPassword!");
     let elem = await browser.$('#login > button > i');
-    await expect(await elem).toHaveTextContaining(
-      "You logged into a secure area!"
-    );
-    await expect(await elem).toBeExisting();
+    await helpers.expectAdv(elem, 'toHaveTextContaining', (["You logged into a secure area!"]));
+    await helpers.expectAdv(elem, 'exists', null);
   });
 
   it("Chapter 8: using expectAdv to validate the assertion ", async () => {

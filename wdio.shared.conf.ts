@@ -11,6 +11,22 @@ console.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`);
 
 const addToElement = true
 
+const environments = {
+    development: {
+        baseUrl: 'http://localhost', // Your development server URL
+    },
+    test: {
+        baseUrl: 'http://localhost', // Your test environment URL
+    },
+    production: {
+        baseUrl: 'http://localhost', // Your production environment URL
+    },
+    lambdatest: {
+        baseUrl: 'http://localhost',
+    },
+
+}
+
 export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     //
     // ====================
@@ -33,9 +49,9 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
         autoCompile: true,
         // see https://github.com/TypeStrong/ts-node#cli-and-programmatic-options
         // for all available options
-        // tsNodeOpts: {
-        //     transpileOnly: true,
-        // },
+        tsNodeOpts: {
+            transpileOnly: true,
+        },
         // tsconfig-paths is only used if "tsConfigPathsOpts" are provided, if you
         // do please make sure "tsconfig-paths" is installed as dependency
         // tsConfigPathsOpts: {
@@ -85,20 +101,26 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
     // https://saucelabs.com/platform/platform-configurator
     //
-    // injectGlobals: true,
+    injectGlobals: true,
     // Inserts WebdriverIO's globals (e.g. `browser`, `$` and `$$`) into the global environment.
     // If you set to `false`, you should import from `@wdio/globals`. Note: WebdriverIO doesn't
     // handle injection of test framework specific globals.
-    // capabilities: [{
+    // capabilities: [
+    //     {
     //     // maxInstances can get overwritten per capability. So if you have an in-house Selenium
     //     // grid with only 5 firefox instances available you can make sure that not more than
     //     // 5 instances get started at a time.
-    //     browserName: 'chrome',
-    //     // or "firefox", "microsoftedge", "safari"
-    //     'goog:chromeOptions': {
-    //         args: ['--disable-gpu', '--enable-automation', '--disable-infobars', '--disable-notifications'] },
-    //     acceptInsecureCerts: true,
-    // }],
+    //         browserName: 'chrome',
+    //         // or "firefox", "microsoftedge", "safari"
+    //         'goog:chromeOptions': {
+    //             args: ['--disable-gpu', '--enable-automation', '--disable-infobars', '--disable-notifications']
+    //         }
+    //     },
+    //     {
+    //         browserName: 'firefox'
+    //     }
+    //     // acceptInsecureCerts: true,
+    // ],
     //
     // ===================
     // Test Configurations
@@ -130,7 +152,7 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
     // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
     // gets prepended directly.
-    baseUrl: "http://localhost",
+    baseUrl: environments[process.env.BASE_ENV].baseUrl,
     //
     // Default timeout for all waitFor* commands.
     waitforTimeout: 10000,
@@ -149,7 +171,6 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     services: [
         "chromedriver",
         "geckodriver",
-        // ["lambdatest", {tunnel: true}]
     ],
 
     // Framework you want to run your specs with.

@@ -672,17 +672,18 @@ export async function waitForElementToStopMoving(element: WebdriverIO.Element, t
  * @param assertionType
  * @param expected
  */
-export async function expectAdv(actual:any, assertionType:any, expected:unknown) {
+export async function expectAdv(actual:any, assertionType:any, expected:any) {
   const softAssert = expect;
 
   const getAssertionType = {
     equals: () => (softAssert(actual).toEqual(expected)),
     contains: () => (softAssert(actual).toContain(expected)),
-    exist: () => (softAssert(actual).toBeExisting()),
+    exists: () => (softAssert(actual).toBeExisting()),
     isEnabled: () => (softAssert(actual).toBeEnabled()),
     isDisabled: () => (softAssert(actual).toBeDisabled()),
     doesNotExist: () => (softAssert(actual).not.toBeExisting()),
     doesNotContain: () => (softAssert(actual).not.toContain(expected)),
+    toHaveTextContaining: () => (softAssert(actual).toHaveTextContaining(expected)),
 
     default: () => (console.info('Invalid assertion type: ', assertionType)),
   };
@@ -700,4 +701,5 @@ export async function expectAdv(actual:any, assertionType:any, expected:unknown)
   allureReporter.endStep();
 }
 
+// for all the options of expect
 // https://github.com/webdriverio/expect-webdriverio/blob/main/docs/API.md

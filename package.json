@@ -13,17 +13,21 @@
             "github": "https://github.com/klassijs"
         }
     ],
-    "license": "ISC",
+    "license": "MIT",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
         "report": "node_modules/.bin/allure generate --clean ./reports/allure-results && allure open -p 5050",
-        "wdio": "wdio wdio.local.conf.ts",
-        "ch2": "wdio wdio.local.conf.ts --spec ./test/specs/ch2.ts",
-        "ch3": "wdio wdio.local.conf.ts --spec ./test/specs/ch3.ts",
-        "ch4": "wdio wdio.local.conf.ts --spec ./test/specs/ch4.ts",
-        "ch5": "wdio wdio.local.conf.ts --spec ./test/specs/ch5.ts",
-        "ch8": "wdio wdio.local.conf.ts --spec ./test/specs/ch8.ts",
-        "ch14": "wdio wdio.lambdatest.conf.ts --spec ./test/specs/ch2.ts"
+        "wdio": "BASE_ENV=test wdio wdio.local.conf.ts",
+        "ch2": "yarn wdio --spec ./test/specs/ch2.ts",
+        "ch3": "yarn wdio --spec ./test/specs/ch3.ts",
+        "ch4": "yarn wdio --spec ./test/specs/ch4.ts",
+        "ch5": "yarn wdio --spec ./test/specs/ch5.ts",
+        "ch8": "yarn wdio --spec ./test/specs/ch8.ts",
+        "ch12": "yarn wdio --spec ./test/specs/ch12.ts",
+        "ch13": "yarn wdio --spec ./test/specs/ch13.ts",
+        "dev": "BASE_ENV=development yarn wdio --spec ./test/specs/ch13.ts",
+        "test": "BASE_ENV=test yarn wdio --spec ./test/specs/ch3.ts",
+        "prod": "BASE_ENV=production yarn wdio --spec ./test/specs/ch2.ts",
+        "ch14": "BASE_ENV=lambdatest wdio wdio.lambdatest.conf.ts --spec ./test/specs/ch2.ts"
     },
     "dependencies": {
         "@types/jasmine": "^4.3.5",
@@ -45,4 +49,5 @@
         "wdio-geckodriver-service": "^5.0.2",
         "wdio-lambdatest-service": "^2.0.3"
     }
+
 }
