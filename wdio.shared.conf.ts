@@ -1,5 +1,6 @@
 import type { Options } from '@wdio/types';
 import {ASB} from './helpers/globalObjects';
+require('dotenv').config();
 
 const DEBUG =
     process.env.DEBUG === undefined ? true : process.env.DEBUG === `true`;
@@ -22,10 +23,11 @@ const environments = {
     },
     lambdatest: {
         baseUrl: 'http://localhost',
-    }
+    },
+
 }
 
-export const config: WebdriverIO.Config = {
+export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     //
     // ====================
     // Runner Configuration
@@ -103,22 +105,22 @@ export const config: WebdriverIO.Config = {
     // Inserts WebdriverIO's globals (e.g. `browser`, `$` and `$$`) into the global environment.
     // If you set to `false`, you should import from `@wdio/globals`. Note: WebdriverIO doesn't
     // handle injection of test framework specific globals.
-    capabilities: [
-        {
-        // maxInstances can get overwritten per capability. So if you have an in-house Selenium
-        // grid with only 5 firefox instances available you can make sure that not more than
-        // 5 instances get started at a time.
-            browserName: 'chrome',
-            // or "firefox", "microsoftedge", "safari"
-            'goog:chromeOptions': {
-                args: ['--disable-gpu', '--enable-automation', '--disable-infobars', '--disable-notifications']
-            }
-        },
-        {
-            browserName: 'firefox'
-        }
-        // acceptInsecureCerts: true,
-    ],
+    // capabilities: [
+    //     {
+    //     // maxInstances can get overwritten per capability. So if you have an in-house Selenium
+    //     // grid with only 5 firefox instances available you can make sure that not more than
+    //     // 5 instances get started at a time.
+    //         browserName: 'chrome',
+    //         // or "firefox", "microsoftedge", "safari"
+    //         'goog:chromeOptions': {
+    //             args: ['--disable-gpu', '--enable-automation', '--disable-infobars', '--disable-notifications']
+    //         }
+    //     },
+    //     {
+    //         browserName: 'firefox'
+    //     }
+    //     // acceptInsecureCerts: true,
+    // ],
     //
     // ===================
     // Test Configurations
