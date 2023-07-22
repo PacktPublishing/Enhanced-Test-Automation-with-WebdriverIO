@@ -22,8 +22,9 @@
     "moduleResolution": "node",
 
     "types": [
-      "node",
       "@wdio/globals/types",
+      "jasmine",
+      "node",
       "@wdio/jasmine-framework",
       "expect-webdriverio"
     ],
