@@ -698,5 +698,5 @@ export async function expectAdv(actual:any, assertionType:any, expected:unknown)
 
   allureReporter.endStep();
 }
-
+// For the full list of options please got to
 // https://github.com/webdriverio/expect-webdriverio/blob/main/docs/API.md
