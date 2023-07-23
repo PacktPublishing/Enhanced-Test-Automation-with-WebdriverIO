@@ -175,8 +175,8 @@ export const config: WebdriverIO.Config = {
     reporters: ["spec", ["allure",
         {
             outputDir: "./reports/allure-results",
-            disableWebdriverStepsReporting: true,
-            disableWebdriverScreenshotsReporting: true,
+            disableWebdriverStepsReporting: false,
+            disableWebdriverScreenshotsReporting: false,
         }]],
 
     //
