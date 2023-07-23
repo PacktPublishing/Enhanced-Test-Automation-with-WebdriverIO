@@ -182,6 +182,34 @@ export const config: WebdriverIO.Config = {
      */
     // beforeSession: function (config, capabilities, specs) {
     // },
+
+
+    beforeCommand: function (commandName, args) {
+        // Chapter 5 - Keep the current object locator for future manipulation
+        let elementSelectorType:String
+        let elementSelector: String
+        let paddedCommandName: String = commandName.padEnd(12, ' ');         
+        switch (commandName) {
+            case 'findElements':
+            case 'findElement':
+                // Pass the class and locator to the Automation Switchboard  
+                elementSelectorType = args[0];
+                elementSelector = args[1];
+                global.log(`beforeCommand ${paddedCommandName}: ASB.get("selectorType") will return '${elementSelectorType}'`)
+                global.log(`beforeCommand ${paddedCommandName}: ASB.get("selector") will return '${elementSelector}'`)
+                ASB.set("selectorType", elementSelectorType)
+                ASB.set("selector", elementSelector)
+                break;
+
+            default:
+                // X-Ray Vision - see all the commands that get executed 
+                // Uncomment to see all commands executed, but logging will mpact execution run time.
+                // global.log(`beforeCommand ${commandName}`);
+                break;
+        }
+    
+    },
+
     /**
      * Gets executed before test execution begins. At this point you can access to all global
      * variables like `browser`. It is the perfect place to define custom commands.
@@ -259,13 +287,6 @@ export const config: WebdriverIO.Config = {
         // });
 
     },
-    /**
-     * Runs before a WebdriverIO command gets executed.
-     * @param {String} commandName hook command name
-     * @param {Array} args arguments that command would receive
-     */
-    // beforeCommand: function (commandName, args) {
-    // },
     /**
      * Hook that gets executed before the suite starts
      * @param {Object} suite suite details
