@@ -18,12 +18,18 @@ class KeyPressesPage extends Page {
    * e.g. to login using username and password
    */
   public async enterDateTags() {
-    await helpers.setValueAdv(this.fldTarget, 
+    await helpers.setValueAdv(await this.fldTarget, 
       "today is <today>");
-    await helpers.setValueAdv(this.fldTarget,
+    helpers.pause(2000);
+
+    await helpers.setValueAdv(await this.fldTarget,
       "next week is <today+7> and last week was <today-7>");
-    await helpers.setValueAdv(this.fldTarget, 
+      helpers.pause(2000);
+
+      await helpers.setValueAdv(await this.fldTarget, 
       "Last year is <today-300>");
+      helpers.pause(2000);
+
   }
 }
 export default new KeyPressesPage();
