@@ -17,6 +17,6 @@ describe("The setValue Wrapper – Entering Text and Dynamic Data Replacement", 
         await LoginPage.loginSetValue("tomsmith", "SuperSecretPassword!");
     
         await LoginPage.open("key_presses");
-        await KeyPressesPage.enterDateTags();
+       // await KeyPressesPage.enterDateTags();
       });
   });

@@ -195,8 +195,8 @@ export const config: WebdriverIO.Config = {
                 // Pass the class and locator to the Automation Switchboard  
                 elementSelectorType = args[0];
                 elementSelector = args[1];
-                global.log(`beforeCommand ${paddedCommandName}: ASB.get("selectorType") will return '${elementSelectorType}'`)
-                global.log(`beforeCommand ${paddedCommandName}: ASB.get("selector") will return '${elementSelector}'`)
+                helpers.log(`beforeCommand ${paddedCommandName}: ASB.get("selectorType") will return '${elementSelectorType}'`)
+                helpers.log(`beforeCommand ${paddedCommandName}: ASB.get("selector") will return '${elementSelector}'`)
                 ASB.set("selectorType", elementSelectorType)
                 ASB.set("selector", elementSelector)
                 break;

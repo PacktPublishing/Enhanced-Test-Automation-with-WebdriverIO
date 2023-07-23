@@ -1,10 +1,8 @@
 import * as fs from "fs";
 import * as path from "path";
 import { ASB } from "./globalObjects.js";
-import { expect as expectChai } from "chai";
-import { assert as assertChai } from "chai";
-import allure from "@wdio/allure-reporter";
-import { Key } from "webdriverio";
+import allureReporter from "@wdio/allure-reporter";
+
 
 export async function clickAdv(element: WebdriverIO.Element) {
   let success: boolean = false;
@@ -21,6 +19,7 @@ export async function clickAdv(element: WebdriverIO.Element) {
       await waitForElementToStopMoving(element);
     }
     await highlightOn(element);
+    //@ts-ignore
     await element.click({ block: "center" });
     await pageSync();
     success = true;
@@ -28,6 +27,7 @@ export async function clickAdv(element: WebdriverIO.Element) {
     await log(`  ERROR: ${SELECTOR} was not clicked.\n       ${error.message}`);
     expect(`to be clickable`).toEqual(SELECTOR);
     // Throw the error to stop the test
+    //@ts-ignore
     await element.click({ block: "center" });
   }
 
@@ -279,27 +279,26 @@ async function isExists(element: WebdriverIO.Element) {
   }
 }
 
-/**
- * Console.log wrapper
- *    - Does not print if string is empty / null
- *    - Prints trace if not passed string or number
- * @param message
- */
-export async function log(message: any): Promise<void> {
-  try {
-    if (typeof message === "string" || typeof message === "number") {
-      if (message) {
-        console.log(`---> ${message}`);
-        if (message.toString().includes(`[object Promise]`)) {
-          console.log(`    Possiblly missing await statement`);
-          console.trace();
-        }
-      }
-    }
-  } catch (error: any) {
-    console.log(`--->   helpers.console(): ${error.message}`);
-  }
-}
+/* Console.log wrapper
+*    - Does not print if string is empty / null
+*    - Prints trace if not passed string or number
+* @param message
+*/
+ export async function log(message: any): Promise<void> {
+   try {
+     if (typeof message === "string" || typeof message === "number") {
+       if (message) {
+         console.log(`---> ${message}`);
+         if (message.toString().includes(`[object Promise]`)) {
+           console.log(`    Possiblly missing await statement`);
+           console.trace();
+         }
+       }
+     }
+   } catch (error: any) {
+     console.log(`--->   helpers.console(): ${error.message}`);
+   }
+ }
 
 
 /**
