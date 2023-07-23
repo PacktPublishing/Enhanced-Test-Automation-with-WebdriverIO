@@ -258,34 +258,28 @@ export const config = {
         */
     beforeCommand: function (commandName, args) {
         // Chapter 5 - Keep the current object locator for future manipulation
-        let elementClass
-        let elementSelector        
+        let elementSelectorType:String
+        let elementSelector: String
+        let paddedCommandName: String = commandName.padEnd(12, ' ');         
         switch (commandName) {
-            case '$':
-            case '$$':
-                elementClass = args[0];
-                elementSelector = args[1];
-                global.log(`beforeCommand: ABS.get("selectorType")    will return '${elementClass}'        [${commandName}]': `)
-                global.log(`beforeCommand: ABS.get("selector") will return '${elementSelector}'     [${commandName}]'`)
-                ASB.set("selectorType", elementClass)
-                ASB.set("selector", elementSelector)
-                break;
-
-            case 'findElement':
             case 'findElements':
+            case 'findElement':
                 // Pass the class and locator to the Automation Switchboard  
-                elementClass = args[0];
+                elementSelectorType = args[0];
                 elementSelector = args[1];
-                global.log(`beforeCommand: ABS.get("selectorType")    will return '${elementClass}'        [${commandName}]': `)
-                global.log(`beforeCommand: ABS.get("selector") will return '${elementSelector}'     [${commandName}]'`)
-                ASB.set("selectorType", elementClass)
+                global.log(`beforeCommand ${paddedCommandName}: ASB.get("selectorType") will return '${elementSelectorType}'`)
+                global.log(`beforeCommand ${paddedCommandName}: ASB.get("selector") will return '${elementSelector}'`)
+                ASB.set("selectorType", elementSelectorType)
                 ASB.set("selector", elementSelector)
                 break;
 
             default:
-                // Handle default case here if needed
+                // X-Ray Vision - see all the commands that get executed 
+                // Uncomment to see all commands executed, but logging will mpact execution run time.
+                // global.log(`beforeCommand ${commandName}`);
                 break;
         }
+    
     },
 
     /**
