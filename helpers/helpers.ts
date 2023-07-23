@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import { ASB } from "./globalObjects.js";
+import { ASB } from "./globalObjects";
 import allureReporter from "@wdio/allure-reporter";
 
 

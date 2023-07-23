@@ -37,7 +37,7 @@ export const config = {
         // for all available options
         tsNodeOpts: {
             transpileOnly: true,
-            project: "./tsconfig.json",
+            // project: "./tsconfig.json",
         },
         // tsconfig-paths is only used if "tsConfigPathsOpts" are provided, if you
         // do please make sure "tsconfig-paths" is installed as dependency
@@ -88,7 +88,7 @@ export const config = {
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
     // https://saucelabs.com/platform/platform-configurator
     //
-    injectGlobals: true,
+    // injectGlobals: true,
     // Inserts WebdriverIO's globals (e.g. `browser`, `$` and `$$`) into the global environment.
     // If you set to `false`, you should import from `@wdio/globals`. Note: WebdriverIO doesn't
     // handle injection of test framework specific globals.
