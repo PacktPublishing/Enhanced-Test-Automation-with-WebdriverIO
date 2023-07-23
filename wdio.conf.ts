@@ -1,5 +1,5 @@
 import type { Options } from '@wdio/types';
-import {ASB} from './helpers/globalObjects';
+import { ASB } from './helpers/globalObjects';
 
 const DEBUG =
     process.env.DEBUG === undefined ? true : process.env.DEBUG === `true`;
@@ -99,7 +99,8 @@ export const config = {
         browserName: 'chrome',
         // or "firefox", "microsoftedge", "safari"
         'goog:chromeOptions': {
-            args: ['--disable-gpu', '--enable-automation', '--disable-infobars', '--disable-notifications'] },
+            args: ['--disable-gpu', '--enable-automation', '--disable-infobars', '--disable-notifications']
+        },
         acceptInsecureCerts: true,
     }],
     //
@@ -191,8 +192,8 @@ export const config = {
             }
 
             try {
-                await console.log (`Jasmine screenshot of ${await assertion.error.message}.`)
-                await console.log (`Waiting for ${timeout/60000} min...`)
+                await console.log(`Jasmine screenshot of ${await assertion.error.message}.`)
+                await console.log(`Waiting for ${timeout / 60000} min...`)
                 await browser.saveScreenshot(
                     `assertionError_${await assertion.error.message}.png`);
                 await browser.pause(timeout);
@@ -249,32 +250,43 @@ export const config = {
     // beforeSession: function (config, capabilities, specs, cid) {
     // },
 
- /**
-     * Gets executed just before initialising the webdriver session and test framework. It allows you
-     * to manipulate configurations depending on the capability or spec.
-     * @param {commandName} wdio command
-     * @param {args} arguments passed to the command
-     */
+    /**
+        * Gets executed just before initialising the webdriver session and test framework. It allows you
+        * to manipulate configurations depending on the capability or spec.
+        * @param {commandName} wdio command
+        * @param {args} arguments passed to the command
+        */
     beforeCommand: function (commandName, args) {
-        if (commandName === '$') {
-          const selector = args[0];
-          // Modify the selector or add additional functionality as needed
-          // For example, you can add a prefix to the selector
-          global.log (`BEFORE $ COMMAND: Selector ${selector} sent to ABS(elementSelector)`);
-          // Pass the locator to the switchboard
-          ASB.set("elementSelector", selector)
+        // Chapter 5 - Keep the current object locator for future manipulation
+        let elementClass
+        let elementSelector        
+        switch (commandName) {
+            case '$':
+            case '$$':
+                elementClass = args[0];
+                elementSelector = args[1];
+                global.log(`beforeCommand: ABS.get("selectorType")    will return '${elementClass}'        [${commandName}]': `)
+                global.log(`beforeCommand: ABS.get("selector") will return '${elementSelector}'     [${commandName}]'`)
+                ASB.set("selectorType", elementClass)
+                ASB.set("selector", elementSelector)
+                break;
+
+            case 'findElement':
+            case 'findElements':
+                // Pass the class and locator to the Automation Switchboard  
+                elementClass = args[0];
+                elementSelector = args[1];
+                global.log(`beforeCommand: ABS.get("selectorType")    will return '${elementClass}'        [${commandName}]': `)
+                global.log(`beforeCommand: ABS.get("selector") will return '${elementSelector}'     [${commandName}]'`)
+                ASB.set("selectorType", elementClass)
+                ASB.set("selector", elementSelector)
+                break;
+
+            default:
+                // Handle default case here if needed
+                break;
         }
-
-        if (commandName === '$$') {
-            const selector = args[0];
-            // Modify the selector or add additional functionality as needed
-            // For example, you can add a prefix to the selector
-            global.log (`BEFORE $$ COMMAND: Selector ${selector} sent to ABS(elementsSelector)`);
-            // Pass the locator to the switchboard
-            ASB.set("elementsSelector", selector)
-          }
-
-      },
+    },
 
     /**
      * Gets executed before test execution begins. At this point you can access to all global
