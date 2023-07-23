@@ -58,8 +58,8 @@ class LoginPage extends Page {
       `Entered '${password}' and clicking Submit with ClickAdv`
     );
 
-    await helpers.clickAdv(this.btnSubmit);
-    await helpers.clickAdv(this.btnBogus);
+    await helpers.clickAdv(await this.btnSubmit);
+    await helpers.clickAdv(await this.btnBogus);
   }
 
   /**
@@ -75,7 +75,7 @@ class LoginPage extends Page {
       `Entered '${password}' and clicking Submit with ClickAdv`
     );
     // Class switching
-    await helpers.clickAdv(this.lnkSubmit);
+    await helpers.clickAdv(await this.lnkSubmit);
   }
 
   /**
@@ -90,8 +90,8 @@ class LoginPage extends Page {
     await helpers.log(
       `Entered '${password}' and clicking Submit with ClickAdv`
     );
-    await helpers.clickAdv(this.btnBogus);
-    await helpers.clickAdv(this.btnSubmit);
+    await helpers.clickAdv(await this.btnBogus);
+    await helpers.clickAdv(await this.btnSubmit);
   }
 
   /**
@@ -100,10 +100,10 @@ class LoginPage extends Page {
    */
   public async loginSetValue(username: string, password: string) {
     await helpers.log(`Logging in with user role '${username}'`);
-    await helpers.setValueAdv(this.inputUsername, username);
+    await helpers.setValueAdv(await this.inputUsername, username);
     // Automatcally Mask the Password
-    await helpers.setValueAdv(this.inputPassword, password); 
-    await helpers.clickAdv(this.btnSubmit);
+    await helpers.setValueAdv(await this.inputPassword, password); 
+    await helpers.clickAdv(await this.btnSubmit);
   }
 
   /**
