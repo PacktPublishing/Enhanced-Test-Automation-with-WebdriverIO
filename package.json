@@ -4,7 +4,7 @@
   "description": "",
   "keywords": [],
   "author": "Paul Grossman",
-  "license": "ISC",
+  "license": "MIT",
   "scripts": {
       "test": "echo \"Error: no test specified\" && exit 1",
       "wdio": "wdio run wdio.conf.ts",
