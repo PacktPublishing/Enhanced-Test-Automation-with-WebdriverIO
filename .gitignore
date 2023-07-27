@@ -10,3 +10,4 @@ logs
 .vscode
 reports
 .env
+yarn-error.log
