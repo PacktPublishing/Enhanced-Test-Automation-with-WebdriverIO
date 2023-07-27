@@ -1,38 +1,23 @@
+import type { Options } from '@wdio/types';
+import { ASB } from './helpers/globalObjects';
 
-import type { Options } from '@wdio/types'
-// Chapter 4 - Automation SwitchBoard 
-function switchboardFactory () {
-    
-    const switchboard = new Map
+const DEBUG =
+    process.env.DEBUG === undefined ? true : process.env.DEBUG === `true`;
+console.log(`DEBUG: ${DEBUG}`);
 
-    //Set 
-    switchboard.set ("DEBUG", (process.env.DEBUG === undefined) ? true : (process.env.DEBUG === `true`))    
-    
-    return {
-        get(k:string) {
-            return switchboard.get(k)
-        },
+let timeout = DEBUG === true ? 1_000_000 : 10_000;
+console.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`);
 
-        set(k:string, v:any) {
-             switchboard.set(k,v)
-        }
-    }
-}
+const addToElement = true //
+//const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
+// Chapter 4 - Automation SwitchBoard
 
-const ASB = switchboardFactory()
-console.log(`DEBUG: ${ASB.get("DEBUG")}`)
-
-ASB.set("timeout", (ASB.get("DEBUG") === true) ? 1_000_000 : 10_000)
-let timeout = ASB.get("timeout")
-console.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`)
-
-
-export const config: Options.Testrunner = {
+export const config = {
     //
     // ====================
     // Runner Configuration
     // ====================
-    //
+    runner: 'local',
     //
     // =====================
     // ts-node Configurations
@@ -52,8 +37,8 @@ export const config: Options.Testrunner = {
         // for all available options
         tsNodeOpts: {
             transpileOnly: true,
-            project: 'tsconfig.json'
-        }
+            // project: "./tsconfig.json",
+        },
         // tsconfig-paths is only used if "tsConfigPathsOpts" are provided, if you
         // do please make sure "tsconfig-paths" is installed as dependency
         // tsConfigPathsOpts: {
@@ -76,9 +61,7 @@ export const config: Options.Testrunner = {
     // then the current working directory is where your `package.json` resides, so `wdio`
     // will be called from there.
     //
-    specs: [
-        './specs/**/*.ts'
-    ],
+    specs: ["./test/specs/**/*.ts"],
     // Patterns to exclude.
     exclude: [
         // 'path/to/excluded/files'
@@ -105,19 +88,20 @@ export const config: Options.Testrunner = {
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
     // https://saucelabs.com/platform/platform-configurator
     //
+    // injectGlobals: true,
+    // Inserts WebdriverIO's globals (e.g. `browser`, `$` and `$$`) into the global environment.
+    // If you set to `false`, you should import from `@wdio/globals`. Note: WebdriverIO doesn't
+    // handle injection of test framework specific globals.
     capabilities: [{
-
         // maxInstances can get overwritten per capability. So if you have an in-house Selenium
         // grid with only 5 firefox instances available you can make sure that not more than
         // 5 instances get started at a time.
-        maxInstances: 5,
-        //
         browserName: 'chrome',
-        acceptInsecureCerts: true
-        // If outputDir is provided WebdriverIO can capture driver session logs
-        // it is possible to configure which logTypes to include/exclude.
-        // excludeDriverLogs: ['*'], // pass '*' to exclude all driver session logs
-        // excludeDriverLogs: ['bugreport', 'server'],
+        // or "firefox", "microsoftedge", "safari"
+        'goog:chromeOptions': {
+            args: ['--disable-gpu', '--enable-automation', '--disable-infobars', '--disable-notifications']
+        },
+        acceptInsecureCerts: true,
     }],
     //
     // ===================
@@ -126,7 +110,7 @@ export const config: Options.Testrunner = {
     // Define all options that are relevant for the WebdriverIO instance here
     //
     // Level of logging verbosity: trace | debug | info | warn | error | silent
-    logLevel: 'trace',
+    logLevel: "warn",
     //
     // Set specific log levels per logger
     // loggers:
@@ -150,7 +134,7 @@ export const config: Options.Testrunner = {
     // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
     // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
     // gets prepended directly.
-    baseUrl: 'http://localhost',
+    baseUrl: "http://localhost",
     //
     // Default timeout for all waitFor* commands.
     waitforTimeout: 10000,
@@ -166,7 +150,7 @@ export const config: Options.Testrunner = {
     // Services take over a specific job you don't want to take care of. They enhance
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
-    services: ['chromedriver'],
+    services: ["chromedriver"],
 
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
@@ -174,7 +158,7 @@ export const config: Options.Testrunner = {
     //
     // Make sure you have the wdio adapter package for the specific framework installed
     // before running any tests.
-    framework: 'jasmine',
+    framework: "jasmine",
     //
     // The number of times to retry the entire specfile when it fails as a whole
     // specFileRetries: 1,
@@ -188,9 +172,7 @@ export const config: Options.Testrunner = {
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
-    reporters: ['spec', ['allure', { outputDir: 'allure-results' }]],
-
-
+    reporters: ["spec", ["allure", { outputDir: "allure-results" }]],
 
     //
     // Options to be passed to Jasmine.
@@ -201,22 +183,25 @@ export const config: Options.Testrunner = {
         // The Jasmine framework allows interception of each assertion in order to log the state of the application
         // or website depending on the result. For example, it is pretty handy to take a screenshot every time
         // an assertion fails.
-        expectationResultHandler: async function (passed, assertion)
-        {
+        expectationResultHandler: async function (passed, assertion) {
             /**
              * only take screenshot if assertion failed
              */
-
-            if (passed)
-            {
-                return
+            if (passed) {
+                return;
             }
-            //await console.log (`Jasmine screenshot of ${assertion.error.message}.`) 
-            //await console.log(`Waiting for ${timeout/60000} min...`) 
-            await browser.saveScreenshot(`assertionError_${assertion.error.message}.png`)
-            //await browser.pause(timeout);
-            //await console.log(`DEBUG wait done`) 
-        }
+
+            try {
+                await console.log(`Jasmine screenshot of ${await assertion.error.message}.`)
+                await console.log(`Waiting for ${timeout / 60000} min...`)
+                await browser.saveScreenshot(
+                    `assertionError_${await assertion.error.message}.png`);
+                await browser.pause(timeout);
+                await console.log(`DEBUG wait done`)
+            } catch (error) {
+                await console.log(`The screen capture failed. Check for a missing await statement. ${error}`)
+            }
+        },
     },
 
     //
@@ -264,6 +249,39 @@ export const config: Options.Testrunner = {
      */
     // beforeSession: function (config, capabilities, specs, cid) {
     // },
+
+    /**
+        * Gets executed just before initialising the webdriver session and test framework. It allows you
+        * to manipulate configurations depending on the capability or spec.
+        * @param {commandName} wdio command
+        * @param {args} arguments passed to the command
+        */
+    beforeCommand: function (commandName, args) {
+        // Chapter 5 - Keep the current object locator for future manipulation
+        let elementSelectorType:String
+        let elementSelector: String
+        let paddedCommandName: String = commandName.padEnd(12, ' ');         
+        switch (commandName) {
+            case 'findElements':
+            case 'findElement':
+                // Pass the class and locator to the Automation Switchboard  
+                elementSelectorType = args[0];
+                elementSelector = args[1];
+                global.log(`beforeCommand ${paddedCommandName}: ASB.get("selectorType") will return '${elementSelectorType}'`)
+                global.log(`beforeCommand ${paddedCommandName}: ASB.get("selector") will return '${elementSelector}'`)
+                ASB.set("selectorType", elementSelectorType)
+                ASB.set("selector", elementSelector)
+                break;
+
+            default:
+                // X-Ray Vision - see all the commands that get executed 
+                // Uncomment to see all commands executed, but logging will mpact execution run time.
+                // global.log(`beforeCommand ${commandName}`);
+                break;
+        }
+    
+    },
+
     /**
      * Gets executed before test execution begins. At this point you can access to all global
      * variables like `browser`. It is the perfect place to define custom commands.
@@ -271,8 +289,71 @@ export const config: Options.Testrunner = {
      * @param {Array.<String>} specs        List of spec file paths that are to be run
      * @param {Object}         browser      instance of created browser/device session
      */
-    // before: function (capabilities, specs) {
-    // },
+    before: function (capabilities, specs) {
+        //Set
+        //helpers.log(`process.env.DEBUG: ${process.env.DEBUG}`) // ---> process.env.DEBUG: -LH:*
+
+        ASB.set("DEBUG", (process.env.DEBUG === undefined) ? false : (process.env.DEBUG === `true`))
+        ASB.set("spinnerTimeoutInSeconds", 30)
+
+        global.log(`DEBUG: ${ASB.get("DEBUG")}`)
+
+        ASB.set("timeout", (ASB.get("DEBUG") === true) ? 1_000_000 : 10_000)
+        let timeout = ASB.get("timeout")
+
+        global.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`)
+
+        // Samples of overidding and adding custom methods.
+
+        // browser.addCommand("clickAdv", async function ()
+        // {
+        //     // `this` is return value of $(selector)
+        //     //await this.waitForDisplayed()
+        //     helpers.log(`Clicking ${this.selector} ...`)
+        //     let locator = "ELEMENT NOT FOUND"
+
+        //     try
+        //     {
+        //         if (ASB.get(`alreadyFailed`) === true)
+        //         {
+        //             helpers.log(`  SKIPPED: browser.clickAdv(${this.selector})`);
+
+        //         } else
+        //         {
+        //             await this.click({ block: 'center' })
+        //             helpers.log(`  button clicked.`)
+        //             await helpers.pageSync()
+        //         }
+        //     } catch (error)
+        //     {
+        //         helpers.log(`Element was not clicked.\n${error}`)
+        //         //Skip any remaining steps
+        //         ASB.set(`alreadyFailed`, false)
+        //     }
+        // }, addToElement)
+
+        // Override the default click command
+
+        // browser.overwriteCommand('click', async (element: ElementFinder) => {
+
+        //     // Do something before clicking the element
+        //     console.log('Overwrite the intrinsic click command...');
+
+        //     // Perform the click action
+        //     try
+        //     {
+        //         helpers.log(`Clicking ${this.selector} ...`)
+        //         await this.click({ block: 'center' })
+
+        //         await helpers.pageSync()
+        //         helpers.log(`done`)
+        //     } catch (error)
+        //     {
+        //         helpers.log(`Element was not clicked.\n${error}`)
+        //     }
+
+        // })
+    },
     /**
      * Runs before a WebdriverIO command gets executed.
      * @param {String} commandName hook command name
@@ -289,25 +370,22 @@ export const config: Options.Testrunner = {
     /**
      * Function to be executed before a test (in Mocha/Jasmine) starts.
      */
-    beforeTest: async function (test, context)
-    {
+    beforeTest: async function (test, context) {
         //Option #1: Run browser full screen on dual monitors
         //browser.maximizeWindow();
 
         // Option #2: Run browser 3/4 screen on single monitor
-        // Allow VS Code Terminal visible on bottom of the screen  
-        await global.log(`Changing window size`)
-        browser.setWindowSize(1920, 770)
-
+        // Allow VS Code Terminal visible on bottom of the screen
+        await global.log(`Changing window size`);
+        await browser.setWindowSize(1920, 770);
     },
     /**
      * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
      * beforeEach in Mocha)
      */
-    beforeHook: function (test, context)
-    {
-        // Create custom commands here
-    },
+    // beforeHook: function (test, context) {
+    //   // Create custom commands here
+    // },
     /**
      * Hook that gets executed _after_ a hook within the suite starts (e.g. runs after calling
      * afterEach in Mocha)
@@ -324,21 +402,22 @@ export const config: Options.Testrunner = {
      * @param {Boolean} result.passed    true if test has passed, otherwise false
      * @param {Object}  result.retries   informations to spec related retries, e.g. `{ attempts: 0, limit: 0 }`
      */
-    afterTest: async function (test, context, { error, result, duration, passed, retries })
-    {
-        if (!passed)
-        {
+    afterTest: async function (
+        test,
+        context,
+        { error, result, duration, passed, retries }
+    ) {
+        if (!passed) {
             await browser.takeScreenshot();
         }
     },
-
-
     /**
      * Hook that gets executed after the suite has ended
      * @param {Object} suite suite details
      */
-    // afterSuite: function (suite) {
-    // },
+    afterSuite: function (suite) {
+        global.log("AFTER SUITE")
+    },
     /**
      * Runs after a WebdriverIO command gets executed
      * @param {String} commandName hook command name
@@ -355,16 +434,18 @@ export const config: Options.Testrunner = {
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {Array.<String>} specs List of spec file paths that ran
      */
-    // after: function (result, capabilities, specs) {
-    // },
+    after: function (result, capabilities, specs) {
+        global.log("AFTER")
+    },
     /**
      * Gets executed right after terminating the webdriver session.
      * @param {Object} config wdio configuration object
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {Array.<String>} specs List of spec file paths that ran
      */
-    // afterSession: function (config, capabilities, specs) {
-    // },
+    afterSession: function (config, capabilities, specs) {
+        global.log("AFTER SESSION")
+    },
     /**
      * Gets executed after all workers got shut down and the process is about to exit. An error
      * thrown in the onComplete hook will result in the test run failing.
@@ -373,33 +454,34 @@ export const config: Options.Testrunner = {
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {<Object>} results object containing test results
      */
-    // onComplete: function(exitCode, config, capabilities, results) {
-    // },
+    onComplete: function (exitCode, config, capabilities, results) {
+        global.log("ON COMPLETE")
+        if (ASB.get("alreadyFailed")) {
+            throw new Error('Test failed');
+        }
+
+    },
     /**
-    * Gets executed when a refresh happens.
-    * @param {String} oldSessionId session ID of the old session
-    * @param {String} newSessionId session ID of the new session
-    */
+     * Gets executed when a refresh happens.
+     * @param {String} oldSessionId session ID of the old session
+     * @param {String} newSessionId session ID of the new session
+     */
     // onReload: function(oldSessionId, newSessionId) {
     // }
-}
+};
 
 /**
  * log wrapper
- * @param text to be output to the console window 
+ * @param text to be output to the console window
  */
- const logASB = switchboardFactory()
- 
- 
-global.log = async (text: any) =>
-{
-    if (text) { //truthy value check
-        if (text===Promise){
-            console.log(`--->     WARN: Log was passed a Promise oject`)
-            console.trace()
-        }else{
-            console.log(`---> ${text}`)
+global.log = async (text: any) => {
+    if (text) {
+        //truthy value check
+        if (text === Promise) {
+            console.log(`--->     WARN: Log was passed a Promise object`);
+            console.trace();
+        } else {
+            console.log(`---> ${text}`);
         }
     }
-    
-}
+};
