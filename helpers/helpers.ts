@@ -2,12 +2,20 @@ import * as fs from "fs";
 import * as path from "path";
 import { ASB } from "./globalObjects";
 import allureReporter from "@wdio/allure-reporter";
-
+import * as clipboardy from 'clipboardy';
 
 export async function clickAdv(element: WebdriverIO.Element) {
   let success: boolean = false;
 
   element = await getValidElement(element, "button");
+
+  if (ASB.get("ELEMENT_EXISTS") == false){
+    await log(`  IfExist: Skipping clicking ${ASB.get("ELEMENT_SELETOR")}`);
+
+    return true;
+  }
+
+
   const SELECTOR = await element.selector;
   await log(`Clicking ${SELECTOR}`);
 
@@ -560,20 +568,34 @@ export async function setValueAdv(
     // Clear input field
     await inputField.click();
 
-    // Do we need to clear the field?
-    if (await inputField.getValue()) await inputField.setValue(newValue);
+    // Clear the field.
+    await inputField.setValue("");
 
-    // Send text to input field
-    for (const letter of text) {
-      await inputField.addValue(letter);
+
+    var escape = require('shell-escape');
+    require('child_process').execSync('printf ' + escape([text]) + ' | pbcopy');
+
+    // Paste the text for speed
+     // Use the sendKeys method with Control-V (or Command-V on macOS) to paste the text
+     inputField.sendKeys(['Control', 'v']); // On macOS, use ['Command', 'v']
+
+    // Check for accuracy
+    if (!(await inputField.getValue()).includes(text)) {
+      await inputField.setValue("");
+      // Send text to input field character by character 
+      for (const letter of text) {
+        await inputField.addValue(letter);
+      }
     }
-
+    
     success = true;
   } catch (error: any) {
     await log(
       `  ERROR: ${SELECTOR} was not populated with ${scrubbedValue}.\n       ${error.message}`
     );
+
     expect(`to be editable`).toEqual(SELECTOR);
+
     // Throw the error to stop the test, still masking password
     await inputField.setValue(scrubbedValue);
   }
