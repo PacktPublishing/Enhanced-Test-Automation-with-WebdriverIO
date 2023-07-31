@@ -1,13 +1,14 @@
 {
     "compilerOptions": {
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
-        "allowSyntheticDefaultImports": true,
+        "alwaysStrict": true,
+        "moduleResolution": "node",
+
         "types": [
             "node",
             "@wdio/globals/types",
             "@wdio/jasmine-framework",
-            "expect-webdriverio",
+            "expect-webdriverio"
         ],
+        "target": "es2022"
     }
 }

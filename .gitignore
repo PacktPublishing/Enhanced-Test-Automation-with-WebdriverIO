@@ -10,3 +10,4 @@ driver-logs
 *.log
 .vscode
 .idea
+.env
