@@ -173,7 +173,7 @@ export const config = {
         return;
       }
       await browser.saveScreenshot(
-        `assertionError_${assertion.error.message}.png`
+        `assertionError_${assertion.error}.png`
       );
     },
   },

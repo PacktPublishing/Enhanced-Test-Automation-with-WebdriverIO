@@ -1,8 +1,4 @@
-<<<<<<< HEAD:test/pageObjects/secure.page.ts
-=======
 
-
->>>>>>> chapter-4:test/pageobjects/secure.page.ts
 import Page from './page';
 
 /**
