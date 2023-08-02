@@ -1,5 +1,5 @@
 
-import { Browser } from "webdriverio";
+import type { Options } from "@wdio/types";
 
 const DEBUG =
   process.env.DEBUG === undefined ? true : process.env.DEBUG === `true`;
@@ -9,18 +9,37 @@ let timeout = DEBUG === true ? 1_000_000 : 10_000;
 console.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`);
 
 export const config = {
-    //
-    // ====================
-    // Runner Configuration
-    // ====================
-    // WebdriverIO supports running e2e tests as well as unit and component tests.
-  runner: 'local',
+  //
+  // ====================
+  // Runner Configuration
+  // ====================
+  //
+  //
+  // =====================
+  // ts-node Configurations
+  // =====================
+  //
+  // You can write tests using TypeScript to get autocompletion and type safety.
+  // You will need typescript and ts-node installed as devDependencies.
+  // WebdriverIO will automatically detect if these dependencies are installed
+  // and will compile your config and tests for you.
+  // If you need to configure how ts-node runs please use the
+  // environment variables for ts-node or use wdio config's autoCompileOpts section.
+  //
+
   autoCompileOpts: {
     autoCompile: true,
+    // see https://github.com/TypeStrong/ts-node#cli-and-programmatic-options
+    // for all available options
     tsNodeOpts: {
-      project: 'tsconfig.json',
-      transpileOnly: true
-    }
+      transpileOnly: true,
+      project: "tsconfig.json",
+    },
+    // tsconfig-paths is only used if "tsConfigPathsOpts" are provided, if you
+    // do please make sure "tsconfig-paths" is installed as dependency
+    // tsConfigPathsOpts: {
+    //     baseUrl: './'
+    // }
   },
 
   //
@@ -82,7 +101,7 @@ export const config = {
   // Define all options that are relevant for the WebdriverIO instance here
   //
   // Level of logging verbosity: trace | debug | info | warn | error | silent
-  logLevel: 'info',
+  logLevel: 'warn',
   //
   // Set specific log levels per logger
   // loggers:
@@ -315,6 +334,7 @@ export const config = {
 // }
 global.log = async (text: any) => {
   if (text) {
+    //truthy value check
     if (text === Promise) {
       console.log(`--->     WARN: Log was passed a Promise object`);
       console.trace();

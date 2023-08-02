@@ -29,26 +29,41 @@ Reboot the machine for all the changes to take effect
 -   node >= 18 - [how to install Node](https://nodejs.org/en/download/)
 -   yarn >= 1.22.x - [how to install Yarn](https://classic.yarnpkg.com/lang/en/docs/install/)
 
-## Getting Started - Install the dependencies:
-```powershell / zsh
+## Getting Started
+
+Install the dependencies:
+
+```bash /zsh
 npm install
 ```
 
-## Run the "Hello World" script of Test Automation - Super Secret Login:
-```powershell / zsh
+Compile TypeScript:
+```bash / zsh
+npm run build
+```
+
+Run e2e tests:
+Run this command to test the global.log command with empty/null strings and a Promise object 
+```bash / zsh
 npm run wdio
 ```
 
-## Note: The Chrome browser version is constantly being updated. 
-If the test briefly launches a browser and fails, update "chromedriver": "^114.0.2" in package.json to the current Chrome browser version.
-If the test still fails, continue to Chapter 2 regarding node-check-updates package to update all packages.
-
-## Note: This is not a selenium-standalone-service version
-If you build a custom wdio project from the wizard and select selenium-standalone-server, Java will need to be installed.
+Run this command to test the Framework DEBUG command with a longer timeout 
+```bash /zsh
+npm run debug
+```
 
 
+## Reports
+### Allure
+Run this command to generate the allure report in the directory `./test-report/allure-report`:
+You can run this command to start a server on your machine and open the allure report on the browser:
+```bash / zsh
+npm run report
+```
 
-## Ch. 2 Fortress of Solitude – 
-Configuring WebdriverIO 
-Allure Report Dependencies
-Node-Check-Updates 
+## Prettier and Eslint
+Run to format the code:
+```bash / zsh
+npm run code:format
+```

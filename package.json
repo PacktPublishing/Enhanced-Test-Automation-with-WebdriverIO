@@ -3,7 +3,16 @@
     "version": "1.0.0",
     "description": "",
     "keywords": [],
-    "author": "Paul Grossman",
+    "authors": [
+        {
+            "name": "Paul Grossman",
+            "github": ""
+        },
+        {
+            "name": "Larry Goddard",
+            "github": "https://github.com/klassijs"
+        }
+    ],
     "license": "MIT",
     "engines": {
         "node": ">=18",
@@ -13,7 +22,8 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "wdio": "wdio run wdio.conf.ts",
         "ch2": "wdio run wdio.conf.ts --spec ./test/specs/ch2.ts",
-        "ch3": "wdio run wdio.conf.ts --spec ./test/specs/ch3.ts"
+        "ch3": "wdio run wdio.conf.ts --spec ./test/specs/ch3.ts",
+        "ch4": "wdio run wdio.conf.ts --spec ./test/specs/ch4.ts"
     },
     "dependencies": {
         "@types/jasmine": "^4.3.5",
