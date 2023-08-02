@@ -3,11 +3,12 @@ allure-report
 allure-results
 .DS_Store
 logs
-package-lock.json
 all-logs
 driver-logs
 *.png
+screenshots
 *.log
 .vscode
 .idea
 .env
+reports
