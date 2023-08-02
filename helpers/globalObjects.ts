@@ -12,3 +12,7 @@ function switchboardFactory(): { get: (k: string) => any; set: (k: string, v: an
         }
     }
 }
+  
+
+
+export const ASB: { get: (k: string) => any; set: (k: string, v: any) => void; } = switchboardFactory();
