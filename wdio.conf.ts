@@ -265,13 +265,22 @@ export const config = {
             case 'findElements':
             case 'findElement':
                 // Pass the class and locator to the Automation Switchboard  
-                elementSelectorType = args[0];
-                elementSelector = args[1];
-                global.log(`beforeCommand ${paddedCommandName}: ASB.get("selectorType") will return '${elementSelectorType}'`)
-                global.log(`beforeCommand ${paddedCommandName}: ASB.get("selector") will return '${elementSelector}'`)
-                ASB.set("selectorType", elementSelectorType)
-                ASB.set("selector", elementSelector)
+                if (args[1].length > 0){
+                    if (args[1] !== ASB.get("selector")){
+                        elementSelectorType = args[0];
+                        elementSelector = args[1];
+                        global.log(`beforeCommand ${paddedCommandName}: ASB.get("selectorType") will return '${elementSelectorType}'`)
+                        global.log(`beforeCommand ${paddedCommandName}: ASB.get("selector") will return '${elementSelector}'`)
+                        ASB.set("selectorType", elementSelectorType)
+                        ASB.set("selector", elementSelector)    
+                    } 
+                }
+                
                 break;
+
+            case 'url':
+                global.log(`beforeCommand ${paddedCommandName}: Navigate to: '${args[0]}'`);
+                break;    
 
             default:
                 // X-Ray Vision - see all the commands that get executed 
