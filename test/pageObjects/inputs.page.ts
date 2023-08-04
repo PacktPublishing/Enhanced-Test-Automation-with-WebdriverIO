@@ -1,4 +1,3 @@
-import { ChainablePromiseElement } from "webdriverio";
 import * as helpers from "../../helpers/helpers";
 import Page from "./page";
 
@@ -18,8 +17,7 @@ class KeyPressesPage extends Page {
    * e.g. to login using username and password
    */
   public async enterDateTags() {
-    await helpers.setValueAdv(await this.fldTarget, 
-      "today is <today>");
+    await helpers.setValueAdv(await this.fldTarget, "today is <today>");
     helpers.pause(2000);
 
     await helpers.setValueAdv(await this.fldTarget,

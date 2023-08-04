@@ -172,35 +172,19 @@ export const config = {
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
-    reporters: ["spec", ["allure", { outputDir: "allure-results" }]],
+    reporters: ["spec", ["allure", { outputDir: "reports/allure-results" }]],
 
     //
     // Options to be passed to Jasmine.
     jasmineOpts: {
-        // Jasmine default timeout
         defaultTimeoutInterval: timeout,
-        //
-        // The Jasmine framework allows interception of each assertion in order to log the state of the application
-        // or website depending on the result. For example, it is pretty handy to take a screenshot every time
-        // an assertion fails.
         expectationResultHandler: async function (passed, assertion) {
-            /**
-             * only take screenshot if assertion failed
-             */
             if (passed) {
                 return;
             }
-
-            try {
-                await console.log(`Jasmine screenshot of ${await assertion.error.message}.`)
-                await console.log(`Waiting for ${timeout / 60000} min...`)
-                await browser.saveScreenshot(
-                    `assertionError_${await assertion.error.message}.png`);
-                await browser.pause(timeout);
-                await console.log(`DEBUG wait done`)
-            } catch (error) {
-                await console.log(`The screen capture failed. Check for a missing await statement. ${error}`)
-            }
+            await browser.saveScreenshot(
+                `reports/assertionError_${assertion.error}.png`
+            );
         },
     },
 
@@ -304,6 +288,8 @@ export const config = {
         global.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`)
 
         // Samples of overidding and adding custom methods.
+
+
 
         // browser.addCommand("clickAdv", async function ()
         // {
