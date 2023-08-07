@@ -38,6 +38,7 @@ class WebListPage extends Page {
 
   public async open(path: string) {
     return await super.open(`https://www.telerik.com/kendo-react-ui/${path}`);
+    await browser.pause(2000);
   }
 
 //span[normalize-space()='Belgium']

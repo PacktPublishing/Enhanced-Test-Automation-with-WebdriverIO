@@ -5,9 +5,9 @@ export default class Page {
     */
     public async open(path: string) {
         if (path.startsWith(`http`)){
-            return await browser.url(path); // Overwrite the path   
+            return await browser.url(path); // Overwrite the path
         }
-    
+
         if (path.startsWith(`components`)){
             return await browser.url(`https://www.telerik.com/kendo-react-ui/${path}`);
         }

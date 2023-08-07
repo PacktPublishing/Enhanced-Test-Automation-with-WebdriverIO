@@ -172,35 +172,19 @@ export const config = {
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
-    reporters: ["spec", ["allure", { outputDir: "allure-results" }]],
+    reporters: ["spec", ["allure", { outputDir: "reports/allure-results" }]],
 
     //
     // Options to be passed to Jasmine.
     jasmineOpts: {
-        // Jasmine default timeout
         defaultTimeoutInterval: timeout,
-        //
-        // The Jasmine framework allows interception of each assertion in order to log the state of the application
-        // or website depending on the result. For example, it is pretty handy to take a screenshot every time
-        // an assertion fails.
         expectationResultHandler: async function (passed, assertion) {
-            /**
-             * only take screenshot if assertion failed
-             */
             if (passed) {
                 return;
             }
-
-            try {
-                await console.log(`Jasmine screenshot of ${await assertion.error.message}.`)
-                await console.log(`Waiting for ${timeout / 60000} min...`)
-                await browser.saveScreenshot(
-                    `assertionError_${await assertion.error.message}.png`);
-                await browser.pause(timeout);
-                await console.log(`DEBUG wait done`)
-            } catch (error) {
-                await console.log(`The screen capture failed. Check for a missing await statement. ${error}`)
-            }
+            await browser.saveScreenshot(
+                `reports/assertionError_${assertion.error}.png`
+            );
         },
     },
 
@@ -314,6 +298,8 @@ export const config = {
 
         // Samples of overidding and adding custom methods.
 
+
+
         // browser.addCommand("clickAdv", async function ()
         // {
         //     // `this` is return value of $(selector)
@@ -386,7 +372,7 @@ export const config = {
         // Option #2: Run browser 3/4 screen on single monitor
         // Allow VS Code Terminal visible on bottom of the screen
         await global.log(`Changing window size`);
-        await browser.setWindowSize(1920, 770);
+        await browser.setWindowSize(1200, 770);
     },
     /**
      * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
