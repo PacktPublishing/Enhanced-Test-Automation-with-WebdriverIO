@@ -850,6 +850,13 @@ async function findElement(selector: string): Promise<WebdriverIO.Element> {
   }
 }
 
+export async function getListValues(selectElement:  WebdriverIO.Element
+): Promise<string> {
+
+  const optionElements = await (await selectElement).getText();
+  return optionElements;
+}
+
 // export async function isExists(element: WebdriverIO.Element) {
 //   try {
 //     return await element.isExisting();
@@ -913,7 +920,7 @@ export async function expectAdv(actual:any, assertionType:any, expected:unknown)
   };
   (getAssertionType[assertionType] || getAssertionType['default'])();
 
-  if (!getAssertionType[assertionType]){
+  if (!getAssertionType[assertionType]) {
     console.info('assertion type failure : =======>>>>>>>>>>> ', assertionType)
     allureReporter.addAttachment('Assertion Failure: ', `Invalid Assertion Type = ${assertionType}`, 'text/plain');
     allureReporter.addAttachment('Assertion Error: ', console.error, 'text/plain');
@@ -921,13 +928,6 @@ export async function expectAdv(actual:any, assertionType:any, expected:unknown)
     allureReporter.addAttachment('Assertion Passes: ', `Valid Assertion Type = ${assertionType}`, 'text/plain');
     console.info('assertion type passed : =======>>>>>>>>>>> ', assertionType)
   }
-
+}
 // For the full list of options please got to
 // https://github.com/webdriverio/expect-webdriverio/blob/main/docs/API.md
-
-  async function getListValues(selectElement:  WebdriverIO.Element
-  ): Promise<string> {
-
-    const optionElements = await (await selectElement).getText();
-    return optionElements;
-  }}
