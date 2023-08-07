@@ -531,7 +531,7 @@ export async function setValueAdv(
 
     if (!(await isElementInViewport(inputField))) {
       await scrollIntoView(inputField);
-      await waitForElementToStopMoving(inputField);
+      await waitForElementToStopMoving(inputField, 2000);
     }
 
     await highlightOn(inputField);
@@ -725,61 +725,61 @@ export async function selectAdv(
 }
 
 
-export async function setValueAdv(
-  inputField: WebdriverIO.Element,
-  text: string
-) {
-  let success: boolean = false;
+// export async function setValueAdv(
+//   inputField: WebdriverIO.Element,
+//   text: string
+// ) {
+//   let success: boolean = false;
+//
+//   inputField = await getValidElement(inputField, "field");
+//
+//   const SELECTOR = await inputField.selector;
+//
+//   let newValue: string = replaceTags(text);
+//
+//   await log(`Entering '${newValue}' into ${SELECTOR}`);
+//
+//   try {
+//     //await element.waitForDisplayed();
+//
+//     if (!(await isElementInViewport(inputField))) {
+//       await scrollIntoView(inputField);
+//       await waitForElementToStopMoving(inputField, 3000);
+//     }
+//
+//     await highlightOn(inputField);
+//
+//     //Check if text was entered
+//     // Clear input field
+//     await inputField.click();
+//
+//     // Do we need to clear the field?
+//     if (await inputField.getValue()) await inputField.setValue(newValue);
+//
+//     // Send text to input field
+//     for (const letter of text) {
+//       await inputField.addValue(letter);
+//     }
+//
+//     success = true;
+//   } catch (error: any) {
+//     await log(
+//         `  ERROR: ${SELECTOR} was not populated with ${text}.\n       ${error.message}`
+//     );
+//     expect(`to be editable`).toEqual(SELECTOR);
+//     // Throw the error to stop the test
+//     await inputField.setValue(text);
+//   }
+//
+//   return success;
+// }
 
-  inputField = await getValidElement(inputField, "field");
-
-  const SELECTOR = await inputField.selector;
-
-  let newValue: string = replaceTags(text);
-
-  await log(`Entering '${newValue}' into ${SELECTOR}`);
-
-  try {
-    //await element.waitForDisplayed();
-
-    if (!(await isElementInViewport(inputField))) {
-      await scrollIntoView(inputField);
-      await waitForElementToStopMoving(inputField, 3000);
-    }
-
-    await highlightOn(inputField);
-
-    //Check if text was entered
-    // Clear input field
-    await inputField.click();
-
-    // Do we need to clear the field?
-    if (await inputField.getValue()) await inputField.setValue(newValue);
-
-    // Send text to input field
-    for (const letter of text) {
-      await inputField.addValue(letter);
-    }
-
-    success = true;
-  } catch (error: any) {
-    await log(
-        `  ERROR: ${SELECTOR} was not populated with ${text}.\n       ${error.message}`
-    );
-    expect(`to be editable`).toEqual(SELECTOR);
-    // Throw the error to stop the test
-    await inputField.setValue(text);
-  }
-
-  return success;
-}
-
-export async function isElementInViewport(
-    element: WebdriverIO.Element
-): Promise<boolean> {
-  let isInViewport = await element.isDisplayedInViewport();
-  return isInViewport;
-}
+// export async function isElementInViewport(
+//     element: WebdriverIO.Element
+// ): Promise<boolean> {
+//   let isInViewport = await element.isDisplayedInViewport();
+//   return isInViewport;
+// }
 
 
 export async function waitForSpinner(): Promise<boolean> {
@@ -817,36 +817,23 @@ export async function waitForSpinner(): Promise<boolean> {
   return spinnerDetected;
 }
 
-export async function highlightOff(
-    element: WebdriverIO.Element
-): Promise<boolean> {
-  let visible: boolean = true;
-  try {
-    await browser.execute(`arguments[0].style.border = "0px";`, element);
-  } catch (error) {
-    // Element no longer exists
-    visible = false;
-  }
-  return visible;
-}
-
-export async function isElementVisible(
-    element: WebdriverIO.Element
-): Promise<boolean> {
-  try {
-    const displayed = await element.isDisplayed();
-    return displayed;
-  } catch (error) {
-    return false;
-  }
-}
+// export async function isElementVisible(
+//     element: WebdriverIO.Element
+// ): Promise<boolean> {
+//   try {
+//     const displayed = await element.isDisplayed();
+//     return displayed;
+//   } catch (error) {
+//     return false;
+//   }
+// }
 
 //Resolves stale element
-export async function refreshElement(
-    element: WebdriverIO.Element
-): Promise<WebdriverIO.Element> {
-  return await browser.$(element.selector);
-}
+// export async function refreshElement(
+//     element: WebdriverIO.Element
+// ): Promise<WebdriverIO.Element> {
+//   return await browser.$(element.selector);
+// }
 
 async function findElement(selector: string): Promise<WebdriverIO.Element> {
   try {
@@ -871,9 +858,9 @@ async function findElement(selector: string): Promise<WebdriverIO.Element> {
 //   }
 // }
 
-export async function scrollIntoView(element: WebdriverIO.Element) {
-  await element.scrollIntoView({block: "center", inline: "center"});
-}
+// export async function scrollIntoView(element: WebdriverIO.Element) {
+//   await element.scrollIntoView({block: "center", inline: "center"});
+// }
 
 
 export async function waitForElementToStopMoving(element: WebdriverIO.Element, timeout: number): Promise<void> {
@@ -943,4 +930,4 @@ export async function expectAdv(actual:any, assertionType:any, expected:unknown)
 
     const optionElements = await (await selectElement).getText();
     return optionElements;
-  }
+  }}
