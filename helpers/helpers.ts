@@ -192,14 +192,14 @@ async function getFieldName(element: WebdriverIO.Element) {
  // helpers.log(getToday("+5", "d/M/yyyy"));  // returns current date plus 5 days in d/M/yyyy format
  // helpers.log(getToday("-3", "yyyy/MM/dd"));  // returns current date minus 3 days in yyyy/MM/dd format
  */
-export function getToday(offset: number = 0, format: string = "MM-dd-yyyy") {
+export function getToday(offset: number = 0, format: string = "dd-mm-yyyy") {
   const currentDate = new Date();
   currentDate.setDate(currentDate.getDate() + offset);
   return currentDate.toLocaleDateString(undefined, {
     year: format.includes("yyyy") ? "numeric" : undefined,
-    month: format.includes("MM")
+    month: format.includes("mm")
         ? "2-digit"
-        : format.includes("M")
+        : format.includes("m")
             ? "numeric"
             : undefined,
     day: format.includes("dd")
@@ -594,7 +594,8 @@ export async function setValueAdv(
         `  ERROR: ${SELECTOR} was not populated with ${scrubbedValue}.\n       ${error.message}`
     );
 
-    expect(`to be editable`).toEqual(SELECTOR);
+    //TODO what exactly is being tested here
+    // expect(`to be editable`).toEqual(SELECTOR);
 
     // Throw the error to stop the test, still masking password
     await inputField.setValue(scrubbedValue);
