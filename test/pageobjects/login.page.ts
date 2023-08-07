@@ -71,7 +71,7 @@ class LoginPage extends Page {
     );
 
     // await helpers.clickAdv(await this.btnSubmit);
-    
+
     // // This button does not exist - failing the test
     // let selector = await this.btnBogus.selector;
     // await helpers.log (`${selector}`)

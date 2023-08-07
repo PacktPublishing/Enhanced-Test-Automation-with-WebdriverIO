@@ -1,9 +1,8 @@
 node_modules
 allure-report
-allure-results
+reports
 .DS_Store
 logs
-package-lock.json
 all-logs
 driver-logs
 *.png
@@ -11,5 +10,5 @@ screenshots
 *.log
 .vscode
 .idea
-yarn.lock
 .env
+yarn-error.log

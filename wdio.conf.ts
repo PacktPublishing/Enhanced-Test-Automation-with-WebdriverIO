@@ -35,7 +35,7 @@ export const config = {
         // for all available options
         tsNodeOpts: {
             transpileOnly: true,
-            project: "./tsconfig.json",
+            // project: "./tsconfig.json",
         },
         // tsconfig-paths is only used if "tsConfigPathsOpts" are provided, if you
         // do please make sure "tsconfig-paths" is installed as dependency
@@ -178,12 +178,7 @@ export const config = {
     //
     // Options to be passed to Jasmine.
     jasmineOpts: {
-        // Jasmine default timeout
         defaultTimeoutInterval: timeout,
-        //
-        // The Jasmine framework allows interception of each assertion in order to log the state of the application
-        // or website depending on the result. For example, it is pretty handy to take a screenshot every time
-        // an assertion fails.
         expectationResultHandler: async function (passed, assertion) {
             /**
              * only take screenshot if assertion failed
@@ -244,12 +239,12 @@ export const config = {
     // beforeSession: function (config, capabilities, specs, cid) {
     // },
 
- /**
-     * Gets executed just before initialising the webdriver session and test framework. It allows you
-     * to manipulate configurations depending on the capability or spec.
-     * @param {commandName} wdio command
-     * @param {args} arguments passed to the command
-     */
+    /**
+        * Gets executed just before initialising the webdriver session and test framework. It allows you
+        * to manipulate configurations depending on the capability or spec.
+        * @param {commandName} wdio command
+        * @param {args} arguments passed to the command
+        */
     beforeCommand: function (commandName, args) {
         if (commandName === '$') {
           const selector = args[0];
@@ -366,7 +361,7 @@ export const config = {
         // Option #2: Run browser 3/4 screen on single monitor
         // Allow VS Code Terminal visible on bottom of the screen
         await global.log(`Changing window size`);
-        await browser.setWindowSize(1920, 770);
+        await browser.setWindowSize(1200, 770);
     },
     /**
      * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
