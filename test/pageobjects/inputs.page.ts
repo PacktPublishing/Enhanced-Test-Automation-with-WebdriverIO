@@ -1,10 +1,6 @@
-import * as helpers from "../../helpers/helpers";
-import Page from "./page";
-
-let today = helpers.getToday(0, 'MM-dd-yyyy');
-let nextWeek = helpers.getToday(7, 'MM-dd-yyyy');
-let lastWeek = helpers.getToday(-7, 'MM-dd-yyyy');
-let lastYear = helpers.getToday(365, 'MM-dd-yyyy');
+import { ChainablePromiseElement } from "webdriverio";
+import * as helpers from "../../helpers/helpers.js";
+import Page from "./page.js";
 
 /**
  * sub page containing specific selectors and methods for a specific page
@@ -14,7 +10,7 @@ class KeyPressesPage extends Page {
    * define selectors using getter methods
    */
   public get fldTarget() {
-    return $(`input[type="text"]`);
+    return $(`//input[@type="text"]`);
   }
 
   /**
@@ -22,17 +18,12 @@ class KeyPressesPage extends Page {
    * e.g. to login using username and password
    */
   public async enterDateTags() {
-    await helpers.setValueAdv(await this.fldTarget, `today is ${helpers.getToday(0, 'dd-mm-yyyy')}`);
-    helpers.pause(2000);
-
+    await helpers.setValueAdv(await this.fldTarget, 
+      "today is <today>");
     await helpers.setValueAdv(await this.fldTarget,
-      `next week is ${helpers.getToday(7, 'dd-mm-yyyy')} and last week was ${helpers.getToday(-7, 'dd-mm-yyyy')}`);
-      helpers.pause(2000);
-
-      await helpers.setValueAdv(await this.fldTarget, 
-      `Last year is ${helpers.getToday(-365, 'dd-mm-yyyy')}`);
-      helpers.pause(2000);
-
+      "next week is <today+7> and last week was <today-7>");
+    await helpers.setValueAdv(await this.fldTarget, 
+      "Last year is <today-300>");
   }
 }
 export default new KeyPressesPage();
