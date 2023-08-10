@@ -44,7 +44,7 @@ class WebListPage extends Page {
 //span[normalize-space()='Belgium']
 
   public async findRestaurantsIn
-  (country: string = "Hungary") {
+  (country: string = " ") {
     // //span[normalize-space()='Belgium']
     await helpers.selectAdv(await this.lstCountriesByAxis, country)
   }
