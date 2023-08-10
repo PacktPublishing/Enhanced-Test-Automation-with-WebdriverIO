@@ -1,11 +1,6 @@
 import * as helpers from "../../helpers/helpers";
 import Page from "./page";
 
-let today = helpers.getToday(0, 'MM-dd-yyyy');
-let nextWeek = helpers.getToday(7, 'MM-dd-yyyy');
-let lastWeek = helpers.getToday(-7, 'MM-dd-yyyy');
-let lastYear = helpers.getToday(365, 'MM-dd-yyyy');
-
 /**
  * sub page containing specific selectors and methods for a specific page
  */
