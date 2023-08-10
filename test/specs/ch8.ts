@@ -5,6 +5,8 @@ import LandingPage from "../pageobjects/landing.page";
 import * as helpers from "../../helpers/helpers";
 import dynamicLoadingPage from "../pageobjects/dynamicLoading.page";
 
+import allureReporter from "@wdio/allure-reporter";
+
 describe("Chapter 8: The expect / assert / Should wrapper", () => {
 
   it("Chapter 8: Ensuring that soft assert works correctly", async () => {
@@ -18,11 +20,18 @@ describe("Chapter 8: The expect / assert / Should wrapper", () => {
     await expect(await elem).toBeExisting();
   });
 
-  it("Chapter 8: using expectAdv to validate the assertion ", async () => {
+  it("Chapter 8: using expectAdv to validate the assertion passed ", async () => {
     await LoginPage.open();
     let elem = await browser.$('#login > button > i');
     let bnText = await elem.getText();
     await helpers.expectAdv(bnText, 'equals', 'Login');
+  });
+
+  it("Chapter 8: using expectAdv to validate the assertion failure", async () => {
+    await LoginPage.open();
+    let elem = await browser.$('#login > button > i');
+    let bnText = await elem.getText();
+    await helpers.expectAdv(bnText, 'equa', 'Login');
   });
 
 });

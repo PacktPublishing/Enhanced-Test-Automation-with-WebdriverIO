@@ -1,5 +1,3 @@
-// import { ChainablePromiseElement } from 'webdriverio';
-import {browser, $} from '@wdio/globals';
 import Page from './page';
 
 /**
@@ -10,7 +8,6 @@ class SecurePage extends Page {
      * define selectors using getter methods
      */
     public get flashAlert () {
-        global.log(`Getting flashalert`)
         return $('#flash');
     }
 }

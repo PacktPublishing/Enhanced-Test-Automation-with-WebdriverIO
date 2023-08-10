@@ -10,7 +10,7 @@ console.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`);
 
 const addToElement = true
 
-export const config: WebdriverIO.Config = {
+export const config = {
     //
     // ====================
     // Runner Configuration
@@ -95,9 +95,8 @@ export const config: WebdriverIO.Config = {
         browserName: 'chrome',
         // or "firefox", "microsoftedge", "safari"
         'goog:chromeOptions': {
-            args: ['--disable-gpu', '--enable-automation', '--disable-infobars', '--disable-notifications']
-        },
-        // acceptInsecureCerts: true,
+            args: ['--disable-gpu', '--enable-automation', '--disable-infobars', '--disable-notifications'] },
+        acceptInsecureCerts: true,
     }],
     //
     // ===================
@@ -173,28 +172,25 @@ export const config: WebdriverIO.Config = {
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
     reporters: ["spec", ["allure",
-        {
-            outputDir: "./reports/allure-results",
-            disableWebdriverStepsReporting: false,
-            disableWebdriverScreenshotsReporting: false,
-        }]],
+        { outputDir: "./reports/allure-results",
+          disableWebdriverStepsReporting: false,
+          disableWebdriverScreenshotsReporting: false,
+    }]],
 
     //
     // Options to be passed to Jasmine.
     jasmineOpts: {
-        // Jasmine default timeout
         defaultTimeoutInterval: timeout,
-        //
-        // The Jasmine framework allows interception of each assertion in order to log the state of the application
-        // or website depending on the result. For example, it is pretty handy to take a screenshot every time
-        // an assertion fails.
         expectationResultHandler: async function (passed, assertion) {
             /**
              * only take screenshot if assertion failed
              */
             if (!passed) {
-                // await browser.takeScreenshot();
-                browser.saveScreenshot(`./reports/assertionError_${assertion.error}.png`)
+                console.log (`Jasmine screenshot of ${assertion}.`)
+                console.log (`Waiting for ${timeout/60000} min...`)
+                await browser.takeScreenshot();
+                await browser.pause(timeout);
+                console.log(`DEBUG wait done`);
             }
         }
     },
@@ -355,7 +351,7 @@ export const config: WebdriverIO.Config = {
         // Option #2: Run browser 3/4 screen on single monitor
         // Allow VS Code Terminal visible on bottom of the screen
         await global.log(`Changing window size`);
-        await browser.setWindowSize(1920, 770);
+        await browser.setWindowSize(1200, 770);
     },
     /**
      * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
@@ -383,7 +379,7 @@ export const config: WebdriverIO.Config = {
     afterTest: async function (
         test,
         context,
-        {error, result, duration, passed, retries}
+        { error, result, duration, passed, retries }
     ) {
         if (!passed) {
             await browser.takeScreenshot();
@@ -413,7 +409,7 @@ export const config: WebdriverIO.Config = {
      * @param {Array.<String>} specs List of spec file paths that ran
      */
     after: function (result, capabilities, specs) {
-        global.log("AFTER");
+        global.log("AFTER")
     },
     /**
      * Gets executed right after terminating the webdriver session.
@@ -422,7 +418,7 @@ export const config: WebdriverIO.Config = {
      * @param {Array.<String>} specs List of spec file paths that ran
      */
     afterSession: function (config, capabilities, specs) {
-        global.log("AFTER SESSION");
+        global.log("AFTER SESSION")
     },
     /**
      * Gets executed after all workers got shut down and the process is about to exit. An error
@@ -433,7 +429,7 @@ export const config: WebdriverIO.Config = {
      * @param {<Object>} results object containing test results
      */
     onComplete: function (exitCode, config, capabilities, results) {
-        global.log("ON COMPLETE");
+        global.log("ON COMPLETE")
         if (ASB.get("alreadyFailed")) {
             throw new Error('Test failed');
         }
