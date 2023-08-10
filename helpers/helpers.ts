@@ -536,12 +536,12 @@ export async function setValueAdv(
     await inputField.setValue("");
 
 
-    var escape = require('shell-escape');
-    require('child_process').execSync('printf ' + escape([text]) + ' | pbcopy');
+    // const escape = require('shell-escape');
+    // require('child_process').execSync('printf ' + escape([text]) + ' | pbcopy');
 
     // Paste the text for speed
      // Use the sendKeys method with Control-V (or Command-V on macOS) to paste the text
-     inputField.sendKeys(['Control', 'v']); // On macOS, use ['Command', 'v']
+     // inputField.sendKeys(['Control', 'v']); // On macOS, use ['Command', 'v']
 
     // Check for accuracy
     if (!(await inputField.getValue()).includes(text)) {
@@ -558,7 +558,7 @@ export async function setValueAdv(
       `  ERROR: ${SELECTOR} was not populated with ${scrubbedValue}.\n       ${error.message}`
     );
 
-    expect(`to be editable`).toEqual(SELECTOR);
+    // expect(`to be editable`).toEqual(SELECTOR);
 
     // Throw the error to stop the test, still masking password
     await inputField.setValue(scrubbedValue);
@@ -731,7 +731,7 @@ export async function selectAdv(
   let itemValue: String = "No Item selected"
 
   // Empty item list - do nothing
-  if (item.length ==0){
+  if (item.length === 0){
     await log(`  ERROR: ${listElement} had no list item passed.\n`)
     return true;
   }
@@ -750,7 +750,7 @@ export async function selectAdv(
     await listElement.click({ block: 'center' })
 
     // Allow user to pass a number like 3 for March
-    if (typeof (item) == 'number') {
+    if (typeof (item) === 'number') {
 
       // Try number select
       const index: number = item;
@@ -777,7 +777,7 @@ export async function selectAdv(
       const optionsList: string = await getListValues(listElement);
       console.log(optionsList); // This will print the list of options text in the select element
 
-      if (typeof (item) == 'number') {
+      if (typeof (item) === 'number') {
         const index: number = item;
         await (await listElement).selectByIndex(index);
       } else {

@@ -13,8 +13,13 @@ class WebListPage extends Page {
   }
 
   public get lstCountriesByAxis() {
-    return $(`//div[text()='Find restaurants in your country']//following::input`);
+    return $('[class="k-input-inner"]');
   }
+  // public get lstCountriesByAxis() {
+  //   return $(`//div[text()='Find restaurants in your country']//following::input`);
+  // }
+
+
 
   public get lstCountriesByCloseMatch() {
     return $(`//div[contains(text(),'restaurant')]//following::input`);
@@ -46,6 +51,7 @@ class WebListPage extends Page {
   public async findRestaurantsIn
   (country: string = "Hungary") {
     // //span[normalize-space()='Belgium']
+    console.log('this is where we are ==============>>>>>>>>>>>>>>>>>>')
     await helpers.selectAdv(await this.lstCountriesByAxis, country)
   }
 
