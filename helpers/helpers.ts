@@ -751,10 +751,8 @@ export async function selectAdv(
 
     // Allow user to pass a number like 3 for March
     if (typeof (item) === 'number') {
-
       // Try number select
       const index: number = item;
-
       try {
         await (await $(`//span[normalize-space()='${item}']`)).click();
         itemValue = await listElement.getText();
