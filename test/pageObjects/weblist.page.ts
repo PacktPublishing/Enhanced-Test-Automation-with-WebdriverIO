@@ -41,16 +41,12 @@ class WebListPage extends Page {
     await browser.pause(2000);
   }
 
-//span[normalize-space()='Belgium']
-
   public async findRestaurantsIn
-  (country: string = " ") {
+  (country: string = "Hungary") {
     // //span[normalize-space()='Belgium']
     await helpers.selectAdv(await this.lstCountriesByAxis, country)
   }
 
 }
-
-
 
 export default new WebListPage();
