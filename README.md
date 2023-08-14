@@ -8,8 +8,8 @@ Please ensure you have these packages installed globally using their most stable
 - Git
 
 Extra steps if you are using a windows machine:
-Setup the environment PATH for node
-Reboot the machine for all the changes to take effect
+- Setup the environment PATH for node
+- Reboot the machine for all the changes to take effect
 ```
 
 # E2E tests with WebDriverIO and Jasmine
