@@ -1,6 +1,5 @@
 node_modules
 allure-report
-allure-results
 .DS_Store
 logs
 all-logs

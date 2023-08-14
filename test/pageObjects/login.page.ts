@@ -24,16 +24,29 @@ class loginPage extends Page {
      * e.g. to login using username and password
      */
     public async login (username: string, password: string) {
+        await global.log(`Logging in with '${username}' and '${password}'`)
         await this.inputUsername.setValue(username);
         await this.inputPassword.setValue(password);
         await this.btnSubmit.click();
     }
 
+        /**
+     * a method to encapsule automation code to interact with the page
+     * e.g. to login using username and password
+     * missing await so the click executes before the setValue
+     */
+        public async login_sync (username: string, password: string) {
+             global.log(`Logging in with '${username}' and '${password}'`)
+             this.inputUsername.setValue(username);
+             this.inputPassword.setValue(password);
+             this.btnSubmit.click();
+        }
+
     /**
      * overwrite specific options to adapt it to page object
      */
-    public open () {
-        return super.open('login');
+    public async open () {
+        return await super.open('login');
     }
 }
 
