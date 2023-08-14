@@ -677,7 +677,8 @@ export async function selectAdv(
 
   if (isCombobox) {
     //@ts-ignore
-    await listElement.click({ block: 'center' })
+    // await listElement.click({ block: 'center' })
+    await listElement.click()
 
     // Allow user to pass a number like 3 for March
     if (typeof (item) === 'number') {
