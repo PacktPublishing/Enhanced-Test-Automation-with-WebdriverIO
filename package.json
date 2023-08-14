@@ -5,6 +5,10 @@
     "keywords": [],
     "author": "Paul Grossman",
     "license": "ISC",
+    "engines": {
+        "node": ">=18",
+        "yarn": ">=1.22.0"
+    },
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "wdio": "wdio run wdio.conf.ts",
