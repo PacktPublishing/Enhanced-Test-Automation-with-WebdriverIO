@@ -14,6 +14,10 @@
         }
     ],
     "license": "MIT",
+    "engines": {
+        "node": ">=16",
+        "yarn": ">=1.22.0"
+    },
     "scripts": {
         "report": "node_modules/.bin/allure generate --clean ./reports/allure-results && allure open -p 5050",
         "wdio": "BASE_ENV=test wdio wdio.local.conf.ts",
