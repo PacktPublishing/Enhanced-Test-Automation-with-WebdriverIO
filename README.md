@@ -1,77 +1,40 @@
 # E2E tests with WebDriverIO and Jasmine
-.
-└── package.json
-├── tsconfig.json
-├── wdio.conf.ts
-└── test
-    ├── specs
-       └── example.e2e.ts
-    └── pageobjects
-       ├── login.page.ts
-       ├── page.ts
-       └── secure.page.ts
-└── helpers
-    └── helpers.ts
-└── logs
-    ├── wdio.log
-    └── wdio-0-0.log
-└── allure-results  # folder and content gets created automatically on test run
-    └── chrome
-        ├── xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx-testsuite.xml
-        └── xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx-attachment.json
 
-This is a demonstration project of advanced Typescript WebdriverIO helper methods.  
-## Features
+
+This is a demonstration project of advanced WebdriverIO methods.  
+## Ch. 1 Utility Belt
 -   Configured to run browser and see console output on a single monitor 
--   TypeScript
--   Custom Debugging
--   Custom global.log
+-   TypeScript 
 -   [Expect-webdriverio](https://github.com/webdriverio/expect-webdriverio)
--   ESlint
--   Prettier
--   cross-env 
--   Allure report (screenshots on failure)
+-   ESlint - Static code analysis tool
+-   Prettier - Code formatting tool
+-   cross-env - used to set environment variables in a consistent behavior across Windows / Mac and Linux 
+-   Allure setup 
 
 ## Requirements
-
 -   node >= 16.13.x - [how to install Node](https://nodejs.org/en/download/)
 -   npm >= 8.1.x - [how to install NPM](https://www.npmjs.com/get-npm)
 
-## Getting Started
-
-Install the dependencies:
-
-```bash /zsh
+## Getting Started - Install the dependencies:
+```powershell / zsh
 npm install
 ```
 
-Compile TypeScript:
-```bash / zsh
-npm run build
-```
-
-Run e2e tests:
-Run this command to test the global.log command with empty/null strings and a Promise object 
-```bash / zsh
+## Run the "Hello World" script of Test Automation - Super Secret Login:
+```powershell / zsh
 npm run wdio
 ```
 
-Run this command to test the Framework DEBUG command with a longer timeout 
-```bash /zsh
-npm run debug
-```
+## Note: The Chrome browser version is constantly being updated. 
+If the test briefly launches a browser and fails, update "chromedriver": "^114.0.2" in package.json to the current Chrome browser version.
+If the test still fails, continue to Chapter 2 regarding node-check-updates package to update all packages.
+
+## Note: This is not a selenium-standalone-service version
+If you build a custom wdio project from the wizard and select selenium-standalone-server, Java will need to be installed.
 
 
-## Reports
-### Allure
-Run this command to generate the allure report in the directory `./test-report/allure-report`:
-You can run this command to start a server on your machine and open the allure report on the browser:
-```bash / zsh
-npm run report
-```
 
-## Prettier and Eslint
-Run to format the code:
-```bash / zsh
-npm run code:format
-```
+## Ch. 2 Fortress of Solitude – 
+Configuring WebdriverIO 
+Allure Report Dependencies
+Node-Check-Updates 
