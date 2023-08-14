@@ -15,7 +15,7 @@
     ],
     "license": "MIT",
     "engines": {
-        "node": ">=18",
+        "node": ">=16",
         "yarn": ">=1.22.0"
     },
     "scripts": {
