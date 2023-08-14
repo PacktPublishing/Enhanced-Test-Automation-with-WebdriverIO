@@ -1,19 +1,23 @@
-
-import type { Options } from "@wdio/types";
+import type { Options } from '@wdio/types';
+import { ASB } from './helpers/globalObjects';
 
 const DEBUG =
-  process.env.DEBUG === undefined ? true : process.env.DEBUG === `true`;
+    process.env.DEBUG === undefined ? true : process.env.DEBUG === `true`;
 console.log(`DEBUG: ${DEBUG}`);
 
 let timeout = DEBUG === true ? 1_000_000 : 10_000;
 console.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`);
+
+const addToElement = true //
+//const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
+// Chapter 4 - Automation SwitchBoard
 
 export const config = {
   //
   // ====================
   // Runner Configuration
   // ====================
-  //
+  runner: 'local',
   //
   // =====================
   // ts-node Configurations
@@ -59,7 +63,7 @@ export const config = {
   // will be called from there.
   //
   specs: [
-      './test/specs/**/*.ts'
+    './test/specs/**/*.ts'
   ],
   // Patterns to exclude.
   exclude: [
@@ -91,7 +95,8 @@ export const config = {
     // capabilities for local browser web tests
     browserName: 'chrome', // or "firefox", "microsoftedge", "safari"
     'goog:chromeOptions': {
-      args: ['--disable-gpu', '--enable-automation', '--disable-infobars', '--disable-notifications'] },
+      args: ['--disable-gpu', '--enable-automation', '--disable-infobars', '--disable-notifications']
+    },
     acceptInsecureCerts: true,
   }],
   //
@@ -163,7 +168,7 @@ export const config = {
   // Test reporter for stdout.
   // The only one supported by default is 'dot'
   // see also: https://webdriver.io/docs/dot-reporter
-  reporters: ['spec',['allure', {outputDir: 'reports/allure-results'}]],
+  reporters: ['spec', ['allure', {outputDir: 'reports/allure-results'}]],
   //
   // Options to be passed to Jasmine.
   jasmineOpts: {
@@ -173,7 +178,7 @@ export const config = {
         return;
       }
       await browser.saveScreenshot(
-        `assertionError_${assertion.error}.png`
+          `assertionError_${assertion.error}.png`
       );
     },
   },
@@ -232,15 +237,119 @@ export const config = {
   // before: function (capabilities, specs) {
   // },
   /**
+   * Gets executed just before initialising the webdriver session and test framework. It allows you
+   * to manipulate configurations depending on the capability or spec.
+   * @param {commandName} wdio command
+   * @param {args} arguments passed to the command
+   */
+  beforeCommand: function (commandName, args) {
+    // Chapter 5 - Keep the current object locator for future manipulation
+    let elementSelectorType: String
+    let elementSelector: String
+    let paddedCommandName: String = commandName.padEnd(12, ' ');
+    switch (commandName) {
+      case 'findElements':
+      case 'findElement':
+        // Pass the class and locator to the Automation Switchboard  
+        elementSelectorType = args[0];
+        elementSelector = args[1];
+        global.log(`beforeCommand ${paddedCommandName}: ASB.get("selectorType") will return '${elementSelectorType}'`)
+        global.log(`beforeCommand ${paddedCommandName}: ASB.get("selector") will return '${elementSelector}'`)
+        ASB.set("selectorType", elementSelectorType)
+        ASB.set("selector", elementSelector)
+        break;
+
+      default:
+        // X-Ray Vision - see all the commands that get executed 
+        // Uncomment to see all commands executed, but logging will mpact execution run time.
+        // global.log(`beforeCommand ${commandName}`);
+        break;
+    }
+
+  },
+
+  /**
+   * Gets executed before test execution begins. At this point you can access to all global
+   * variables like `browser`. It is the perfect place to define custom commands.
+   * @param {Array.<Object>} capabilities list of capabilities details
+   * @param {Array.<String>} specs        List of spec file paths that are to be run
+   * @param {Object}         browser      instance of created browser/device session
+   */
+  before: function (capabilities, specs) {
+    //Set
+    //helpers.log(`process.env.DEBUG: ${process.env.DEBUG}`) // ---> process.env.DEBUG: -LH:*
+
+    ASB.set("DEBUG", (process.env.DEBUG === undefined) ? false : (process.env.DEBUG === `true`))
+    ASB.set("spinnerTimeoutInSeconds", 30)
+
+    global.log(`DEBUG: ${ASB.get("DEBUG")}`)
+
+    ASB.set("timeout", (ASB.get("DEBUG") === true) ? 1_000_000 : 10_000)
+    let timeout = ASB.get("timeout")
+
+    global.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`)
+
+    // Samples of overidding and adding custom methods.
+
+    // browser.addCommand("clickAdv", async function ()
+    // {
+    //     // `this` is return value of $(selector)
+    //     //await this.waitForDisplayed()
+    //     helpers.log(`Clicking ${this.selector} ...`)
+    //     let locator = "ELEMENT NOT FOUND"
+
+    //     try
+    //     {
+    //         if (ASB.get(`alreadyFailed`) === true)
+    //         {
+    //             helpers.log(`  SKIPPED: browser.clickAdv(${this.selector})`);
+
+    //         } else
+    //         {
+    //             await this.click({ block: 'center' })
+    //             helpers.log(`  button clicked.`)
+    //             await helpers.pageSync()
+    //         }
+    //     } catch (error)
+    //     {
+    //         helpers.log(`Element was not clicked.\n${error}`)
+    //         //Skip any remaining steps
+    //         ASB.set(`alreadyFailed`, false)
+    //     }
+    // }, addToElement)
+
+    // Override the default click command
+
+    // browser.overwriteCommand('click', async (element: ElementFinder) => {
+
+    //     // Do something before clicking the element
+    //     console.log('Overwrite the intrinsic click command...');
+
+    //     // Perform the click action
+    //     try
+    //     {
+    //         helpers.log(`Clicking ${this.selector} ...`)
+    //         await this.click({ block: 'center' })
+
+    //         await helpers.pageSync()
+    //         helpers.log(`done`)
+    //     } catch (error)
+    //     {
+    //         helpers.log(`Element was not clicked.\n${error}`)
+    //     }
+
+    // })
+  },
+  /**
    * Runs before a WebdriverIO command gets executed.
-   * @param {string} commandName hook command name
+   * @param {String} commandName hook command name
    * @param {Array} args arguments that command would receive
    */
   // beforeCommand: function (commandName, args) {
   // },
   /**
    * Hook that gets executed before the suite starts
-   * @param {object} suite suite details
+   * @param {Object} suite suite details
    */
   // beforeSuite: function (suite) {
   // },
@@ -248,6 +357,11 @@ export const config = {
    * Function to be executed before a test (in Mocha/Jasmine) starts.
    */
   beforeTest: async function (test, context) {
+    //Option #1: Run browser full screen on dual monitors
+    //browser.maximizeWindow();
+
+    // Option #2: Run browser 3/4 screen on single monitor
+    // Allow VS Code Terminal visible on bottom of the screen
     await global.log(`Changing window size`);
     await browser.setWindowSize(1920, 770);
   },
@@ -256,6 +370,7 @@ export const config = {
    * beforeEach in Mocha)
    */
   // beforeHook: function (test, context) {
+  //   // Create custom commands here
   // },
   /**
    * Hook that gets executed _after_ a hook within the suite starts (e.g. runs after calling
@@ -265,81 +380,138 @@ export const config = {
   // },
   /**
    * Function to be executed after a test (in Mocha/Jasmine only)
-   * @param {object}  test             test object
-   * @param {object}  context          scope object the test was executed with
+   * @param {Object}  test             test object
+   * @param {Object}  context          scope object the test was executed with
    * @param {Error}   result.error     error object in case the test fails, otherwise `undefined`
-   * @param {*}       result.result    return object of test function
-   * @param {number}  result.duration  duration of test
-   * @param {boolean} result.passed    true if test has passed, otherwise false
-   * @param {object}  result.retries   informations to spec related retries, e.g. `{ attempts: 0, limit: 0 }`
+   * @param {Any}     result.result    return object of test function
+   * @param {Number}  result.duration  duration of test
+   * @param {Boolean} result.passed    true if test has passed, otherwise false
+   * @param {Object}  result.retries   informations to spec related retries, e.g. `{ attempts: 0, limit: 0 }`
    */
   afterTest: async function (
-    test,
-    context,
-    { error, result, duration, passed, retries }
+      test,
+      context,
+      {error, result, duration, passed, retries}
   ) {
     if (!passed) {
       await browser.takeScreenshot();
     }
   },
-};
-/**
- * Hook that gets executed after the suite has ended
- * @param {object} suite suite details
- */
+  /**
+   * Hook that gets executed after the suite has ended
+   * @param {Object} suite suite details
+   */
+  afterSuite: function (suite) {
+    global.log("AFTER SUITE")
+  },
+  /**
+   * Runs after a WebdriverIO command gets executed
+   * @param {String} commandName hook command name
+   * @param {Array} args arguments that command would receive
+   * @param {Number} result 0 - command success, 1 - command error
+   * @param {Object} error error object if any
+   */
+  // afterCommand: function (commandName, args, result, error) {
+  // },
+  /**
+   * Gets executed after all tests are done. You still have access to all global variables from
+   * the test.
+   * @param {Number} result 0 - test pass, 1 - test fail
+   * @param {Array.<Object>} capabilities list of capabilities details
+   * @param {Array.<String>} specs List of spec file paths that ran
+   */
+  after: function (result, capabilities, specs) {
+    global.log("AFTER")
+  },
+  /**
+   * Gets executed right after terminating the webdriver session.
+   * @param {Object} config wdio configuration object
+   * @param {Array.<Object>} capabilities list of capabilities details
+   * @param {Array.<String>} specs List of spec file paths that ran
+   */
+  afterSession: function (config, capabilities, specs) {
+    global.log("AFTER SESSION")
+  },
+  /**
+   * Gets executed after all workers got shut down and the process is about to exit. An error
+   * thrown in the onComplete hook will result in the test run failing.
+   * @param {Object} exitCode 0 - success, 1 - fail
+   * @param {Object} config wdio configuration object
+   * @param {Array.<Object>} capabilities list of capabilities details
+   * @param {<Object>} results object containing test results
+   */
+  onComplete: function (exitCode, config, capabilities, results) {
+    global.log("ON COMPLETE")
+    if (ASB.get("alreadyFailed")) {
+      throw new Error('Test failed');
+    }
+
+  },
+  /**
+   * Gets executed when a refresh happens.
+   * @param {String} oldSessionId session ID of the old session
+   * @param {String} newSessionId session ID of the new session
+   */
+  // onReload: function(oldSessionId, newSessionId) {
+  // }
+  /**
+   * Hook that gets executed after the suite has ended
+   * @param {object} suite suite details
+   */
 // afterSuite: function (suite) {
 // },
-/**
- * Runs after a WebdriverIO command gets executed
- * @param {string} commandName hook command name
- * @param {Array} args arguments that command would receive
- * @param {number} result 0 - command success, 1 - command error
- * @param {object} error error object if any
- */
+  /**
+   * Runs after a WebdriverIO command gets executed
+   * @param {string} commandName hook command name
+   * @param {Array} args arguments that command would receive
+   * @param {number} result 0 - command success, 1 - command error
+   * @param {object} error error object if any
+   */
 // afterCommand: function (commandName, args, result, error) {
 // },
-/**
- * Gets executed after all tests are done. You still have access to all global variables from
- * the test.
- * @param {number} result 0 - test pass, 1 - test fail
- * @param {Array.<Object>} capabilities list of capabilities details
- * @param {Array.<String>} specs List of spec file paths that ran
- */
+  /**
+   * Gets executed after all tests are done. You still have access to all global variables from
+   * the test.
+   * @param {number} result 0 - test pass, 1 - test fail
+   * @param {Array.<Object>} capabilities list of capabilities details
+   * @param {Array.<String>} specs List of spec file paths that ran
+   */
 // after: function (result, capabilities, specs) {
 // },
-/**
- * Gets executed right after terminating the webdriver session.
- * @param {object} config wdio configuration object
- * @param {Array.<Object>} capabilities list of capabilities details
- * @param {Array.<String>} specs List of spec file paths that ran
- */
+  /**
+   * Gets executed right after terminating the webdriver session.
+   * @param {object} config wdio configuration object
+   * @param {Array.<Object>} capabilities list of capabilities details
+   * @param {Array.<String>} specs List of spec file paths that ran
+   */
 // afterSession: function (config, capabilities, specs) {
 // },
-/**
- * Gets executed after all workers got shut down and the process is about to exit. An error
- * thrown in the onComplete hook will result in the test run failing.
- * @param {object} exitCode 0 - success, 1 - fail
- * @param {object} config wdio configuration object
- * @param {Array.<Object>} capabilities list of capabilities details
- * @param {<Object>} results object containing test results
- */
+  /**
+   * Gets executed after all workers got shut down and the process is about to exit. An error
+   * thrown in the onComplete hook will result in the test run failing.
+   * @param {object} exitCode 0 - success, 1 - fail
+   * @param {object} config wdio configuration object
+   * @param {Array.<Object>} capabilities list of capabilities details
+   * @param {<Object>} results object containing test results
+   */
 // onComplete: function(exitCode, config, capabilities, results) {
 // },
-/**
- * Gets executed when a refresh happens.
- * @param {string} oldSessionId session ID of the old session
- * @param {string} newSessionId session ID of the new session
- */
+  /**
+   * Gets executed when a refresh happens.
+   * @param {string} oldSessionId session ID of the old session
+   * @param {string} newSessionId session ID of the new session
+   */
 // onReload: function(oldSessionId, newSessionId) {
 // }
+}
 global.log = async (text: any) => {
-  if (text) {
-    //truthy value check
-    if (text === Promise) {
-      console.log(`--->     WARN: Log was passed a Promise object`);
-      console.trace();
-    } else {
-      console.log(`---> ${text}`);
+    if (text) {
+        //truthy value check
+        if (text === Promise) {
+            console.log(`--->     WARN: Log was passed a Promise object`);
+            console.trace();
+        } else {
+            console.log(`---> ${text}`);
+        }
     }
-  }
 };
