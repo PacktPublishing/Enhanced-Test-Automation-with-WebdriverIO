@@ -737,20 +737,21 @@ export async function selectAdv(
   }
 
   //Get a valid list element
-  listElement = await getValidElement(listElement, "list");
+  let newListElement: WebdriverIO.Element = await getValidElement(listElement, "list");
 
   // Get the name of the element
-  let listname = await getListName(await listElement);
+  //let listname = await getListName(await newListElement);
 
   // Comboboxes look like input fields
-  let isCombobox = listElement.selector.toString().includes("//input")
+  let isCombobox = listElement.selector.toString().includes("//input") || listElement.selector.toString().includes("::input")
 
-  if (isCombobox) {
+  if (isCombobox===true) {
     //@ts-ignore
-    await listElement.click({ block: 'center' })
+    await listElement.doubleClick() //click({ block: 'center' })
 
     // Allow user to pass a number like 3 for March
     if (typeof (item) === 'number') {
+
       // Try number select
       const index: number = item;
       try {
@@ -765,7 +766,10 @@ export async function selectAdv(
       }
     } else {
         // Click the item
-        await (await $(`//span[normalize-space()='${item}']`)).click();
+        await browser.keys(`${item}`)
+        await browser.pause(3000);
+        await browser.keys('Enter');
+
     }
 
   } else {
