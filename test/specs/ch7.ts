@@ -20,9 +20,9 @@ describe("The select Wrapper: Selecting from List and Combobox", () => {
         await browser.switchToFrame(iframe);
         elem = await browser.$('[class="k-input-inner"]');
         await elem.scrollIntoView();
-        await WebListPage.findRestaurantsIn('Trinidad and Tobago');
+        await WebListPage.findRestaurantsIn('Trinidad and Tobago'); //Fail
         await browser.pause(6000);
-        await WebListPage.findRestaurantsIn('Denmark');
+        await WebListPage.findRestaurantsIn('Denmark'); //
         await browser.pause(6000);
     });
 
