@@ -729,7 +729,9 @@ export async function selectAdv(
 {
   let success: boolean = false;
   let itemValue: String = "No Item selected"
-
+  let listItems: WebdriverIO.Element[]
+  let listItem: WebdriverIO.Element
+  let textContent:string = " "
   // Empty item list - do nothing
   if (item.length === 0){
     await log(`  ERROR: ${listElement} had no list item passed.\n`)
@@ -747,7 +749,7 @@ export async function selectAdv(
 
   if (isCombobox===true) {
     //@ts-ignore
-    await listElement.doubleClick() //click({ block: 'center' })
+    await listElement.doubleClick() //Selects all the text in the combobox
 
     // Allow user to pass a number like 3 for March
     if (typeof (item) === 'number') {
@@ -766,9 +768,44 @@ export async function selectAdv(
       }
     } else {
         // Click the item
+        //await browser.keys(`${item}`)
+        
+        // Clear the field.
+        await listElement.click() // Select All Clear Mac and Windows
+        await browser.keys(['Home']);
+        await browser.keys(['Shift','End']);
+        await browser.keys(['Delete']); 
         await browser.keys(`${item}`)
-        await browser.pause(3000);
-        await browser.keys('Enter');
+1
+        await browser.pause(3000); // Demo 
+
+        // Find the item in the list
+        try {
+          //listItem = await browser.$(`//li/*[contains(text(),'${item}')])`)
+
+          listItems = await browser.$$(`//li/*`)
+          
+          for (const listItem of listItems) {
+            if ((await listItem.getText()).includes(item)) // Found the element
+            break;
+          }
+
+          clickAdv(listItem)          
+        } catch (error) {
+          
+          // no such item
+          listItems = await browser.$$(`//li/*`)
+          for (const listItem of listItems) {
+             textContent += await listItem.getText() + " | "; // Get the text content of the element
+
+        }
+
+          await log(`  ERROR: "${item}" was not found in combobox: \n ${textContent}`)
+
+        }
+        
+         
+        //await browser.keys('Enter');
 
     }
 
