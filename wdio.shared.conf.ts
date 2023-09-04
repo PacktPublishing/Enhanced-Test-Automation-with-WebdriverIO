@@ -11,21 +11,36 @@ console.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`);
 
 const addToElement = true
 
-const environments = {
-    development: {
-        baseUrl: 'http://localhost', // Your development server URL
-    },
-    test: {
-        baseUrl: 'http://localhost', // Your test environment URL
-    },
-    production: {
-        baseUrl: 'http://localhost', // Your production environment URL
-    },
-    lambdatest: {
-        baseUrl: 'http://localhost',
-    },
-
+/**
+ *  The baseUrl will only be used if in your script you don't specify a url
+ *  loadPage('/')
+ *  if you specify on then its ignored
+ *  loadPage('https://dckduckgo.com')
+ */
+let baseUrl: string
+let env = process.env.Env
+let urls = {
+    uat: 'https://the-internet.herokuapp.com',
+    dev: 'https://google.com',
+    prod: 'https://duckduckgo.com'
 }
+baseUrl = urls[env]
+
+// export const environments = {
+//     development: {
+//         baseUrl: 'https://google.com', // Your development server URL
+//     },
+//     test: {
+//         baseUrl: 'https://the-internet.herokuapp.com', // Your test environment URL
+//     },
+//     production: {
+//         baseUrl: '', // Your production environment URL
+//     },
+//     lambdatest: {
+//         baseUrl: '',
+//     },
+// }
+// let environment = environments['test'];
 
 export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     //
@@ -152,7 +167,9 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
     // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
     // gets prepended directly.
-    baseUrl: environments[process.env.BASE_ENV].baseUrl,
+    // baseUrl: environments[process.env.BASE_ENV].baseUrl,
+    baseUrl: baseUrl,
+    // baseUrl: env,
     //
     // Default timeout for all waitFor* commands.
     waitforTimeout: 10000,
