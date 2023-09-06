@@ -11,7 +11,8 @@ export default class Page {
     */
     public async open (path: string) {
         global.log(`Opening browser to https://the-internet.herokuapp.com/${path}`)
-        return await browser.url(`https://the-internet.herokuapp.com/${path}`)
+        // return await browser.url(`https://the-internet.herokuapp.com/${path}`)
+        return await browser.url(`/${path}`)
     }
 
     public async getUrlAdv (path: string) {
