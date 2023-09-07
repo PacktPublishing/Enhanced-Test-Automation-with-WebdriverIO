@@ -15,14 +15,14 @@ const addToElement = true
  *  The baseUrl will only be used if you don't specify a url in your script
  *  loadPage('/')
  *  if you specify on then its ignored
- *  loadPage('https://dckduckgo.com')
+ *  loadPage('https://candymapper.com/')
  */
 let baseUrl: string
 let env = process.env.Env
 let urls = {
     uat: 'https://the-internet.herokuapp.com',
-    dev: 'https://google.com',
-    prod: 'https://duckduckgo.com'
+    dev: 'https://candymapperr2.com/',
+    prod: 'https://candymapper.com/'
 }
 baseUrl = urls[env]
 
