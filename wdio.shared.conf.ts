@@ -15,7 +15,7 @@ const addToElement = true
  *  The baseUrl will only be used if you don't specify a url in your script
  *  loadPage('/')
  *  if you specify on then its ignored
- *  loadPage('https://dckduckgo.com')
+ *  loadPage('https://candymapper.com/')
  */
 let baseUrl: string
 let env = process.env.Env
