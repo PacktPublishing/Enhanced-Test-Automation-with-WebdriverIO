@@ -5,7 +5,10 @@ export const config: WebdriverIO.Config = {
     ...{
         capabilities: [
             {
-                browserName: 'firefox'
+                browserName: 'chrome'
+            },
+            {
+                browserName: 'safari'
             }
         ]
     }

@@ -20,9 +20,9 @@ const addToElement = true
 let baseUrl: string
 let env = process.env.Env
 let urls = {
-    uat: 'https://the-internet.herokuapp.com',
-    dev: 'https://google.com',
-    prod: 'https://duckduckgo.com'
+    uat: 'https://the-internet.herokuapp.com', // 
+    dev: 'https://candymapperr2.com', // windows machine specific run
+    prod: 'https://candymapper.com' // mac machine specific run
 }
 baseUrl = urls[env]
 

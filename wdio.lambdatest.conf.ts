@@ -19,7 +19,7 @@ export const config = {
         capabilities: [
             {
                 "LT:Options": {
-                    browserName: "firefox",
+                    browserName: "Edge",
                     version: "latest",
                     name: "Test WebdriverIO Single",
                     build: "WebDriver Selenium Sample"
@@ -28,6 +28,22 @@ export const config = {
             {
                 "LT:Options": {
                     browserName: "chrome",
+                    version: "latest",
+                    name: "Test WebdriverIO Single",
+                    build: "WebDriver Selenium Sample"
+                }
+            },
+            {
+                "LT:Options": {
+                    browserName: "safari",
+                    version: "latest",
+                    name: "Test WebdriverIO Single",
+                    build: "WebDriver Selenium Sample"
+                }
+            },
+            {
+                "LT:Options": {
+                    browserName: "firefox",
                     version: "latest",
                     name: "Test WebdriverIO Single",
                     build: "WebDriver Selenium Sample"
