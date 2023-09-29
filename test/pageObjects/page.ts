@@ -1,3 +1,4 @@
+
 export default class Page {
     /**
     * Opens a sub page of the page or the url provided

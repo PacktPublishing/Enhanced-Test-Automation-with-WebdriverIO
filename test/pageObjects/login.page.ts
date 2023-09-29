@@ -1,3 +1,4 @@
+import allureReporter from '@wdio/allure-reporter';
 import * as helpers from "../../helpers/helpers";
 import Page from "./page";
 
@@ -121,6 +122,7 @@ class LoginPage extends Page {
      * overwrite specific options to adapt it to page object
      */
     public open(path: string = "login") {
+        allureReporter.addAttachment('Navigating to url', path, 'string');
         return super.open(path);
     }
 }
