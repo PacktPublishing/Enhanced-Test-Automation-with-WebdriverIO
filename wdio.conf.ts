@@ -1,22 +1,10 @@
-import type { Options } from '@wdio/types';
-import { ASB } from './helpers/globalObjects';
-
-const DEBUG =
-    process.env.DEBUG === undefined ? true : process.env.DEBUG === `true`;
-console.log(`DEBUG: ${DEBUG}`);
-
-let timeout = DEBUG === true ? 1_000_000 : 10_000;
-console.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`);
-
-const addToElement = true //
-//const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
-// Chapter 4 - Automation SwitchBoard
-
-export const config = {
+import type { Options } from '@wdio/types'
+export const config: Options.Testrunner = {
     //
     // ====================
     // Runner Configuration
     // ====================
+    // WebdriverIO supports running e2e tests as well as unit and component tests.
     runner: 'local',
     //
     // =====================
@@ -33,24 +21,18 @@ export const config = {
 
     autoCompileOpts: {
         autoCompile: true,
-        // see https://github.com/TypeStrong/ts-node#cli-and-programmatic-options
-        // for all available options
         tsNodeOpts: {
-            transpileOnly: true,
-            // project: "./tsconfig.json",
-        },
-        // tsconfig-paths is only used if "tsConfigPathsOpts" are provided, if you
-        // do please make sure "tsconfig-paths" is installed as dependency
-        // tsConfigPathsOpts: {
-        //     baseUrl: './'
-        // }
+            project: './tsconfig.json',
+            transpileOnly: true
+        }
     },
+    
     //
     // ==================
     // Specify Test Files
     // ==================
     // Define which test specs should run. The pattern is relative to the directory
-    // from which `wdio` was called.
+    // of the configuration file being run.
     //
     // The specs are defined as an array of spec files (optionally using wildcards
     // that will be expanded). The test for each spec file will be run in a separate
@@ -61,7 +43,9 @@ export const config = {
     // then the current working directory is where your `package.json` resides, so `wdio`
     // will be called from there.
     //
-    specs: ["./test/specs/**/*.ts"],
+    specs: [
+        './test/specs/**/*.ts'
+    ],
     // Patterns to exclude.
     exclude: [
         // 'path/to/excluded/files'
@@ -93,16 +77,9 @@ export const config = {
     // If you set to `false`, you should import from `@wdio/globals`. Note: WebdriverIO doesn't
     // handle injection of test framework specific globals.
     capabilities: [{
-        // maxInstances can get overwritten per capability. So if you have an in-house Selenium
-        // grid with only 5 firefox instances available you can make sure that not more than
-        // 5 instances get started at a time.
-        browserName: 'chrome',
-        // or "firefox", "microsoftedge", "safari"
-        'goog:chromeOptions': {
-            args: ['--disable-gpu', '--enable-automation', '--disable-infobars', '--disable-notifications']
-        },
-        acceptInsecureCerts: true,
+        browserName: 'chrome'
     }],
+
     //
     // ===================
     // Test Configurations
@@ -110,7 +87,7 @@ export const config = {
     // Define all options that are relevant for the WebdriverIO instance here
     //
     // Level of logging verbosity: trace | debug | info | warn | error | silent
-    logLevel: "warn",
+    logLevel: 'info',
     //
     // Set specific log levels per logger
     // loggers:
@@ -134,7 +111,7 @@ export const config = {
     // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
     // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
     // gets prepended directly.
-    baseUrl: "http://localhost",
+    baseUrl: 'http://localhost',
     //
     // Default timeout for all waitFor* commands.
     waitforTimeout: 10000,
@@ -150,15 +127,15 @@ export const config = {
     // Services take over a specific job you don't want to take care of. They enhance
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
-    services: ["chromedriver"],
-
+    // services: [],
+    //
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
     // see also: https://webdriver.io/docs/frameworks
     //
     // Make sure you have the wdio adapter package for the specific framework installed
     // before running any tests.
-    framework: "jasmine",
+    framework: 'jasmine',
     //
     // The number of times to retry the entire specfile when it fails as a whole
     // specFileRetries: 1,
@@ -166,28 +143,29 @@ export const config = {
     // Delay in seconds between the spec file retry attempts
     // specFileRetriesDelay: 0,
     //
-    // Whether or not retried specfiles should be retried immediately or deferred to the end of the queue
+    // Whether or not retried spec files should be retried immediately or deferred to the end of the queue
     // specFileRetriesDeferred: false,
     //
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
-    reporters: ["spec", ["allure", { outputDir: "reports/allure-results" }]],
+    reporters: ['spec'],
 
+    
     //
     // Options to be passed to Jasmine.
     jasmineOpts: {
-        defaultTimeoutInterval: timeout,
-        expectationResultHandler: async function (passed, assertion) {
-            if (passed) {
-                return;
-            }
-            await browser.saveScreenshot(
-                `reports/assertionError_${assertion.error}.png`
-            );
-        },
+        // Jasmine default timeout
+        defaultTimeoutInterval: 60000,
+        //
+        // The Jasmine framework allows interception of each assertion in order to log the state of the application
+        // or website depending on the result. For example, it is pretty handy to take a screenshot every time
+        // an assertion fails.
+        expectationResultHandler: function(passed, assertion) {
+            // do something
+        }
     },
-
+    
     //
     // =====
     // Hooks
@@ -198,7 +176,7 @@ export const config = {
     // resolved to continue.
     /**
      * Gets executed once before all workers get launched.
-     * @param {Object} config wdio configuration object
+     * @param {object} config wdio configuration object
      * @param {Array.<Object>} capabilities list of capabilities details
      */
     // onPrepare: function (config, capabilities) {
@@ -206,171 +184,65 @@ export const config = {
     /**
      * Gets executed before a worker process is spawned and can be used to initialise specific service
      * for that worker as well as modify runtime environments in an async fashion.
-     * @param  {String} cid      capability id (e.g 0-0)
-     * @param  {[type]} caps     object containing capabilities for session that will be spawn in the worker
-     * @param  {[type]} specs    specs to be run in the worker process
-     * @param  {[type]} args     object that will be merged with the main configuration once worker is initialized
-     * @param  {[type]} execArgv list of string arguments passed to the worker process
+     * @param  {string} cid      capability id (e.g 0-0)
+     * @param  {object} caps     object containing capabilities for session that will be spawn in the worker
+     * @param  {object} specs    specs to be run in the worker process
+     * @param  {object} args     object that will be merged with the main configuration once worker is initialized
+     * @param  {object} execArgv list of string arguments passed to the worker process
      */
     // onWorkerStart: function (cid, caps, specs, args, execArgv) {
     // },
     /**
      * Gets executed just after a worker process has exited.
-     * @param  {String} cid      capability id (e.g 0-0)
-     * @param  {Number} exitCode 0 - success, 1 - fail
-     * @param  {[type]} specs    specs to be run in the worker process
-     * @param  {Number} retries  number of retries used
+     * @param  {string} cid      capability id (e.g 0-0)
+     * @param  {number} exitCode 0 - success, 1 - fail
+     * @param  {object} specs    specs to be run in the worker process
+     * @param  {number} retries  number of retries used
      */
     // onWorkerEnd: function (cid, exitCode, specs, retries) {
     // },
     /**
      * Gets executed just before initialising the webdriver session and test framework. It allows you
      * to manipulate configurations depending on the capability or spec.
-     * @param {Object} config wdio configuration object
+     * @param {object} config wdio configuration object
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {Array.<String>} specs List of spec file paths that are to be run
-     * @param {String} cid worker id (e.g. 0-0)
+     * @param {string} cid worker id (e.g. 0-0)
      */
     // beforeSession: function (config, capabilities, specs, cid) {
     // },
-
-    /**
-        * Gets executed just before initialising the webdriver session and test framework. It allows you
-        * to manipulate configurations depending on the capability or spec.
-        * @param {commandName} wdio command
-        * @param {args} arguments passed to the command
-        */
-    beforeCommand: function (commandName, args) {
-        // Chapter 5 - Keep the current object locator for future manipulation
-        let elementSelectorType:String
-        let elementSelector: String
-        let paddedCommandName: String = commandName.padEnd(12, ' ');         
-        switch (commandName) {
-            case 'findElements':
-            case 'findElement':
-                // Pass the class and locator to the Automation Switchboard  
-                elementSelectorType = args[0];
-                elementSelector = args[1];
-                global.log(`beforeCommand ${paddedCommandName}: ASB.get("selectorType") will return '${elementSelectorType}'`)
-                global.log(`beforeCommand ${paddedCommandName}: ASB.get("selector") will return '${elementSelector}'`)
-                ASB.set("selectorType", elementSelectorType)
-                ASB.set("selector", elementSelector)
-                break;
-
-            default:
-                // X-Ray Vision - see all the commands that get executed 
-                // Uncomment to see all commands executed, but logging will mpact execution run time.
-                // global.log(`beforeCommand ${commandName}`);
-                break;
-        }
-    
-    },
-
     /**
      * Gets executed before test execution begins. At this point you can access to all global
      * variables like `browser`. It is the perfect place to define custom commands.
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {Array.<String>} specs        List of spec file paths that are to be run
-     * @param {Object}         browser      instance of created browser/device session
+     * @param {object}         browser      instance of created browser/device session
      */
-    before: function (capabilities, specs) {
-        //Set
-        //helpers.log(`process.env.DEBUG: ${process.env.DEBUG}`) // ---> process.env.DEBUG: -LH:*
-
-        ASB.set("DEBUG", (process.env.DEBUG === undefined) ? false : (process.env.DEBUG === `true`))
-        ASB.set("spinnerTimeoutInSeconds", 30)
-
-        global.log(`DEBUG: ${ASB.get("DEBUG")}`)
-
-        ASB.set("timeout", (ASB.get("DEBUG") === true) ? 1_000_000 : 10_000)
-        let timeout = ASB.get("timeout")
-
-        global.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`)
-
-        // Samples of overidding and adding custom methods.
-
-
-
-        // browser.addCommand("clickAdv", async function ()
-        // {
-        //     // `this` is return value of $(selector)
-        //     //await this.waitForDisplayed()
-        //     helpers.log(`Clicking ${this.selector} ...`)
-        //     let locator = "ELEMENT NOT FOUND"
-
-        //     try
-        //     {
-        //         if (ASB.get(`alreadyFailed`) === true)
-        //         {
-        //             helpers.log(`  SKIPPED: browser.clickAdv(${this.selector})`);
-
-        //         } else
-        //         {
-        //             await this.click({ block: 'center' })
-        //             helpers.log(`  button clicked.`)
-        //             await helpers.pageSync()
-        //         }
-        //     } catch (error)
-        //     {
-        //         helpers.log(`Element was not clicked.\n${error}`)
-        //         //Skip any remaining steps
-        //         ASB.set(`alreadyFailed`, false)
-        //     }
-        // }, addToElement)
-
-        // Override the default click command
-
-        // browser.overwriteCommand('click', async (element: ElementFinder) => {
-
-        //     // Do something before clicking the element
-        //     console.log('Overwrite the intrinsic click command...');
-
-        //     // Perform the click action
-        //     try
-        //     {
-        //         helpers.log(`Clicking ${this.selector} ...`)
-        //         await this.click({ block: 'center' })
-
-        //         await helpers.pageSync()
-        //         helpers.log(`done`)
-        //     } catch (error)
-        //     {
-        //         helpers.log(`Element was not clicked.\n${error}`)
-        //     }
-
-        // })
-    },
+    // before: function (capabilities, specs) {
+    // },
     /**
      * Runs before a WebdriverIO command gets executed.
-     * @param {String} commandName hook command name
+     * @param {string} commandName hook command name
      * @param {Array} args arguments that command would receive
      */
     // beforeCommand: function (commandName, args) {
     // },
     /**
      * Hook that gets executed before the suite starts
-     * @param {Object} suite suite details
+     * @param {object} suite suite details
      */
     // beforeSuite: function (suite) {
     // },
     /**
      * Function to be executed before a test (in Mocha/Jasmine) starts.
      */
-    beforeTest: async function (test, context) {
-        //Option #1: Run browser full screen on dual monitors
-        //browser.maximizeWindow();
-
-        // Option #2: Run browser 3/4 screen on single monitor
-        // Allow VS Code Terminal visible on bottom of the screen
-        await global.log(`Changing window size`);
-        await browser.setWindowSize(1920, 770);
-    },
+    // beforeTest: function (test, context) {
+    // },
     /**
      * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
      * beforeEach in Mocha)
      */
     // beforeHook: function (test, context) {
-    //   // Create custom commands here
     // },
     /**
      * Hook that gets executed _after_ a hook within the suite starts (e.g. runs after calling
@@ -380,94 +252,65 @@ export const config = {
     // },
     /**
      * Function to be executed after a test (in Mocha/Jasmine only)
-     * @param {Object}  test             test object
-     * @param {Object}  context          scope object the test was executed with
+     * @param {object}  test             test object
+     * @param {object}  context          scope object the test was executed with
      * @param {Error}   result.error     error object in case the test fails, otherwise `undefined`
-     * @param {Any}     result.result    return object of test function
-     * @param {Number}  result.duration  duration of test
-     * @param {Boolean} result.passed    true if test has passed, otherwise false
-     * @param {Object}  result.retries   informations to spec related retries, e.g. `{ attempts: 0, limit: 0 }`
+     * @param {*}       result.result    return object of test function
+     * @param {number}  result.duration  duration of test
+     * @param {boolean} result.passed    true if test has passed, otherwise false
+     * @param {object}  result.retries   information about spec related retries, e.g. `{ attempts: 0, limit: 0 }`
      */
-    afterTest: async function (
-        test,
-        context,
-        { error, result, duration, passed, retries }
-    ) {
-        if (!passed) {
-            await browser.takeScreenshot();
-        }
-    },
+    // afterTest: function(test, context, { error, result, duration, passed, retries }) {
+    // },
+
+
     /**
      * Hook that gets executed after the suite has ended
-     * @param {Object} suite suite details
+     * @param {object} suite suite details
      */
-    afterSuite: function (suite) {
-        global.log("AFTER SUITE")
-    },
+    // afterSuite: function (suite) {
+    // },
     /**
      * Runs after a WebdriverIO command gets executed
-     * @param {String} commandName hook command name
+     * @param {string} commandName hook command name
      * @param {Array} args arguments that command would receive
-     * @param {Number} result 0 - command success, 1 - command error
-     * @param {Object} error error object if any
+     * @param {number} result 0 - command success, 1 - command error
+     * @param {object} error error object if any
      */
     // afterCommand: function (commandName, args, result, error) {
     // },
     /**
      * Gets executed after all tests are done. You still have access to all global variables from
      * the test.
-     * @param {Number} result 0 - test pass, 1 - test fail
+     * @param {number} result 0 - test pass, 1 - test fail
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {Array.<String>} specs List of spec file paths that ran
      */
-    after: function (result, capabilities, specs) {
-        global.log("AFTER")
-    },
+    // after: function (result, capabilities, specs) {
+    // },
     /**
      * Gets executed right after terminating the webdriver session.
-     * @param {Object} config wdio configuration object
+     * @param {object} config wdio configuration object
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {Array.<String>} specs List of spec file paths that ran
      */
-    afterSession: function (config, capabilities, specs) {
-        global.log("AFTER SESSION")
-    },
+    // afterSession: function (config, capabilities, specs) {
+    // },
     /**
      * Gets executed after all workers got shut down and the process is about to exit. An error
      * thrown in the onComplete hook will result in the test run failing.
-     * @param {Object} exitCode 0 - success, 1 - fail
-     * @param {Object} config wdio configuration object
+     * @param {object} exitCode 0 - success, 1 - fail
+     * @param {object} config wdio configuration object
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {<Object>} results object containing test results
      */
-    onComplete: function (exitCode, config, capabilities, results) {
-        global.log("ON COMPLETE")
-        if (ASB.get("alreadyFailed")) {
-            throw new Error('Test failed');
-        }
-
-    },
+    // onComplete: function(exitCode, config, capabilities, results) {
+    // },
     /**
-     * Gets executed when a refresh happens.
-     * @param {String} oldSessionId session ID of the old session
-     * @param {String} newSessionId session ID of the new session
-     */
+    * Gets executed when a refresh happens.
+    * @param {string} oldSessionId session ID of the old session
+    * @param {string} newSessionId session ID of the new session
+    */
     // onReload: function(oldSessionId, newSessionId) {
     // }
-};
-
-/**
- * log wrapper
- * @param text to be output to the console window
- */
-global.log = async (text: any) => {
-    if (text) {
-        //truthy value check
-        if (text === Promise) {
-            console.log(`--->     WARN: Log was passed a Promise object`);
-            console.trace();
-        } else {
-            console.log(`---> ${text}`);
-        }
-    }
-};
+}
