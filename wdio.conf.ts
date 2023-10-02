@@ -85,7 +85,7 @@ export const config = {
     // Define all options that are relevant for the WebdriverIO instance here
     //
     // Level of logging verbosity: trace | debug | info | warn | error | silent
-    logLevel: 'info',
+    logLevel: 'warn',
     //
     // Set specific log levels per logger
     // loggers:
@@ -162,16 +162,18 @@ export const config = {
         // The Jasmine framework allows interception of each assertion in order to log the state of the application or website depending on the result. For example, it is pretty handy to take a screenshot every time
         // an assertion fails.
         expectationResultHandler: async function (passed, assertion) {
+            /**
+             * only take screenshot if assertion failed
+             */
             if (!passed) {
                 console.log (`Jasmine screenshot of ${assertion}.`)
                 console.log (`Waiting for ${timeout/60000} min...`)
-                await browser.saveScreenshot(
-                    `./reports/assertionError_${assertion.error.message}.png`
-                );
+                // await browser.takeScreenshot();
+                await browser.saveScreenshot(`./reports/assertionError_${assertion.error}.png`)
                 await browser.pause(timeout);
                 console.log(`DEBUG wait done`);
             }
-        },
+        }
     },
     //
     // =====

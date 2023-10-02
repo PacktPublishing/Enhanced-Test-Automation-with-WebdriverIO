@@ -4,8 +4,6 @@ import LandingPage from "../pageobjects/landing.page";
 import * as helpers from "../../helpers/helpers";
 import dynamicLoadingPage from "../pageobjects/dynamicLoading.page";
 
-import allureReporter from "@wdio/allure-reporter";
-
 describe("Chapter 8: The expect / assert / softAssert", () => {
 
     it("Chapter 8: using expectAdv (softAssert) to validate the assertion failure", async () => {
