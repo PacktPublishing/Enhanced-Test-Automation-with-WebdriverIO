@@ -20,6 +20,7 @@
     },
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
+        "report": "node_modules/.bin/allure generate --clean ./reports/allure-results && allure open -p 5050",
         "wdio": "wdio run wdio.conf.ts",
         "ch2": "yarn wdio --spec ./test/specs/ch2.ts",
         "ch3": "yarn wdio --spec ./test/specs/ch3.ts",
