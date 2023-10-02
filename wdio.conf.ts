@@ -150,7 +150,7 @@ export const config = {
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
     reporters: ['spec'],
-    // reporters: ['spec',['allure', {outputDir: './allure-results'}]],
+    // reporters: ['spec',['allure', {outputDir: './reports/allure-results'}]],
 
     //
     // Options to be passed to Jasmine.
@@ -164,7 +164,7 @@ export const config = {
                 return;
             }
             await browser.saveScreenshot(
-                `assertionError_${assertion.error.message}.png`
+                `./reports/assertionError_${assertion.error.message}.png`
             );
         },
     },
