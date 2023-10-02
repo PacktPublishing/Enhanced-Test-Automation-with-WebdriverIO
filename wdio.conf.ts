@@ -1,5 +1,3 @@
-// import type { Options } from '@wdio/types';
-// import {browser} from '@wdio/globals';
 import { ASB } from './helpers/globalObjects';
 
 const DEBUG =
@@ -150,8 +148,12 @@ export const config = {
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
     // reporters: ['spec'],
-    reporters: ['spec',['allure', {outputDir: './reports/allure-results'}]],
+    reporters: ['spec',['allure', {
+        outputDir: './reports/allure-results',
+        disableWebdriverStepsReporting: true,
+        disableWebdriverScreenshotsReporting: true,
 
+    }]],
     //
     // Options to be passed to Jasmine.
     jasmineOpts: {
@@ -160,15 +162,17 @@ export const config = {
         // The Jasmine framework allows interception of each assertion in order to log the state of the application or website depending on the result. For example, it is pretty handy to take a screenshot every time
         // an assertion fails.
         expectationResultHandler: async function (passed, assertion) {
-            if (passed) {
-                return;
+            if (!passed) {
+                console.log (`Jasmine screenshot of ${assertion}.`)
+                console.log (`Waiting for ${timeout/60000} min...`)
+                await browser.saveScreenshot(
+                    `./reports/assertionError_${assertion.error.message}.png`
+                );
+                await browser.pause(timeout);
+                console.log(`DEBUG wait done`);
             }
-            await browser.saveScreenshot(
-                `./reports/assertionError_${assertion.error.message}.png`
-            );
         },
     },
-
     //
     // =====
     // Hooks
@@ -215,6 +219,56 @@ export const config = {
     // beforeSession: function (config, capabilities, specs, cid) {
     // },
     /**
+     * Gets executed just before initialising the webdriver session and test framework. It allows you
+     * to manipulate configurations depending on the capability or spec.
+     * Runs before a WebdriverIO command gets executed.
+     * @param {string} commandName hook command name
+     * @param {Array} args arguments that command would receive
+     */
+    beforeCommand: function (commandName, args) {
+        // Chapter 5 - Keep the current object locator for future manipulation
+        let elementSelectorType: String
+        let elementSelector: String
+        let paddedCommandName: String = commandName.padEnd(12, ' ');
+        if (commandName === '$') {
+            const selector = args[0];
+            // Modify the selector or add additional functionality as needed
+            // For example, you can add a prefix to the selector
+            global.log (`BEFORE $ COMMAND: Selector ${selector} sent to ABS(elementSelector)`);
+            // Pass the locator to the switchboard
+            ASB.set("elementSelector", selector)
+        }
+
+        if (commandName === '$$') {
+            const selector = args[0];
+            // Modify the selector or add additional functionality as needed
+            // For example, you can add a prefix to the selector
+            global.log (`BEFORE $$ COMMAND: Selector ${selector} sent to ABS(elementsSelector)`);
+            // Pass the locator to the switchboard
+            ASB.set("elementsSelector", selector)
+        }
+
+        //   switch (commandName) {
+        //   case 'findElements':
+        //   case 'findElement':
+        //     // Pass the class and locator to the Automation Switchboard
+        //     elementSelectorType = args[0];
+        //     elementSelector = args[1];
+        //     global.log(`beforeCommand ${paddedCommandName}: ASB.get("selectorType") will return '${elementSelectorType}'`)
+        //     global.log(`beforeCommand ${paddedCommandName}: ASB.get("selector") will return '${elementSelector}'`)
+        //     ASB.set("selectorType", elementSelectorType)
+        //     ASB.set("selector", elementSelector)
+        //     break;
+        //
+        //   default:
+        //     // X-Ray Vision - see all the commands that get executed
+        //     // Uncomment to see all commands executed, but logging will mpact execution run time.
+        //     // global.log(`beforeCommand ${commandName}`);
+        //     break;
+        // }
+
+    },
+    /**
      * Gets executed before test execution begins. At this point you can access to all global
      * variables like `browser`. It is the perfect place to define custom commands.
      * @param {Array.<Object>} capabilities list of capabilities details
@@ -234,38 +288,6 @@ export const config = {
       let timeout = ASB.get("timeout")
 
       global.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`)
-
-    },
-    /**
-     * Gets executed just before initialising the webdriver session and test framework. It allows you
-     * to manipulate configurations depending on the capability or spec.
-     * Runs before a WebdriverIO command gets executed.
-     * @param {string} commandName hook command name
-     * @param {Array} args arguments that command would receive
-     */
-    beforeCommand: function (commandName, args) {
-      // Chapter 5 - Keep the current object locator for future manipulation
-      let elementSelectorType: String
-      let elementSelector: String
-      let paddedCommandName: String = commandName.padEnd(12, ' ');
-      switch (commandName) {
-        case 'findElements':
-        case 'findElement':
-          // Pass the class and locator to the Automation Switchboard
-          elementSelectorType = args[0];
-          elementSelector = args[1];
-          global.log(`beforeCommand ${paddedCommandName}: ASB.get("selectorType") will return '${elementSelectorType}'`)
-          global.log(`beforeCommand ${paddedCommandName}: ASB.get("selector") will return '${elementSelector}'`)
-          ASB.set("selectorType", elementSelectorType)
-          ASB.set("selector", elementSelector)
-          break;
-
-        default:
-          // X-Ray Vision - see all the commands that get executed
-          // Uncomment to see all commands executed, but logging will mpact execution run time.
-          // global.log(`beforeCommand ${commandName}`);
-          break;
-      }
 
     },
     /**

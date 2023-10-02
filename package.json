@@ -26,7 +26,8 @@
         "ch4": "yarn wdio --spec ./test/specs/ch4.ts",
         "ch5": "yarn wdio --spec ./test/specs/ch5.ts",
         "ch6": "yarn wdio --spec ./test/specs/ch6.ts",
-        "ch7": "yarn wdio --spec ./test/specs/ch7.ts"
+        "ch7": "yarn wdio --spec ./test/specs/ch7.ts",
+        "ch8": "yarn wdio --spec ./test/specs/ch8.ts"
     },
     "dependencies": {
         "@types/jasmine": "^4.3.6",
@@ -36,6 +37,7 @@
         "@wdio/jasmine-framework": "^8.11.2",
         "@wdio/local-runner": "^8.11.2",
         "@wdio/spec-reporter": "^8.11.2",
+        "expect-webdriverio": "^4.4.0",
         "jasmine": "^5.0.2",
         "ts-node": "^10.9.1",
         "typescript": "^5.1.6"

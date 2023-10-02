@@ -24,7 +24,7 @@ export async function clickAdv(element: WebdriverIO.Element) {
 
         if (!(await isElementInViewport(element))) {
             await scrollIntoView(element);
-            await waitForElementToStopMoving(element);
+            await waitForElementToStopMoving(element, 1000);
         }
         await highlightOn(element);
         //@ts-ignore
@@ -42,19 +42,6 @@ export async function clickAdv(element: WebdriverIO.Element) {
     return success;
 }
 
-async function findElement(selector: string): Promise<WebdriverIO.Element> {
-    try {
-        return await browser.$(selector);
-    } catch (error: any) {
-        if (error.message.includes("stale")) {
-            // element is stale, so we need to recreate it
-            return await browser.$(selector);
-        } else {
-            throw error;
-        }
-    }
-}
-
 export async function getValidElement(
     element: WebdriverIO.Element,
     elementType: string
@@ -68,7 +55,6 @@ export async function getValidElement(
     let elementText: string = "";
 
     try {
-
         elements = await $$(selector);
 
         if (elements.length === 0) {
@@ -123,7 +109,6 @@ export async function getValidElement(
                     found = false;
                     break;
             }
-
             newElement = await $(newSelector);
             found = await isElementVisible(newElement);
             // Successful class switch
@@ -167,11 +152,11 @@ async function getElementType(element: WebdriverIO.Element) {
  */
 
 async function getFieldName(element: WebdriverIO.Element) {
-// Add any custom properties here, e.g.: 
-// const customPropertyName = await element.getAttribute("aria-label"); 
-// if (customPropertyName) return custom; 
+// Add any custom properties here, e.g.:
+// const customPropertyName = await element.getAttribute("aria-label");
+// if (customPropertyName) return custom;
 
-// Get the 'name' property of the element 
+// Get the 'name' property of the element
     const name = await element.getAttribute("name");
     if (name) return name;
 
@@ -329,11 +314,12 @@ async function isExists(element: WebdriverIO.Element) {
     }
 }
 
-/* Console.log wrapper
-*    - Does not print if string is empty / null
-*    - Prints trace if not passed string or number
-* @param message
-*/
+/**
+ * Console.log wrapper
+ *    - Does not print if string is empty / null
+ *    - Prints trace if not passed string or number
+ * @param message
+ */
 export async function log(message: any): Promise<void> {
     try {
         if (typeof message === "string" || typeof message === "number") {
@@ -362,6 +348,13 @@ export async function log(message: any): Promise<void> {
  */
 function maskValue(str: string): string {
     return str.slice(0, 2) + str.slice(2, -2).replace(/./g, '*') + str.slice(-2);
+}
+
+function maskPassword(password: string): string {
+    return password.replace(
+        /^(.{2})(.*)(.{2})$/,
+        "$1" + "*".repeat(password.length - 4) + "$3"
+    );
 }
 
 function normalizeElementType(elementType: string) {
@@ -398,6 +391,7 @@ function normalizeElementType(elementType: string) {
  *      Minimum 25 for speed / stability balance
  */
 let LAST_URL: String = "";
+let waitforTimeout = browser.options.waitforTimeout;
 
 export async function pageSync(
     ms: number = 25,
@@ -422,9 +416,10 @@ export async function pageSync(
 
     if (skipToEnd === false) {
         LAST_URL = thisUrl;
-        const waitforTimeout = browser.options.waitforTimeout;
-        let visibleSpans: string = `div:not([style*="visibility: hidden"])`;
-        let elements: any = await $$(visibleSpans);
+        // const waitforTimeout = browser.options.waitforTimeout;
+        let visibleSpans: string = 'div:not([style*="visibility: hidden"])';
+        let elements: ElementArrayType = await $$(visibleSpans);
+
         let exit: boolean = false;
         let count: number = elements.length;
         let lastCount: number = 0;
@@ -523,7 +518,7 @@ export async function setValueAdv(
 
         if (!(await isElementInViewport(inputField))) {
             await scrollIntoView(inputField);
-            await waitForElementToStopMoving(inputField);
+            await waitForElementToStopMoving(inputField, 2000);
         }
 
         await highlightOn(inputField);
@@ -557,9 +552,6 @@ export async function setValueAdv(
         await log(
             `  ERROR: ${SELECTOR} was not populated with ${scrubbedValue}.\n       ${error.message}`
         );
-
-        // expect(`to be editable`).toEqual(SELECTOR);
-
         // Throw the error to stop the test, still masking password
         await inputField.setValue(scrubbedValue);
     }
@@ -633,8 +625,6 @@ function replaceTags(text: string) {
     return newText;
 }
 
-
-
 export async function scrollIntoView(element: WebdriverIO.Element) {
     await element.scrollIntoView({ block: "center", inline: "center" });
 }
@@ -644,16 +634,75 @@ export async function sleep(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-// Wrapper of selectByVisibleText
-export async function select(
+export async function selectAdv(
     listElement: WebdriverIO.Element,
     item: string
 ): Promise<boolean>
 {
-    //@ts-ignore
-    return await listElement.selectByVisibleText(item);
-}
+    let success: boolean = false;
+    let itemValue: String = "No Item selected"
 
+    // Empty item list - do nothing
+    if (item.length === 0){
+        await log(`  ERROR: ${listElement} had no list item passed.\n`)
+        return true;
+    }
+
+    //Get a valid list element
+    listElement = await getValidElement(listElement, "list");
+
+    // Get the name of the element
+    let listname = await getListName(await listElement);
+
+    // Comboboxes look like input fields
+    let isCombobox = listElement.selector.toString().includes("//input")
+
+    if (isCombobox) {
+        //@ts-ignore
+        await listElement.click({ block: 'center' })
+
+        // Allow user to pass a number like 3 for March
+        if (typeof (item) === 'number') {
+            // Try number select
+            const index: number = item;
+            try {
+                await (await $(`//span[normalize-space()='${item}']`)).click();
+                itemValue = await listElement.getText();
+                // Report actual item selected
+                global.log (`  Item selected: "${itemValue}"`)
+                success = true;
+            } catch (error: any) {
+                await log(`  ERROR: ${listElement} could not select "${item}" was not selected\n
+        ${error.message}`);
+            }
+        } else {
+            // Click the item
+            await (await $(`//span[normalize-space()='${item}']`)).click();
+        }
+
+    } else {
+
+        try {
+            // Get the list of options in the select element
+            const optionsList: string = await getListValues(listElement);
+            console.log(optionsList); // This will print the list of options text in the select element
+
+            if (typeof (item) === 'number') {
+                const index: number = item;
+                await (await listElement).selectByIndex(index);
+            } else {
+                await (await listElement).selectByVisibleText (item)
+            }
+            global.log (`  Item selected: "${item}"`)
+            success = true;
+        } catch (error: any) {
+            await log(`  ERROR: ${listElement} could not select "${item}"\n
+      ${error.message}`);
+        }
+
+    }
+    return success;
+}
 
 export async function waitForSpinner(): Promise<boolean> {
     let spinnerDetected: boolean = false;
@@ -690,152 +739,87 @@ export async function waitForSpinner(): Promise<boolean> {
     return spinnerDetected;
 }
 
-
-
-export async function waitForElementToStopMoving(
-    element: WebdriverIO.Element,
-    timeout: number = 1500
-): Promise<boolean> {
-    let rect = await browser.options.waitforTimeout;
-    pause(100);
-    let isMoving = rect !== (await browser.options.waitforTimeout);
-    let startTime = Date.now();
-
-    // Keep checking the element's position until it stops moving or the timeout is reached
-    while (isMoving) {
-        // If the element's position hasn't changed, it is not moving
-        if (rect === (await browser.options.waitforTimeout)) {
-            await log(`  Element is static`);
-            isMoving = false;
-        } else {
-            await log(`  Element is moving...`);
-            pause(100);
+async function findElement(selector: string): Promise<WebdriverIO.Element> {
+    try {
+        return await browser.$(selector);
+    } catch (error: unknown) {
+        if (typeof error === 'object' && error !== null && 'message' in error) {
+            const errorMessage = (error as Error).message;
+            if (errorMessage.includes('stale')) {
+                // Element is stale, so we need to recreate it
+                return await browser.$(selector);
+            }
         }
-        // If the timeout has been reached, stop the loop
-        if (Date.now() - startTime > timeout) {
-            break;
-        }
-        // Wait for a short amount of time before checking the element's position again
-        await pause(100);
+        throw error;
     }
-
-    return !isMoving;
 }
 
-export async function selectAdv(
-    listElement: WebdriverIO.Element,
-    item: string
-): Promise<boolean>
-{
-    let success: boolean = false;
-    let itemValue: String = "No Item selected"
-    let listItems: WebdriverIO.Element[]
-    let listItem: WebdriverIO.Element
-    let textContent:string = " "
-    // Empty item list - do nothing
-    if (item.length === 0){
-        await log(`  ERROR: ${listElement} had no list item passed.\n`)
-        return true;
-    }
-
-    //Get a valid list element
-    let newListElement: WebdriverIO.Element = await getValidElement(listElement, "list");
-
-    // Get the name of the element
-    //let listname = await getListName(await newListElement);
-
-    // Comboboxes look like input fields
-    let isCombobox = listElement.selector.toString().includes("//input") || listElement.selector.toString().includes("::input")
-
-    if (isCombobox===true) {
-        //@ts-ignore
-        await listElement.doubleClick() //Selects all the text in the combobox
-
-        // Allow user to pass a number like 3 for March
-        if (typeof (item) === 'number') {
-
-            // Try number select
-            const index: number = item;
-            try {
-                await (await $(`//span[normalize-space()='${item}']`)).click();
-                itemValue = await listElement.getText();
-                // Report actual item selected
-                global.log (`  Item selected: "${itemValue}"`)
-                success = true;
-            } catch (error: any) {
-                await log(`  ERROR: ${listElement} could not select "${item}" was not selected\n
-        ${error.message}`);
-            }
-        } else {
-            // Click the item
-            //await browser.keys(`${item}`)
-
-            // Clear the field.
-            await listElement.click() // Select All Clear Mac and Windows
-            await browser.keys(['Home']);
-            await browser.keys(['Shift','End']);
-            await browser.keys(['Delete']);
-            await browser.keys(`${item}`)
-            1
-            await browser.pause(3000); // Demo 
-
-            // Find the item in the list
-            try {
-                //listItem = await browser.$(`//li/*[contains(text(),'${item}')])`)
-
-                listItems = await browser.$$(`//li/*`)
-
-                for (const listItem of listItems) {
-                    if ((await listItem.getText()).includes(item)) // Found the element
-                        break;
-                }
-
-                clickAdv(listItem)
-            } catch (error) {
-
-                // no such item
-                listItems = await browser.$$(`//li/*`)
-                for (const listItem of listItems) {
-                    textContent += await listItem.getText() + " | "; // Get the text content of the element
-
-                }
-
-                await log(`  ERROR: "${item}" was not found in combobox: \n ${textContent}`)
-
-            }
-
-
-            //await browser.keys('Enter');
-
-        }
-
-    } else {
-
-        try {
-            // Get the list of options in the select element
-            const optionsList: string = await getListValues(listElement);
-            console.log(optionsList); // This will print the list of options text in the select element
-
-            if (typeof (item) === 'number') {
-                const index: number = item;
-                await (await listElement).selectByIndex(index);
-            } else {
-                await (await listElement).selectByVisibleText (item)
-            }
-            global.log (`  Item selected: "${item}"`)
-            success = true;
-        } catch (error: any) {
-            await log(`  ERROR: ${listElement} could not select "${item}"\n
-      ${error.message}`);
-        }
-
-    }
-    return success;
-}
-
-async function getListValues(selectElement:  WebdriverIO.Element
+export async function getListValues(selectElement:  WebdriverIO.Element
 ): Promise<string> {
 
     const optionElements = await (await selectElement).getText();
     return optionElements;
 }
+
+export async function waitForElementToStopMoving(element: WebdriverIO.Element, timeout: number): Promise<void> {
+
+    const initialLocation = await element.getLocation();
+
+    return new Promise((resolve, reject) => {
+        let intervalId: NodeJS.Timeout;
+
+        const checkMovement = () => {
+            element.getLocation().then((currentLocation) => {
+                if (
+                    currentLocation.x === initialLocation.x &&
+                    currentLocation.y === initialLocation.y
+                ) {
+                    clearInterval(intervalId);
+                    resolve();
+                }
+            });
+        };
+
+        intervalId = setInterval(checkMovement, 100);
+
+        setTimeout(() => {
+            clearInterval(intervalId);
+            reject(new Error(`Timeout: Element did not stop moving within ${timeout}ms`));
+        }, timeout);
+    });
+}
+
+/**
+ * This is the function for doign asserts and passing the results to the allure report
+ * @param actual
+ * @param assertionType
+ * @param expected
+ */
+export async function expectAdv(actual: any, assertionType: any, expected: unknown) {
+    const softAssert = expect;
+
+        const getAssertionType = {
+            equals: () => softAssert(actual).toEqual(expected),
+            contains: () => softAssert(actual).toContain(expected),
+            exist: () => softAssert(actual).toBeExisting(),
+            isEnabled: () => softAssert(actual).toBeEnabled(),
+            isDisabled: () => softAssert(actual).toBeDisabled(),
+            doesNotExist: () => softAssert(actual).not.toBeExisting(),
+            doesNotContain: () => softAssert(actual).not.toContain(expected),
+
+            default: () => console.info('Invalid assertion type: ===>>>> ', assertionType),
+        };
+        (getAssertionType[assertionType] || getAssertionType['default'])();
+
+        if (!getAssertionType[assertionType]) {
+            console.info('assertion type failure : ===>>>>> ', assertionType)
+            allureReporter.addAttachment('Assertion Failure: ', `Invalid Assertion Type = ${assertionType}`, 'text/plain');
+            allureReporter.addAttachment('Assertion Error: ', console.error, 'text/plain');
+        } else {
+            allureReporter.addAttachment('Assertion Passes: ', `Valid Assertion Type = ${assertionType}`, 'text/plain');
+            console.info('assertion type passed : ===>>>>> ', assertionType)
+        }
+}
+
+// For the full list of options please got to
+// https://github.com/webdriverio/expect-webdriverio/blob/main/docs/API.md
