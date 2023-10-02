@@ -22,7 +22,8 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "wdio": "wdio run wdio.conf.ts",
         "ch2": "yarn wdio --spec ./test/specs/ch2.ts",
-        "ch3": "yarn wdio --spec ./test/specs/ch3.ts"
+        "ch3": "yarn wdio --spec ./test/specs/ch3.ts",
+        "ch4": "yarn wdio --spec ./test/specs/ch4.ts"
     },
     "dependencies": {
         "@types/jasmine": "^4.3.6",
