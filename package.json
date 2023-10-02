@@ -3,7 +3,16 @@
     "version": "1.0.0",
     "description": "",
     "keywords": [],
-    "author": "Paul Grossman",
+    "authors": [
+        {
+            "name": "Paul Grossman",
+            "github": "https://github.com/darkartswizard"
+        },
+        {
+            "name": "Larry Goddard",
+            "github": "https://github.com/klassijs"
+        }
+    ],
     "license": "ISC",
     "engines": {
         "node": ">=18",
@@ -12,7 +21,8 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "wdio": "wdio run wdio.conf.ts",
-        "ch2": "yarn wdio --spec ./test/specs/ch2.ts"
+        "ch2": "yarn wdio --spec ./test/specs/ch2.ts",
+        "ch3": "yarn wdio --spec ./test/specs/ch3.ts"
     },
     "dependencies": {
         "@types/jasmine": "^4.3.6",

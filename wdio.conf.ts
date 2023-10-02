@@ -1,5 +1,7 @@
-import type { Options } from '@wdio/types'
-export const config: Options.Testrunner = {
+// import type { Options } from '@wdio/types';
+// import {browser} from '@wdio/globals';
+
+export const config = {
     //
     // ====================
     // Runner Configuration
@@ -13,7 +15,7 @@ export const config: Options.Testrunner = {
             transpileOnly: true
         }
     },
-    
+
     //
     // ==================
     // Specify Test Files
@@ -60,7 +62,12 @@ export const config: Options.Testrunner = {
     // https://saucelabs.com/platform/platform-configurator
     //
     capabilities: [{
-        browserName: 'chrome'
+        // capabilities for local browser web tests
+        browserName: 'chrome', // or "firefox", "microsoftedge", "safari"
+        'goog:chromeOptions': {
+            args: ['--disable-gpu', '--enable-automation', '--disable-infobars', '--disable-notifications']
+        },
+        acceptInsecureCerts: true,
     }],
 
     //
@@ -133,22 +140,25 @@ export const config: Options.Testrunner = {
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
     reporters: ['spec'],
+    // reporters: ['spec',['allure', {outputDir: './allure-results'}]],
 
-    
     //
     // Options to be passed to Jasmine.
     jasmineOpts: {
         // Jasmine default timeout
         defaultTimeoutInterval: 60000,
-        //
-        // The Jasmine framework allows interception of each assertion in order to log the state of the application
-        // or website depending on the result. For example, it is pretty handy to take a screenshot every time
+        // The Jasmine framework allows interception of each assertion in order to log the state of the application or website depending on the result. For example, it is pretty handy to take a screenshot every time
         // an assertion fails.
-        // expectationResultHandler: function(passed, assertion) {
-        //     // do something
-        // }
+        // expectationResultHandler: function (passed, assertion) {
+        //     if (passed) {
+        //         return;
+        //     }
+        //     await browser.saveScreenshot(
+        //         `assertionError_${assertion.error.message}.png`
+        //     );
+        // },
     },
-    
+
     //
     // =====
     // Hooks
@@ -287,13 +297,34 @@ export const config: Options.Testrunner = {
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {<Object>} results object containing test results
      */
-    // onComplete: function(exitCode, config, capabilities, results) {
+    // onComplete: function (exitCode, config, capabilities, results) {
+    //     global.log("ON COMPLETE");
+    //     if (ASB.get("alreadyFailed")) {
+    //         throw new Error('Test failed');
+    //     }
+    //
     // },
     /**
-    * Gets executed when a refresh happens.
-    * @param {string} oldSessionId session ID of the old session
-    * @param {string} newSessionId session ID of the new session
-    */
+     * Gets executed when a refresh happens.
+     * @param {string} oldSessionId session ID of the old session
+     * @param {string} newSessionId session ID of the new session
+     */
     // onReload: function(oldSessionId, newSessionId) {
     // }
-}
+};
+    /**
+     * global log function wrapper
+     * @param text to be output to the console window
+     */
+    global.log = async (text: any) => {
+        if (text) {
+            //truthy value check
+            if (text === Promise) {
+                console.log(`--->     WARN: Log was passed a Promise object`);
+                console.trace();
+            } else {
+                console.log(`---> ${text}`);
+            }
+        }
+    };
+
