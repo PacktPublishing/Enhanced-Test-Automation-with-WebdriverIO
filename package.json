@@ -25,10 +25,12 @@
         "ch3": "yarn wdio --spec ./test/specs/ch3.ts",
         "ch4": "yarn wdio --spec ./test/specs/ch4.ts",
         "ch5": "yarn wdio --spec ./test/specs/ch5.ts",
-        "ch6": "yarn wdio --spec ./test/specs/ch6.ts"
+        "ch6": "yarn wdio --spec ./test/specs/ch6.ts",
+        "ch7": "yarn wdio --spec ./test/specs/ch7.ts"
     },
     "dependencies": {
         "@types/jasmine": "^4.3.6",
+        "@types/node": "^20.8.0",
         "@wdio/allure-reporter": "^8.16.17",
         "@wdio/cli": "^8.11.2",
         "@wdio/jasmine-framework": "^8.11.2",

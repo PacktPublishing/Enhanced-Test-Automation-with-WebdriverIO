@@ -9,3 +9,4 @@ driver-logs
 .idea
 .env
 reports
+yarn-error.log
