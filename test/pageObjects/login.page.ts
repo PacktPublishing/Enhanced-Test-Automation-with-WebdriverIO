@@ -106,8 +106,8 @@ class loginPage extends Page {
     /**
      * overwrite specific options to adapt it to page object
      */
-    public open () {
-        return super.open('login');
+    public open(path: string = "login") {
+        return super.open(path);
     }
 }
 
