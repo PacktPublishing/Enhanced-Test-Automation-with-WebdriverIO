@@ -4,7 +4,7 @@ import { ASB } from "./globalObjects";
 import allureReporter from "@wdio/allure-reporter";
 import * as clipboardy from 'clipboardy';
 
-export async function clickAdv(element: WebdriverIO.Element) {
+export async function clickAdv(element: WebdriverIO.Element | string) {
   let success: boolean = false;
 
   element = await getValidElement(element, "button");
@@ -97,7 +97,7 @@ export async function getValidElement(
             selector = elementType + `[contains(@id,'${elementText}')]`
             break;
 
-          case "//a":
+          case "//button":
             selector = elementType + `[contains(@type,'${elementText}')]`
             break;
 

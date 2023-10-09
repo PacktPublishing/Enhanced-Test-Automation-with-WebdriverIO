@@ -130,7 +130,9 @@ class loginPage extends Page {
         global.log(`Logging in with '${username}' and '${password}' without the Page Object Model`)
         await helpers.setValueAdv(`username`, username);
         await helpers.setValueAdv(`password`, password);
-        this.btnSubmit.click();
+        
+        //this.btnSubmit.click();
+        await helpers.clickAdv(`submit`);
     }
 
     /**
