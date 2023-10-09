@@ -9,7 +9,7 @@ export async function clickAdv(element: WebdriverIO.Element) {
 
   element = await getValidElement(element, "button");
 
-  if (ASB.get("ELEMENT_EXISTS") == false){
+  if (ASB.get("ELEMENT_EXISTS") == false) {
     await log(`  IfExist: Skipping clicking ${ASB.get("ELEMENT_SELETOR")}`);
 
     return true;
@@ -60,39 +60,54 @@ export async function getValidElement(
   elementType: string
 ): Promise<WebdriverIO.Element> {
 
-  let selector: any 
-  
-  
+  let selector: any
+
+
   // Get a collection of matching elements
   let found: boolean = true;
   let newSelector: string = "";
-  let newElement: any = element;
+  let newElement: any;
   let elements: any;
   let elementText: string = "";
 
-  if (typeof(element) == 'string') {
+  //Ch 11: 
+  if (typeof (element) == 'string') {
     elementType = normalizeElementType(elementType);
-    elementText = element; 
-    // Create a non-matching but valid locator that will be searched by the self-healing code 
-    selector = `${elementType}[text()=${elementText} and @bogus="return_no_matches"]`;
+    elementText = element;
+    // Force a valid but non-matching locator that will be searched by the self-healing code 
+    selector = `${elementType}[text()="${elementText}" and @bogus="return_no_matches"]`;
   }
 
-  try { 
+
+  try {
+    // Try to find an element with a valid locator
     elements = await $$(selector);
 
     if (elements.length === 0) {
       // Extract the element type if not provided
       if (elementType === "") {
-        let index: number = selector.indexOf("[");
+        let index: number = selector.indexOf("[");  //input[@somthing="someValue"]
         elementType = selector.substring(0, index);
-      } else {
-        elementText = normalizeElementType(elementType);
 
-        selector = elementText + `[contains(@id,'${elementText}']`
+      } else {
+        
+        selector = elementType + `[contains(@id,'${elementText}')]`
 
       }
+    }
+
+  } catch (error) {
+    found = false;
+    //eat the error
+  }
 
 
+  try {
+
+    let elements = await $$(selector);
+    
+    if (elements.length < 1) {
+      // 2nd and 3rd chance for non matches
       switch (elementType) {
         case "//a":
           elementText = selector.match(/=".*"/)[0].slice(2, -1);
@@ -108,7 +123,7 @@ export async function getValidElement(
 
         case "//input":
           elementText = selector.match(/=".*"/)[0].slice(2, -1);
-
+          // //input['add to Carts'] //input['dd to Cart']  // add to carts ==
           newSelector = `//input[contains(@id,'${elementText}'])`;
           found = await isElementVisible(await $(newSelector));
 
@@ -144,7 +159,10 @@ export async function getValidElement(
           `  WARNING: Replaced ${selector}\n                    with ${newSelector}`
         );
       }
+    }else{
+      newElement =  elements[0]; // Return a WebdriverIO element 
     }
+
   } catch (error) {
     found = false;
   }
@@ -179,11 +197,11 @@ async function getElementType(element: WebdriverIO.Element) {
 */
 
 async function getFieldName(element: WebdriverIO.Element) {
-// Add any custom properties here, e.g.:
-// const customPropertyName = await element.getAttribute("aria-label");
-// if (customPropertyName) return custom;
+  // Add any custom properties here, e.g.:
+  // const customPropertyName = await element.getAttribute("aria-label");
+  // if (customPropertyName) return custom;
 
-// Get the 'name' property of the element
+  // Get the 'name' property of the element
   const name = await element.getAttribute("name");
   if (name) return name;
 
@@ -198,7 +216,7 @@ async function getFieldName(element: WebdriverIO.Element) {
   // Return the 'class' property of the element if others are empty
   const className = await element.getAttribute("class");
 
-  if (className == "input"){  // combobox
+  if (className == "input") {  // combobox
     // Find the first parent div element using XPath
     const parentDivElement = await element.$('ancestor::div[1]');
     return parentDivElement.getText();
@@ -211,26 +229,26 @@ async function getListName(element: WebdriverIO.Element) {
   // const customPropertyName = await element.getAttribute("aria-label");
   // if (customPropertyName) return customPropertyName;
 
-    // Get the 'name' property of the element
-    const ariaLable = await element.getAttribute("aria-label");
-    if (ariaLable) return ariaLable;
+  // Get the 'name' property of the element
+  const ariaLable = await element.getAttribute("aria-label");
+  if (ariaLable) return ariaLable;
 
-    // Get the 'name' property of the element
-    const name = await element.getAttribute("aria-label");
-    if (name) return name;
+  // Get the 'name' property of the element
+  const name = await element.getAttribute("aria-label");
+  if (name) return name;
 
-    // Get the 'id' property of the element
-    const id = await element.getAttribute("id");
-    if (id) return id;
+  // Get the 'id' property of the element
+  const id = await element.getAttribute("id");
+  if (id) return id;
 
-    // Get the 'type' property of the element
-    const type = await element.getAttribute("type");
-    if (type) return type;
+  // Get the 'type' property of the element
+  const type = await element.getAttribute("type");
+  if (type) return type;
 
-    // Return the 'class' property of the element if others are empty
-    const className = await element.getAttribute("class");
-    return className;
-  }
+  // Return the 'class' property of the element if others are empty
+  const className = await element.getAttribute("class");
+  return className;
+}
 
 /**
  * Returns the current date plus or minus a specified number of days in a specified format.
@@ -241,7 +259,7 @@ async function getListName(element: WebdriverIO.Element) {
  "yyyy" or "yy" - to represent the 4 or 2 digit year, respectively.
  "MM" or "M" - to represent the month with leading zero or without leading zero respectively
  "dd" or "d" - to represent the date with leading zero or without leading zero respectively
-
+ 
  // helpers.log(getToday());  // returns current date in MM-dd-yyyy format
  // helpers.log(getToday("+5", "d/M/yyyy"));  // returns current date plus 5 days in d/M/yyyy format
  // helpers.log(getToday("-3", "yyyy/MM/dd"));  // returns current date minus 3 days in yyyy/MM/dd format
@@ -252,15 +270,15 @@ export function getToday(offset: number = 0, format: string = "dd-mm-yyyy") {
   return currentDate.toLocaleDateString(undefined, {
     year: format.includes("yyyy") ? "numeric" : undefined,
     month: format.includes("mm")
-        ? "2-digit"
-        : format.includes("m")
-            ? "numeric"
-            : undefined,
+      ? "2-digit"
+      : format.includes("m")
+        ? "numeric"
+        : undefined,
     day: format.includes("dd")
-        ? "2-digit"
-        : format.includes("d")
-            ? "numeric"
-            : undefined,
+      ? "2-digit"
+      : format.includes("d")
+        ? "numeric"
+        : undefined,
   });
 }
 
@@ -297,7 +315,7 @@ export async function highlightOn(
 }
 
 export async function highlightOff(
-    element: WebdriverIO.Element
+  element: WebdriverIO.Element
 ): Promise<boolean> {
   let visible: boolean = true;
   try {
@@ -310,7 +328,7 @@ export async function highlightOff(
 }
 
 export async function isElementVisible(
-    element: WebdriverIO.Element
+  element: WebdriverIO.Element
 ): Promise<boolean> {
   try {
     const displayed = await element.isDisplayed();
@@ -347,21 +365,21 @@ async function isExists(element: WebdriverIO.Element) {
  *    - Prints trace if not passed string or number
  * @param message
  */
-  export async function log(message: any): Promise<void> {
-    try {
-      if (typeof message === "string" || typeof message === "number") {
-        if (message) {
-          console.log(`---> ${message}`);
-          if (message.toString().includes(`[object Promise]`)) {
-            console.log(`    Possiblly missing await statement`);
-            console.trace();
-          }
+export async function log(message: any): Promise<void> {
+  try {
+    if (typeof message === "string" || typeof message === "number") {
+      if (message) {
+        console.log(`---> ${message}`);
+        if (message.toString().includes(`[object Promise]`)) {
+          console.log(`    Possiblly missing await statement`);
+          console.trace();
         }
       }
-    } catch (error: any) {
-      console.log(`--->   helpers.console(): ${error.message}`);
     }
+  } catch (error: any) {
+    console.log(`--->   helpers.console(): ${error.message}`);
   }
+}
 
 
 /**
@@ -411,18 +429,18 @@ function normalizeElementType(elementType: string) {
   return elementText;
 }
 
-  /**
-   * pageSync - Dynamic wait for the page to stabilize.
-   * Use after click
-   * ms = default time wait between loops 125 = 1/8 sec
-   *      Minimum 25 for speed / stability balance
-   */
-  let LAST_URL: String = "";
-  let waitforTimeout = browser.options.waitforTimeout;
+/**
+ * pageSync - Dynamic wait for the page to stabilize.
+ * Use after click
+ * ms = default time wait between loops 125 = 1/8 sec
+ *      Minimum 25 for speed / stability balance
+ */
+let LAST_URL: string = "";
+let waitforTimeout = browser.options.waitforTimeout;
 
 export async function pageSync(
-    ms: number = 25,
-    waitOnSamePage: boolean = false
+  ms: number = 25,
+  waitOnSamePage: boolean = false
 ): Promise<boolean> {
   await waitForSpinner();
 
@@ -506,9 +524,8 @@ export async function pageSync(
 
     if (duration > timeout) {
       await log(
-          `  WARN: pageSync() completed in ${
-              duration / 1000
-          } sec  (${duration} ms) `
+        `  WARN: pageSync() completed in ${duration / 1000
+        } sec  (${duration} ms) `
       );
     } else {
       //log(`  pageSync() completed in ${duration} ms`); // Optional debug messaging
@@ -520,7 +537,7 @@ export async function pageSync(
 
 
 export async function setValueAdv(
-  inputField: WebdriverIO.Element|String,
+  inputField: WebdriverIO.Element | string,
   text: string
 ) {
   let success: boolean = false;
@@ -534,7 +551,7 @@ export async function setValueAdv(
   let fieldName: string = await getFieldName(inputField)
 
   //Mask Passwords in output
-  if (fieldName.includes("ssword") ){
+  if (fieldName.includes("ssword")) {
     scrubbedValue = maskValue(scrubbedValue)
   }
 
@@ -562,8 +579,8 @@ export async function setValueAdv(
     // require('child_process').execSync('printf ' + escape([text]) + ' | pbcopy');
 
     // Paste the text for speed
-     // Use the sendKeys method with Control-V (or Command-V on macOS) to paste the text
-     // inputField.sendKeys(['Control', 'v']); // On macOS, use ['Command', 'v']
+    // Use the sendKeys method with Control-V (or Command-V on macOS) to paste the text
+    // inputField.sendKeys(['Control', 'v']); // On macOS, use ['Command', 'v']
 
     // Check for accuracy
     if (!(await inputField.getValue()).includes(text)) {
@@ -633,7 +650,7 @@ function replaceTags(text: string) {
         if (match) {
           const days = parseInt(match[0]);
         }
-        
+
         newText = newText.replace(tag, getToday(days, format));
         break;
 
@@ -667,15 +684,14 @@ export async function sleep(ms: number) {
 }
 
 export async function selectAdv(
-    listElement: WebdriverIO.Element,
-    item: string
-): Promise<boolean>
-{
+  listElement: WebdriverIO.Element,
+  item: string
+): Promise<boolean> {
   let success: boolean = false;
-  let itemValue: String = "No Item selected"
+  let itemValue: string = "No Item selected";
 
   // Empty item list - do nothing
-  if (item.length === 0){
+  if (item.length === 0) {
     await log(`  ERROR: ${listElement} had no list item passed.\n`)
     return true;
   }
@@ -702,7 +718,7 @@ export async function selectAdv(
         await (await $(`//span[normalize-space()='${item}']`)).click();
         itemValue = await listElement.getText();
         // Report actual item selected
-        global.log (`  Item selected: "${itemValue}"`)
+        global.log(`  Item selected: "${itemValue}"`)
         success = true;
       } catch (error: any) {
         await log(`  ERROR: ${listElement} could not select "${item}" was not selected\n
@@ -724,9 +740,9 @@ export async function selectAdv(
         const index: number = item;
         await (await listElement).selectByIndex(index);
       } else {
-        await (await listElement).selectByVisibleText (item)
+        await (await listElement).selectByVisibleText(item)
       }
-      global.log (`  Item selected: "${item}"`)
+      global.log(`  Item selected: "${item}"`)
       success = true;
     } catch (error: any) {
       await log(`  ERROR: ${listElement} could not select "${item}"\n
@@ -824,7 +840,7 @@ export async function waitForSpinner(): Promise<boolean> {
       // Spinner no longer exists
     }
     await log(
-        `  Spinner Elapsed time: ${Math.floor(performance.now() - startTime)} ms`
+      `  Spinner Elapsed time: ${Math.floor(performance.now() - startTime)} ms`
     );
   }
   return spinnerDetected;
@@ -863,7 +879,7 @@ async function findElement(selector: string): Promise<WebdriverIO.Element> {
   }
 }
 
-export async function getListValues(selectElement:  WebdriverIO.Element
+export async function getListValues(selectElement: WebdriverIO.Element
 ): Promise<string> {
 
   const optionElements = await (await selectElement).getText();
@@ -893,8 +909,8 @@ export async function waitForElementToStopMoving(element: WebdriverIO.Element, t
     const checkMovement = () => {
       element.getLocation().then((currentLocation) => {
         if (
-            currentLocation.x === initialLocation.x &&
-            currentLocation.y === initialLocation.y
+          currentLocation.x === initialLocation.x &&
+          currentLocation.y === initialLocation.y
         ) {
           clearInterval(intervalId);
           resolve();
@@ -917,7 +933,7 @@ export async function waitForElementToStopMoving(element: WebdriverIO.Element, t
  * @param assertionType
  * @param expected
  */
-export async function expectAdv(actual:any, assertionType:any, expected:unknown) {
+export async function expectAdv(actual: any, assertionType: any, expected: unknown) {
   const softAssert = expect;
 
   const getAssertionType = {
