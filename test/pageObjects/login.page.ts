@@ -109,6 +109,31 @@ class loginPage extends Page {
     }
 
     /**
+     * a method to unit test the failure of an button that does not exist
+     * e.g. to login using username and password
+     */
+    public async loginSetValue(username: string, password: string) {
+        await helpers.log(`Logging in with user role '${username}'`);
+        await helpers.setValueAdv(await this.inputUsername, username);
+        // Automatcally Mask the Password
+        await helpers.setValueAdv(await this.inputPassword, password);
+        await helpers.clickAdv(await this.btnSubmit);
+    }
+
+
+    /**
+     * a method to encapsule automation code to interact with the page object model
+     * e.g. to login using username and password
+     * missing await so the click executes before the setValue
+     */
+    public async loginWithoutPom (username: string, password: string) {
+        global.log(`Logging in with '${username}' and '${password}' without the Page Object Model`)
+        await helpers.setValueAdv(`username`, username);
+        await helpers.setValueAdv(`password`, password);
+        this.btnSubmit.click();
+    }
+
+    /**
      * overwrite specific options to adapt it to page object
      */
     public open(path: string = "login") {
