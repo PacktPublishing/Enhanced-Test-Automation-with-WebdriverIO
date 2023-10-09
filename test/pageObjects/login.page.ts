@@ -1,31 +1,31 @@
-import * as helpers from "../../helpers/helpers";
-import Page from "./page";
+import Page from './page';
+import * as helpers from '../../helpers/helpers';
 
 /**
  * sub page containing specific selectors and methods for a specific page
  */
-class LoginPage extends Page {
+class loginPage extends Page {
     /**
      * define selectors using getter methods
      */
-    public get inputUsername() {
-        return $("#username");
+    public get inputUsername () {
+        return $('#username');
     }
 
-    public get inputPassword() {
-        return $("#password");
+    public get inputPassword () {
+        return $('#password');
     }
 
-    public get btnSubmit() {
+    public get btnSubmit () {
         return $('button[type="submit"]');
-    }
-
-    public get lnkSubmit() {
-        return $('//a[text()="submit"]');
     }
 
     public get btnBogus() {
         return $('//button[type="bogus"]');
+    }
+
+    public get lnkSubmit() {
+        return $('//a[text()="submit"]');
     }
 
     /**
@@ -40,8 +40,19 @@ class LoginPage extends Page {
         await helpers.log(
             `Entered '${password}' and clicking Submit with ClickAdv`
         );
-        // @ts-ignore
         await this.btnSubmit.click();
+    }
+
+    /**
+     * a method to encapsule automation code to interact with the page
+     * e.g. to login using username and password
+     * missing await so the click executes before the setValue
+     */
+    public async login_sync (username: string, password: string) {
+        global.log(`Logging in with '${username}' and '${password}'`)
+        this.inputUsername.setValue(username);
+        this.inputPassword.setValue(password);
+        this.btnSubmit.click();
     }
 
     /**
@@ -58,6 +69,10 @@ class LoginPage extends Page {
         );
 
         await helpers.clickAdv(await this.btnSubmit);
+
+        // This button does not exist - failing the test
+        let selector = await this.btnBogus.selector;
+        await helpers.log (`${selector}`)
         await helpers.clickAdv(await this.btnBogus);
     }
 
@@ -94,43 +109,6 @@ class LoginPage extends Page {
     }
 
     /**
-     * a method to unit test the failure of an button that does not exist
-     * e.g. to login using username and password
-     */
-    public async loginSetValue(username: string, password: string) {
-        await helpers.log(`Logging in with user role '${username}'`);
-        await helpers.setValueAdv(await this.inputUsername, username);
-        // Automatcally Mask the Password
-        await helpers.setValueAdv(await this.inputPassword, password);
-        await helpers.clickAdv(await this.btnSubmit);
-    }
-
-    /**
-     * a method to encapsule automation code to interact with the page
-     * e.g. to login using username and password
-     * missing await so the click executes before the setValue
-     */
-    public async login_sync (username: string, password: string) {
-        global.log(`Logging in with '${username}' and '${password}'`)
-        this.inputUsername.setValue(username);
-        this.inputPassword.setValue(password);
-        this.btnSubmit.click();
-    }
-
-
-    /**
-     * a method to encapsule automation code to interact with the page object model
-     * e.g. to login using username and password
-     * missing await so the click executes before the setValue
-     */
-    public async loginWithoutPom (username: string, password: string) {
-        global.log(`Logging in with '${username}' and '${password}' without the Page Object Model`)
-        await helpers.setValueAdv(`inputUsername`, username);
-        await helpers.setValueAdv(`password`, password);
-        this.btnSubmit.click();
-    }
-
-    /**
      * overwrite specific options to adapt it to page object
      */
     public open(path: string = "login") {
@@ -138,4 +116,4 @@ class LoginPage extends Page {
     }
 }
 
-export default new LoginPage();
+export default new loginPage();
