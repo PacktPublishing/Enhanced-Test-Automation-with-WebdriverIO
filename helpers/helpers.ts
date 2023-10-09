@@ -90,8 +90,25 @@ export async function getValidElement(
         elementType = selector.substring(0, index);
 
       } else {
-        
-        selector = elementType + `[contains(@id,'${elementText}')]`
+
+
+        switch (elementType) {
+          case "//input":
+            selector = elementType + `[contains(@id,'${elementText}')]`
+            break;
+
+          case "//a":
+            selector = elementType + `[contains(@type,'${elementText}')]`
+            break;
+
+          case "//select":
+            selector = elementType + `[contains(@id,'${elementText}')]`
+            break;
+
+          default:
+            break;
+        }
+
 
       }
     }
@@ -104,8 +121,8 @@ export async function getValidElement(
 
   try {
 
-    let elements = await $$(selector);
-    
+    elements = await $$(selector);
+
     if (elements.length < 1) {
       // 2nd and 3rd chance for non matches
       switch (elementType) {
@@ -159,8 +176,8 @@ export async function getValidElement(
           `  WARNING: Replaced ${selector}\n                    with ${newSelector}`
         );
       }
-    }else{
-      newElement =  elements[0]; // Return a WebdriverIO element 
+    } else {
+      newElement = elements[0]; // Return a WebdriverIO element 
     }
 
   } catch (error) {
