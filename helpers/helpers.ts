@@ -56,10 +56,15 @@ export async function clickAdv(element: WebdriverIO.Element) {
 // }
 
 export async function getValidElement(
-  element: WebdriverIO.Element,
+  element: WebdriverIO.Element | string,
   elementType: string
 ): Promise<WebdriverIO.Element> {
-  let selector: any = await element.selector;
+
+  let selector: any 
+  
+
+  
+  
   // Get a collection of matching elements
   let found: boolean = true;
   let newSelector: string = "";
@@ -67,7 +72,14 @@ export async function getValidElement(
   let elements: any;
   let elementText: string = "";
 
-  try {
+  if (typeof(element) == 'string') {
+    elementType = normalizeElementType(elementType);
+    elementText = element; 
+    // Create a non-matching but valid locator that will be searched by the self-healing code 
+    selector = `${elementType}[text()=${elementText} and @force="no matches returned"]`;
+  }
+
+  try { 
     elements = await $$(selector);
 
     if (elements.length === 0) {
@@ -77,7 +89,11 @@ export async function getValidElement(
         elementType = selector.substring(0, index);
       } else {
         elementText = normalizeElementType(elementType);
+
+        selector = elementText + `[contains(@id,'${elementText}']`
+
       }
+
 
       switch (elementType) {
         case "//a":
@@ -506,7 +522,7 @@ export async function pageSync(
 
 
 export async function setValueAdv(
-  inputField: WebdriverIO.Element,
+  inputField: WebdriverIO.Element|String,
   text: string
 ) {
   let success: boolean = false;

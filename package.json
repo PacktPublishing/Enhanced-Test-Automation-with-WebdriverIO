@@ -29,7 +29,8 @@
         "ch6": "wdio run wdio.conf.ts --spec ./test/specs/ch6.ts",
         "ch7": "wdio run wdio.conf.ts --spec ./test/specs/ch7.ts",
         "ch8": "wdio wdio.conf.ts --spec ./test/specs/ch8.ts",
-        "ch9": "wdio wdio.conf.ts --spec ./test/specs/ch9.ts"
+        "ch9": "wdio wdio.conf.ts --spec ./test/specs/ch9.ts",
+        "ch11": "wdio wdio.conf.ts --spec ./test/specs/ch11.ts"
     },
     "dependencies": {
         "@types/jasmine": "^4.3.5",
