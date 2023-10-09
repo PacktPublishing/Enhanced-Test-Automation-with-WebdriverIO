@@ -1,8 +1,14 @@
 node_modules
 allure-report
-allure-results
+reports
+.DS_Store
+logs
 all-logs
 driver-logs
 *.png
-.DS_Store
-logs
+screenshots
+*.log
+.vscode
+.idea
+.env
+yarn-error.log
