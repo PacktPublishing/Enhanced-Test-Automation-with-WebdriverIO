@@ -62,8 +62,6 @@ export async function getValidElement(
 
   let selector: any 
   
-
-  
   
   // Get a collection of matching elements
   let found: boolean = true;
@@ -76,7 +74,7 @@ export async function getValidElement(
     elementType = normalizeElementType(elementType);
     elementText = element; 
     // Create a non-matching but valid locator that will be searched by the self-healing code 
-    selector = `${elementType}[text()=${elementText} and @force="no matches returned"]`;
+    selector = `${elementType}[text()=${elementText} and @bogus="return_no_matches"]`;
   }
 
   try { 
