@@ -684,6 +684,7 @@ export async function expectAdv(actual:any, assertionType:any, expected:any) {
     doesNotExist: () => (softAssert(actual).not.toBeExisting()),
     doesNotContain: () => (softAssert(actual).not.toContain(expected)),
     toHaveTextContaining: () => (softAssert(actual).toHaveTextContaining(expected)),
+    toBeDisplayed: () => softAssert(actual).toBeDisplayed(),
 
     default: () => (console.info('Invalid assertion type: ', assertionType)),
   };
