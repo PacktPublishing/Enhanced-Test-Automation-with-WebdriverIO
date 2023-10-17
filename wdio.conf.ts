@@ -1,12 +1,13 @@
 import type { Options } from '@wdio/types';
 import {ASB} from './helpers/globalObjects';
+import {log} from './helpers/helpers';
 
 const DEBUG =
     process.env.DEBUG === undefined ? true : process.env.DEBUG === `true`;
 console.log(`DEBUG: ${DEBUG}`);
 
 let timeout = DEBUG === true ? 1_000_000 : 10_000;
-console.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`);
+log(`timeout = ${Math.ceil(timeout / 60_000)} min.`);
 
 const addToElement = true
 
@@ -251,7 +252,7 @@ export const config = {
             const selector = args[0];
             // Modify the selector or add additional functionality as needed
             // For example, you can add a prefix to the selector
-            global.log(`BEFORE $ COMMAND: Selector ${selector} sent to ABS(elementSelector)`);
+            log(`BEFORE $ COMMAND: Selector ${selector} sent to ABS(elementSelector)`);
             // Pass the locator to the switchboard
             ASB.set("elementSelector", selector);
         }
@@ -260,7 +261,7 @@ export const config = {
             const selector = args[0];
             // Modify the selector or add additional functionality as needed
             // For example, you can add a prefix to the selector
-            global.log(`BEFORE $$ COMMAND: Selector ${selector} sent to ABS(elementsSelector)`);
+            log(`BEFORE $$ COMMAND: Selector ${selector} sent to ABS(elementsSelector)`);
             // Pass the locator to the switchboard
             ASB.set("elementsSelector", selector);
         }
@@ -280,12 +281,12 @@ export const config = {
         ASB.set("DEBUG", (process.env.DEBUG === undefined) ? false : (process.env.DEBUG === `true`));
         ASB.set("spinnerTimeoutInSeconds", 30);
 
-        global.log(`DEBUG: ${ASB.get("DEBUG")}`);
+        log(`DEBUG: ${ASB.get("DEBUG")}`);
 
         ASB.set("timeout", (ASB.get("DEBUG") === true) ? 1000000 : 10000);
         let timeout = ASB.get("timeout");
 
-        global.log(`timeout = ${Math.ceil(timeout / 60000)} min.`);
+        log(`timeout = ${Math.ceil(timeout / 60000)} min.`);
 
         // Samples of overidding and adding custom methods.
         // browser.addCommand("clickAdv", async function ()
@@ -350,7 +351,7 @@ export const config = {
         //browser.maximizeWindow();
         // Option #2: Run browser 3/4 screen on single monitor
         // Allow VS Code Terminal visible on bottom of the screen
-        await global.log(`Changing window size`);
+        await log(`Changing window size`);
         await browser.setWindowSize(1200, 770);
     },
     /**
@@ -390,7 +391,7 @@ export const config = {
      * @param {Object} suite suite details
      */
     afterSuite: function (suite) {
-        global.log("AFTER SUITE");
+        log("AFTER SUITE");
     },
     /**
      * Runs after a WebdriverIO command gets executed
@@ -409,7 +410,7 @@ export const config = {
      * @param {Array.<String>} specs List of spec file paths that ran
      */
     after: function (result, capabilities, specs) {
-        global.log("AFTER")
+        log("AFTER")
     },
     /**
      * Gets executed right after terminating the webdriver session.
@@ -418,7 +419,7 @@ export const config = {
      * @param {Array.<String>} specs List of spec file paths that ran
      */
     afterSession: function (config, capabilities, specs) {
-        global.log("AFTER SESSION")
+        log("AFTER SESSION")
     },
     /**
      * Gets executed after all workers got shut down and the process is about to exit. An error
@@ -429,7 +430,7 @@ export const config = {
      * @param {<Object>} results object containing test results
      */
     onComplete: function (exitCode, config, capabilities, results) {
-        global.log("ON COMPLETE")
+        log("ON COMPLETE")
         if (ASB.get("alreadyFailed")) {
             throw new Error('Test failed');
         }
@@ -441,14 +442,14 @@ export const config = {
  * log wrapper
  * @param text to be output to the console window
  */
-global.log = async (text: any) => {
-    if (text) {
-        //truthy value check
-        if (text === Promise) {
-            console.log(`--->     WARN: Log was passed a Promise object`);
-            console.trace();
-        } else {
-            console.log(`---> ${text}`);
-        }
-    }
-};
+// global.log = async (text: any) => {
+//     if (text) {
+//         //truthy value check
+//         if (text === Promise) {
+//             console.log(`--->     WARN: Log was passed a Promise object`);
+//             console.trace();
+//         } else {
+//             console.log(`---> ${text}`);
+//         }
+//     }
+// };
