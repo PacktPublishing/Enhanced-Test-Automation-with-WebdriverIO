@@ -29,10 +29,11 @@
         "ch8": "yarn wdio --spec ./test/specs/ch8.ts",
         "ch12": "yarn wdio --spec ./test/specs/ch12.ts",
         "ch13": "yarn wdio --spec ./test/specs/ch13.ts",
+        "ch14": "PARTY_PATH=host yarn wdio --spec ./test/specs/ch14.ts",        
+        "ch15": "Env=uat wdio wdio.lambdatest.conf.ts --spec ./test/specs/ch2.ts",
         "uat": "yarn wdio --spec ./test/specs/ch3.ts",
         "dev": "Env=dev wdio wdio.dev.conf.ts --spec ./test/specs/ch13.ts",
-        "prod": "Env=prod wdio wdio.prod.conf.ts --spec ./test/specs/ch2.ts",
-        "ch14": "Env=uat wdio wdio.lambdatest.conf.ts --spec ./test/specs/ch2.ts"
+        "prod": "Env=prod wdio wdio.prod.conf.ts --spec ./test/specs/ch2.ts"
     },
     "dependencies": {
         "@types/jasmine": "^4.3.5",
