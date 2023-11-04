@@ -671,38 +671,31 @@ export async function waitForElementToStopMoving(element: WebdriverIO.Element, t
  * @param assertionType
  * @param expected
  */
-export async function expectAdv(actual:any, assertionType:any, expected:any) {
+export async function expectAdv(actual: any, assertionType: any, expected: unknown) {
   const softAssert = expect;
 
-  const getAssertionType = {
-    equals: () => (softAssert(actual).toEqual(expected)),
-    contains: () => (softAssert(actual).toContain(expected)),
-    exists: () => (softAssert(actual).toBeExisting()),
-    isEnabled: () => (softAssert(actual).toBeEnabled()),
-    isDisabled: () => (softAssert(actual).toBeDisabled()),
-    doesNotExist: () => (softAssert(actual).not.toBeExisting()),
-    doesNotContain: () => (softAssert(actual).not.toContain(expected)),
-    toHaveTextContaining: () => (softAssert(actual).toHaveTextContaining(expected)),
-    toBeDisplayed: () => softAssert(actual).toBeDisplayed(),
+      const getAssertionType = {
+          equals: () => softAssert(actual).toEqual(expected),
+          contains: () => softAssert(actual).toContain(expected),
+          exist: () => softAssert(actual).toBeExisting(),
+          isEnabled: () => softAssert(actual).toBeEnabled(),
+          isDisabled: () => softAssert(actual).toBeDisabled(),
+          doesNotExist: () => softAssert(actual).not.toBeExisting(),
+          doesNotContain: () => softAssert(actual).not.toContain(expected),
 
-    default: () => (console.info('Invalid assertion type: ', assertionType)),
-  };
-  (getAssertionType[assertionType] || getAssertionType['default'])();
+          default: () => console.info('Invalid assertion type: ===>>>> ', assertionType),
+      };
+      (getAssertionType[assertionType] || getAssertionType['default'])();
 
-  if (!getAssertionType[assertionType]){
-    console.info('assertion type failure : =======>>>>>>>>>>> ', assertionType)
-    allureReporter.addAttachment('Assertion Failure: ', `Invalid Assertion Type = ${assertionType}`, 'text/plain');
-    allureReporter.addAttachment('Assertion Error: ', console.error, 'text/plain');
-  } else {
-    allureReporter.addAttachment('Assertion Passes: ', `Valid Assertion Type = ${assertionType}`, 'text/plain');
-    console.info('assertion type passed : =======>>>>>>>>>>> ', assertionType)
-    // If the timeout has been reached, stop the loop
-    if (Date.now() - startTime > timeout) {
-      break;
-    }
-    // Wait for a short amount of time before checking the element's position again
-    await pause(100);
-  }
-
+      if (!getAssertionType[assertionType]) {
+          console.info('assertion type failure : ===>>>>> ', assertionType)
+          allureReporter.addAttachment('Assertion Failure: ', `Invalid Assertion Type = ${assertionType}`, 'text/plain');
+          allureReporter.addAttachment('Assertion Error: ', console.error, 'text/plain');
+      } else {
+          allureReporter.addAttachment('Assertion Passes: ', `Valid Assertion Type = ${assertionType}`, 'text/plain');
+          console.info('assertion type passed : ===>>>>> ', assertionType)
+      }
 }
 
+// For the full list of options please got to
+// https://github.com/webdriverio/expect-webdriverio/blob/main/docs/API.md
