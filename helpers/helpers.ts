@@ -454,7 +454,9 @@ function replaceTags(text: string) {
   return newText;
 }
 
-
+export async function scrollIntoView(element: WebdriverIO.Element) {
+  await element.scrollIntoView({ block: "center", inline: "center" });
+}
 
 export async function sleep(ms: number) {
   await log(`Waiting ${ms} ms...`);
@@ -617,11 +619,6 @@ async function findElement(selector: string): Promise<WebdriverIO.Element> {
 //     return false;
 //   }
 // }
-
-export async function scrollIntoView(element: WebdriverIO.Element) {
-  await element.scrollIntoView({block: "center", inline: "center"});
-}
-
 
 export async function waitForElementToStopMoving(element: WebdriverIO.Element, timeout: number): Promise<void> {
 
