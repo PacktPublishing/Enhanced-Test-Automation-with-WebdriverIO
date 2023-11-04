@@ -579,9 +579,11 @@ export async function highlightOff(
   return visible;
 }
 
-export async function isElementVisible(
-    element: WebdriverIO.Element
+
+export async function isElementMoving(
+  element: WebdriverIO.Element
 ): Promise<boolean> {
+
   let rect = await browser.options.waitforTimeout;
   pause(100);
   let isMoving = rect !== (await browser.options.waitforTimeout);
@@ -597,7 +599,18 @@ export async function isElementVisible(
       await log(`  Element is moving...`);
       pause(100);
     }
-    throw error;
+    return isMoving;
+  }
+}
+
+export async function isElementVisible(
+  element: WebdriverIO.Element
+): Promise<boolean> {
+  try {
+      const displayed = await element.isDisplayed();
+      return displayed;
+  } catch (error) {
+      return false;
   }
 }
 
@@ -691,6 +704,5 @@ export async function expectAdv(actual:any, assertionType:any, expected:any) {
     await pause(100);
   }
 
-  return !isMoving;
 }
 
