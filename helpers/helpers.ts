@@ -582,31 +582,20 @@ export async function highlightOff(
 export async function isElementVisible(
     element: WebdriverIO.Element
 ): Promise<boolean> {
-  try {
-    const displayed = await element.isDisplayed();
-    return displayed;
-  } catch (error) {
-    return false;
-  }
-}
+  let rect = await browser.options.waitforTimeout;
+  pause(100);
+  let isMoving = rect !== (await browser.options.waitforTimeout);
+  let startTime = Date.now();
 
-//Resolves stale element
-export async function refreshElement(
-    element: WebdriverIO.Element
-): Promise<WebdriverIO.Element> {
-  return await browser.$(element.selector);
-}
-
-async function findElement(selector: string): Promise<WebdriverIO.Element> {
-  try {
-    return await browser.$(selector);
-  } catch (error: unknown) {
-    if (typeof error === 'object' && error !== null && 'message' in error) {
-      const errorMessage = (error as Error).message;
-      if (errorMessage.includes('stale')) {
-        // Element is stale, so we need to recreate it
-        return await browser.$(selector);
-      }
+  // Keep checking the element's position until it stops moving or the timeout is reached
+  while (isMoving) {
+    // If the element's position hasn't changed, it is not moving
+    if (rect === (await browser.options.waitforTimeout)) {
+      await log(`  Element is static`);
+      isMoving = false;
+    } else {
+      await log(`  Element is moving...`);
+      pause(100);
     }
     throw error;
   }
@@ -694,10 +683,14 @@ export async function expectAdv(actual:any, assertionType:any, expected:any) {
   } else {
     allureReporter.addAttachment('Assertion Passes: ', `Valid Assertion Type = ${assertionType}`, 'text/plain');
     console.info('assertion type passed : =======>>>>>>>>>>> ', assertionType)
+    // If the timeout has been reached, stop the loop
+    if (Date.now() - startTime > timeout) {
+      break;
+    }
+    // Wait for a short amount of time before checking the element's position again
+    await pause(100);
   }
 
-  allureReporter.endStep();
+  return !isMoving;
 }
 
-// for all the options of expect
-// https://github.com/webdriverio/expect-webdriverio/blob/main/docs/API.md
