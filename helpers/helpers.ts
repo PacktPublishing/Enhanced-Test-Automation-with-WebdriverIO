@@ -709,17 +709,24 @@ export async function getPageName(): Promise<string> {
 }
 
 
-export async function partyPath(testData) {
-  let exit: Boolean;
+/**
+ * Parses a string of key-value pairs and updates the SwitchBoard state with those values.
+ * Each pair within the testData string should be separated by spaces, and 
+ * keys/values should be separated by an '=' character.
+ * 
+ * For example, a string "guests=2 zipcode=12345" will result in ASB having
+ * "guests" set to 2 and "zipcode" set to 12345.
+ *
+ * @param {string} testData - The string containing key-value pairs to be parsed.
+ */
+export function parseToASB(testData: string) {
+  let parts = testData.split(" ");
 
-  while (exit === false) {
-    //Get Page Name
-    ASB.set("page", await getPageName()
-            //Pass test file to each page
-    await halloweenPartyPage.build(testData);
-    await halloweenAttendPartyPage.build(testData);
-    await halloweenChooseLocationPage.build(testData);
-    // Add new pages along the journey here.    
+  parts.forEach(part => {
+    if (part.includes('=')) {
+      let [key, value] = part.split("=");
+      ASB.set(key, parseInt(value));
+    }
+  });
 
-  }
 }
