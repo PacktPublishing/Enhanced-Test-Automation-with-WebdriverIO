@@ -17,26 +17,18 @@ class HalloweenPartyPage extends Page {
         return $(`//a[contains(normalize-space(),'ttend')]`);
     }
 
-    public async build(testdata) {
+    public async build(testdata:string) {
 
-        let success: boolean = true;
-
+        let success: boolean = false; // Return false if this is not the current page.
 
         // Is this the page to process?   	 
-
-        if (await ASB.get("page") === "attend-a-party") {
-
+        if (await ASB.get("page") === "halloween-party") {
             if (testdata.HostOrAttend.toLowerCase() === `host`) {
-
                 success = await helpers.clickAdv(await this.hostParty);
-
             } else {
-
+                //Default to attend
                 success = await helpers.clickAdv(await this.attendParty);
-
             }
-
-
         }
 
         return success;
