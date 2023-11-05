@@ -1,6 +1,15 @@
 {
   "userData": {
+    "_comment": "User credentials",
     "username": "tomsmith",
-    "password":  "SuperSecretPassword!"
+    "password": "SuperSecretPassword!"
+  },
+  "journeyData": {
+    "_journey_comment": "'host' (default Happy Path), 'join' or 'skip' ",
+    "JOURNEY": "host",
+    "_location_comment": "'zombieton' (default Happy Path) or 'ghostville' ",
+    "LOCATION": "zombieton",
+    "_environment_comment": "'prod' (default Happy Path) or 'stage' ",
+    "ENV": "PROD"
   }
 }
