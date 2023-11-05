@@ -5,7 +5,7 @@
     "password": "SuperSecretPassword!"
   },
   "journeyData": {
-    "_journey_comment": "'host' (default Happy Path), 'join' or 'skip' ",
+    "_journey_comment": "'host' (default Happy Path), 'attend' or 'skip' ",
     "JOURNEY": "host",
     "_location_comment": "'zombieton' (default Happy Path) or 'ghostville' ",
     "LOCATION": "zombieton",
