@@ -161,13 +161,13 @@ export function getToday(offset: number = 0, format: string = "MM-dd-yyyy") {
     month: format.includes("MM")
       ? "2-digit"
       : format.includes("M")
-      ? "numeric"
-      : undefined,
+        ? "numeric"
+        : undefined,
     day: format.includes("dd")
       ? "2-digit"
       : format.includes("d")
-      ? "numeric"
-      : undefined,
+        ? "numeric"
+        : undefined,
   });
 }
 
@@ -231,21 +231,21 @@ async function isExists(element: WebdriverIO.Element) {
  *    - Prints trace if not passed string or number
  * @param message
  */
-  export async function log(message: any): Promise<void> {
-    try {
-      if (typeof message === "string" || typeof message === "number") {
-        if (message) {
-          console.log(`---> ${message}`);
-          if (message.toString().includes(`[object Promise]`)) {
-            console.log(`    Possiblly missing await statement`);
-            console.trace();
-          }
+export async function log(message: any): Promise<void> {
+  try {
+    if (typeof message === "string" || typeof message === "number") {
+      if (message) {
+        console.log(`---> ${message}`);
+        if (message.toString().includes(`[object Promise]`)) {
+          console.log(`    Possiblly missing await statement`);
+          console.trace();
         }
       }
-    } catch (error: any) {
-      console.log(`--->   helpers.console(): ${error.message}`);
     }
+  } catch (error: any) {
+    console.log(`--->   helpers.console(): ${error.message}`);
   }
+}
 
 function maskPassword(password: string): string {
   return password.replace(
@@ -281,18 +281,18 @@ function normalizeElementType(elementType: string) {
   return elementText;
 }
 
-  /**
-   * pageSync - Dynamic wait for the page to stabilize.
-   * Use after click
-   * ms = default time wait between loops 125 = 1/8 sec
-   *      Minimum 25 for speed / stability balance
-   */
-  let LAST_URL: String = "";
-  let waitforTimeout = browser.options.waitforTimeout;
+/**
+ * pageSync - Dynamic wait for the page to stabilize.
+ * Use after click
+ * ms = default time wait between loops 125 = 1/8 sec
+ *      Minimum 25 for speed / stability balance
+ */
+let LAST_URL: String = "";
+let waitforTimeout = browser.options.waitforTimeout;
 
 export async function pageSync(
-    ms: number = 25,
-    waitOnSamePage: boolean = false
+  ms: number = 25,
+  waitOnSamePage: boolean = false
 ): Promise<boolean> {
   await waitForSpinner();
 
@@ -376,9 +376,8 @@ export async function pageSync(
 
     if (duration > timeout) {
       await log(
-          `  WARN: pageSync() completed in ${
-              duration / 1000
-          } sec  (${duration} ms) `
+        `  WARN: pageSync() completed in ${duration / 1000
+        } sec  (${duration} ms) `
       );
     } else {
       //log(`  pageSync() completed in ${duration} ms`); // Optional debug messaging
@@ -432,7 +431,7 @@ function replaceTags(text: string) {
         if (match) {
           const days = parseInt(match[0]);
         }
-        
+
         newText = newText.replace(tag, getToday(days, format));
         break;
 
@@ -519,7 +518,7 @@ export async function setValueAdv(
     success = true;
   } catch (error: any) {
     await log(
-        `  ERROR: ${SELECTOR} was not populated with ${text}.\n       ${error.message}`
+      `  ERROR: ${SELECTOR} was not populated with ${text}.\n       ${error.message}`
     );
     expect(`to be editable`).toEqual(SELECTOR);
     // Throw the error to stop the test
@@ -560,14 +559,14 @@ export async function waitForSpinner(): Promise<boolean> {
       // Spinner no longer exists
     }
     await log(
-        `  Spinner Elapsed time: ${Math.floor(performance.now() - startTime)} ms`
+      `  Spinner Elapsed time: ${Math.floor(performance.now() - startTime)} ms`
     );
   }
   return spinnerDetected;
 }
 
 export async function highlightOff(
-    element: WebdriverIO.Element
+  element: WebdriverIO.Element
 ): Promise<boolean> {
   let visible: boolean = true;
   try {
@@ -607,10 +606,10 @@ export async function isElementVisible(
   element: WebdriverIO.Element
 ): Promise<boolean> {
   try {
-      const displayed = await element.isDisplayed();
-      return displayed;
+    const displayed = await element.isDisplayed();
+    return displayed;
   } catch (error) {
-      return false;
+    return false;
   }
 }
 
@@ -632,8 +631,8 @@ export async function waitForElementToStopMoving(element: WebdriverIO.Element, t
     const checkMovement = () => {
       element.getLocation().then((currentLocation) => {
         if (
-            currentLocation.x === initialLocation.x &&
-            currentLocation.y === initialLocation.y
+          currentLocation.x === initialLocation.x &&
+          currentLocation.y === initialLocation.y
         ) {
           clearInterval(intervalId);
           resolve();
@@ -674,28 +673,53 @@ export async function waitForElementToStopMoving(element: WebdriverIO.Element, t
 export async function expectAdv(actual: any, assertionType: any, expected: unknown) {
   const softAssert = expect;
 
-      const getAssertionType = {
-          equals: () => softAssert(actual).toEqual(expected),
-          contains: () => softAssert(actual).toContain(expected),
-          exist: () => softAssert(actual).toBeExisting(),
-          isEnabled: () => softAssert(actual).toBeEnabled(),
-          isDisabled: () => softAssert(actual).toBeDisabled(),
-          doesNotExist: () => softAssert(actual).not.toBeExisting(),
-          doesNotContain: () => softAssert(actual).not.toContain(expected),
+  const getAssertionType = {
+    equals: () => softAssert(actual).toEqual(expected),
+    contains: () => softAssert(actual).toContain(expected),
+    exist: () => softAssert(actual).toBeExisting(),
+    isEnabled: () => softAssert(actual).toBeEnabled(),
+    isDisabled: () => softAssert(actual).toBeDisabled(),
+    doesNotExist: () => softAssert(actual).not.toBeExisting(),
+    doesNotContain: () => softAssert(actual).not.toContain(expected),
 
-          default: () => console.info('Invalid assertion type: ===>>>> ', assertionType),
-      };
-      (getAssertionType[assertionType] || getAssertionType['default'])();
+    default: () => console.info('Invalid assertion type: ===>>>> ', assertionType),
+  };
+  (getAssertionType[assertionType] || getAssertionType['default'])();
 
-      if (!getAssertionType[assertionType]) {
-          console.info('assertion type failure : ===>>>>> ', assertionType)
-          allureReporter.addAttachment('Assertion Failure: ', `Invalid Assertion Type = ${assertionType}`, 'text/plain');
-          allureReporter.addAttachment('Assertion Error: ', console.error, 'text/plain');
-      } else {
-          allureReporter.addAttachment('Assertion Passes: ', `Valid Assertion Type = ${assertionType}`, 'text/plain');
-          console.info('assertion type passed : ===>>>>> ', assertionType)
-      }
+  if (!getAssertionType[assertionType]) {
+    console.info('assertion type failure : ===>>>>> ', assertionType)
+    allureReporter.addAttachment('Assertion Failure: ', `Invalid Assertion Type = ${assertionType}`, 'text/plain');
+    allureReporter.addAttachment('Assertion Error: ', console.error, 'text/plain');
+  } else {
+    allureReporter.addAttachment('Assertion Passes: ', `Valid Assertion Type = ${assertionType}`, 'text/plain');
+    console.info('assertion type passed : ===>>>>> ', assertionType)
+  }
+  // For the full list of options please got to
+  // https://github.com/webdriverio/expect-webdriverio/blob/main/docs/API.md
 }
 
-// For the full list of options please got to
-// https://github.com/webdriverio/expect-webdriverio/blob/main/docs/API.md
+/**
+ * Gets last segment of current URL after splitting by "/".
+ * @returns {Promise<string>} The last URL segment.
+ */
+export async function getPageName(): Promise<string> {
+  const currentURL = await browser.getUrl();
+  const urlSegments = currentURL.split('/');
+  return urlSegments[urlSegments.length - 1];
+}
+
+
+export async function partyPath(testData) {
+  let exit: Boolean;
+
+  while (exit === false) {
+    //Get Page Name
+    ASB.set("page", await getPageName()
+            //Pass test file to each page
+    await halloweenPartyPage.build(testData);
+    await halloweenAttendPartyPage.build(testData);
+    await halloweenChooseLocationPage.build(testData);
+    // Add new pages along the journey here.    
+
+  }
+}
