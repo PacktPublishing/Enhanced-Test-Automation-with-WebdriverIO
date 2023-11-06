@@ -23,11 +23,13 @@ class HalloweenPartyPage extends Page {
 
         // Is this the page to process?   	 
         if (await ASB.get("page") === "halloween-party") {
-            if (testdata.HostOrAttend.toLowerCase() === `host`) {
-                success = await helpers.clickAdv(await this.hostParty);
-            } else {
-                //Default to attend
+
+            // Host or attend the party based on the ASB
+            if (await ASB.get("hostOrAttend").toLowerCase() === `attend`) {
                 success = await helpers.clickAdv(await this.attendParty);
+            } else {
+                //Default to host
+                success = await helpers.clickAdv(await this.hostParty);
             }
         }
 

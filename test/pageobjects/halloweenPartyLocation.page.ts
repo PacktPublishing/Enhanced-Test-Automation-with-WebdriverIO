@@ -20,16 +20,12 @@ class HalloweenPartyLocationPage extends Page {
 
     public async build(testdata) {
         let success: boolean = false; // Return false if this is not the current page.
-        if (await ASB.get("page") === "party-location") {
-            let location = testdata.Location.toLowerCase()
-            // Is this the page to process?   	 
-            const path = {
-                zombieton: async () => success = await helpers.clickAdv(await this.btnZombieton),
-                ghostville: async () => success = await helpers.clickAdv(await this.btnGhostville),
-                default: () => allureReporter.addAttachment(`Invalid location: ${location}`, "", "text/plain"),
-            };
+        
+        //if page contains "party-location" then click on find out more button
+        if ((await ASB.get("page")).includes("party-location")) {
+            // Implicitly move to the next page
             
-            path[location]();
+           success = await helpers.clickAdv(await this.btnFindOutMore);
         }
 
         return success;
