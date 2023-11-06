@@ -21,8 +21,8 @@ let baseUrl: string
 let env = process.env.Env
 let urls = {
     uat: 'https://the-internet.herokuapp.com',
-    dev: 'https://google.com',
-    prod: 'https://duckduckgo.com'
+    dev: 'https://candymapperR2.com/',
+    prod: 'https://candymapper.com/'
 }
 baseUrl = urls[env]
 
