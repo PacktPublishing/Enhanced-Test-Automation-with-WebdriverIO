@@ -36,7 +36,7 @@
         "ch14-host-ghoshville": "JOURNEY='attend ghost' yarn wdio --spec ./test/specs/ch14.ts",        
         "ch14-attend-zombieton": "JOURNEY='attend zombieton' yarn wdio --spec ./test/specs/ch14.ts",        
         "ch14": "yarn wdio --spec ./test/specs/ch14.ts",
-        "ch15": "Env=uat wdio wdio.lambdatest.conf.ts --spec ./test/specs/ch2.ts",
+        "ch15": "Env=uat wdio wdio.lambdatest.conf.ts --spec ./test/specs/ch14.ts",
         "uat": "yarn wdio --spec ./test/specs/ch3.ts",
         "dev": "Env=dev wdio wdio.dev.conf.ts --spec ./test/specs/ch13.ts",
         "prod": "Env=prod wdio wdio.prod.conf.ts --spec ./test/specs/ch2.ts"
