@@ -12,7 +12,11 @@ import halloweenPartyTimerPage from "../pageobjects/halloweenPartyTimer.page";
 
 // code that executes before every test
 beforeEach(async () => {  
-  await LoginPage.open();
+  // Determins the environment to run the test in from the command line
+  // Default to prod: candymapper.com
+  // stage: candymapperR2.com
+  let env = process.env.ENV || "prod";
+  await LoginPage.open(env);
 });
 
 describe("Ch14: State-drive Automation - Host a Party (Default in Ghostville)", () => {
