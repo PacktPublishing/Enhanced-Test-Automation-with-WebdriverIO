@@ -1,15 +1,7 @@
 import LoginPage from "../pageobjects/login.page";
-import SecurePage from "../pageobjects/secure.page";
-import * as helpers from "../../helpers/helpers";
-import { ASB } from "../../helpers/globalObjects";
 
 // Host or Attend a party in Ghostville or Zombieton
-import halloweenPartyPage from "../pageobjects/halloweenParty.page";
-import halloweenAttendPartyPage from "../pageobjects/halloweenAttendParty.page";
-import halloweenHostPartyPage from "../pageobjects/halloweenHostParty.page";
-import halloweenPartyLocationPage from "../pageobjects/halloweenPartyLocation.page";
-import halloweenPartyTimerPage from "../pageobjects/halloweenPartyTimer.page";
-import { partyPath } from "../utilities/stateDrivenUtils";
+import stateDrivenUtils from "../utilities/stateDriven.utils";
 
 describe("Ch15: State-drive Automation from Jenkins", () => {
     it("should loop around until the final or first page is found", async () => {
@@ -21,6 +13,6 @@ describe("Ch15: State-drive Automation from Jenkins", () => {
         let env = process.env.ENV || "prod";
         await LoginPage.open(env);
         let testData = process.env.JOURNEY || "";
-        partyPath(testData); // Attend path through the party
+        stateDrivenUtils.partyPath(testData); // Attend path through the party
     });
 });
