@@ -12,7 +12,7 @@ describe("Ch15: State-drive Automation from Jenkins", () => {
         // stage: candymapperR2.com
         let env = process.env.ENV || "prod";
         await LoginPage.open(env);
-        let testData = process.env.JOURNEY || "";
+        let testData = process.env.JOURNEY || ""; // Get test data from JOURNEY environment variable set by Jenkins
         stateDrivenUtils.partyPath(testData); // Attend path through the party
     });
 });
