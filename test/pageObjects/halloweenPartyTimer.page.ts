@@ -1,5 +1,5 @@
-import Page from './page.js';
-import { ASB } from '../../helpers/globalObjects.js';
+import Page from './page';
+import { ASB } from '../../helpers/globalObjects';
 import allureReporter from "@wdio/allure-reporter";
 /** 
  * sub page with selectors for a specific page 

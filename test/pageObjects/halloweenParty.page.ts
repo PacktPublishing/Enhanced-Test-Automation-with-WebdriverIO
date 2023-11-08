@@ -1,6 +1,6 @@
-import Page from './page.js';
-import * as helpers from "../../helpers/helpers.js";
-import { ASB } from '../../helpers/globalObjects.js';
+import Page from './page';
+import * as helpers from "../../helpers/helpers";
+import { ASB } from '../../helpers/globalObjects';
 
 /** 
  * sub page with selectors for a specific page 

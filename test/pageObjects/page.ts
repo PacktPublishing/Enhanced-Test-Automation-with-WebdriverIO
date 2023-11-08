@@ -11,21 +11,23 @@ export default class Page {
 
         if (path.startsWith(`http`)) {
             await browser.url(path); // Overwrite the path
-        } 
-        
-        if (path.startsWith(`components`)) {
+        } else if (path.startsWith(`components`)) {
             await browser.url(`https://www.telerik.com/kendo-react-ui/${path}`);
-        } 
-        
-        if (path===(``)) {
-            // Use the default path passed in from Env=prod or Jenkins
+        } else if (path===(``)){
             await browser.url(`${browser.options.baseUrl}`);
+        }else {
+            return browser.url(`https://the-internet.herokuapp.com/${path}`);
         }
+        
+        // if (path===(``)) {
+        //     // Use the default path passed in from Env=prod or Jenkins
+        //     await browser.url(`${browser.options.baseUrl}`);
+        // }
 
     
-        console.log(await browser.getUrl());
+        // console.log(await browser.getUrl());
 
-        //return await  browser.url(`https://the-internet.herokuapp.com/${path}`);
+
     
     }
 }

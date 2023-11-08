@@ -1,4 +1,3 @@
-// import { ChainablePromiseElement } from 'webdriverio';
 import {browser, $} from '@wdio/globals';
 import Page from './page';
 

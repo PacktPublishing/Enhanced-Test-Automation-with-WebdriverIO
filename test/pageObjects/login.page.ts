@@ -124,7 +124,7 @@ class loginPage extends Page {
     //     }
     // }
 
-    public open(path: string = "login"|| "") {
+    public open(path: string = "login" ) {
         return super.open(path);
     }
 
