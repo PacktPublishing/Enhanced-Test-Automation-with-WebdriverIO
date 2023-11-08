@@ -5,22 +5,22 @@
 export default class Page {
     /**
      * Opens a sub page of the page or the url provided
-     * @param path path of the sub page (e.g. /path/to/page.html)
+     * @param path optional path of the sub page (e.g. /path/to/page.html)
      */
-    public async open(path: string) {
-        if (path.startsWith(`http`)){
-            return await browser.url(path); // Overwrite the path
+    public async open(path?: string | undefined) {
+        if (typeof path !== 'undefined' && typeof path === 'string') {
+            if (path.startsWith(`http`)) {
+                await browser.url(path); // Overwrite the path
+            } else if (path.startsWith(`components`)) {
+                await browser.url(`https://www.telerik.com/kendo-react-ui/${path}`);
+            } else {
+                await browser.url(`${browser.options.baseUrl}/${path}`);
+            }
+        } else {
+            // Use the default path passed in from Env=prod or Jenkins
+            await browser.url(`${browser.options.baseUrl}`);
         }
 
-        if (path.startsWith(`components`)){
-            return await browser.url(`https://www.telerik.com/kendo-react-ui/${path}`);
-        }
-
-        return await browser.url(`https://the-internet.herokuapp.com/${path}`);
-    }
-
-    public async getUrlAdv(path: string): Promise<string> {
-        let thisUrl = await browser.getUrl();
-        return thisUrl;
+        console.log(await browser.getUrl());
     }
 }

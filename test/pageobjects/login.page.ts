@@ -108,12 +108,22 @@ class loginPage extends Page {
         await helpers.clickAdv(await this.btnSubmit);
     }
 
-    /**
-     * overwrite specific options to adapt it to page object
+
+
+   /**
+     * Opens a sub page of the page or the url provided
+     * @param path optional path of the sub page (e.g. /path/to/page.html)
      */
-    public open(path: string = "login") {
+public open(): Promise<void>;
+public open(path: string): Promise<void>;
+public open(path?: string): Promise<void> {
+    if (typeof path !== 'undefined' ) {
         return super.open(path);
+    } else {
+        return super.open();
     }
+}
+
 }
 
 export default new loginPage();

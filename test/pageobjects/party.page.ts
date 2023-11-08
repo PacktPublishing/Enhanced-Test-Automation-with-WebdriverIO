@@ -26,4 +26,4 @@ class halloween extends Page {
       "Last year is <today-300>");
   }
 }
-export default new KeyPressesPage();
+export default new halloween();
