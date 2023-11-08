@@ -1,4 +1,4 @@
-import LoginPage from "../pageobjects/login.page";
+import LoginPage from "../pageObjects/login.page";
 
 // Host or Attend a party in Ghostville or Zombieton
 import stateDrivenUtils from "../utilities/stateDriven.utils";

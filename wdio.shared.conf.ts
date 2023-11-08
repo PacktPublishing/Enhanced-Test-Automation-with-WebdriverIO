@@ -17,6 +17,8 @@ const addToElement = true
  *  if you specify on then its ignored
  *  loadPage('https://dckduckgo.com')
  */
+
+
 let baseUrl: string
 let env = process.env.Env
 let urls = {
@@ -24,6 +26,7 @@ let urls = {
     dev: 'https://candymapperR2.com/',
     prod: 'https://candymapper.com/'
 }
+
 baseUrl = urls[env]
 
 // export const environments = {
@@ -186,8 +189,8 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
     services: [
-        "chromedriver",
-        "geckodriver",
+        //"chromedriver",
+        //"geckodriver",
     ],
 
     // Framework you want to run your specs with.

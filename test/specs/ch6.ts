@@ -1,9 +1,9 @@
 "strict mode";
-import LoginPage from "../pageobjects/login.page";
-import SecurePage from "../pageobjects/secure.page";
-import LandingPage from "../pageobjects/landing.page";
+import LoginPage from "../pageObjects/login.page";
+import SecurePage from "../pageObjects/secure.page";
+import LandingPage from "../pageObjects/landing.page";
 import * as helpers from "../../helpers/helpers";
-import dynamicLoadingPage from "../pageobjects/dynamicLoading.page";
+import dynamicLoadingPage from "../pageObjects/dynamicLoading.page";
 describe("The setValue Wrapper – Entering Text and Dynamic Data Replacement", () => {
 
     fit("Chapter 6: setValue Wrapper", async () => {

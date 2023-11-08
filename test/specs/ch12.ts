@@ -1,5 +1,5 @@
-import LoginPage from "../pageobjects/login.page";
-import SecurePage from "../pageobjects/secure.page";
+import LoginPage from "../pageObjects/login.page";
+import SecurePage from "../pageObjects/secure.page";
 import * as helpers from "../../helpers/helpers";
 import * as Data from "../../shared-data/userData.json";
 

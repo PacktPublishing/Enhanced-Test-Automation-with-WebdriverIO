@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "sourceMap": false,
     /* strict Type-Checking Options */
     //"strict": true, /* Enable all strict type-checking options below */
     // "noImplicitAny": true, /* Raise error on expressions and declarations with an implied 'any' type */
@@ -30,5 +31,6 @@
       "expect-webdriverio"
     ],
     "target": "es2022"
+    
   }
 }
