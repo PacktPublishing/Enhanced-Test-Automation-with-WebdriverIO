@@ -8,15 +8,15 @@ class loginPage extends Page {
     /**
      * define selectors using getter methods
      */
-    public get inputUsername () {
+    public get inputUsername() {
         return $('#username');
     }
 
-    public get inputPassword () {
+    public get inputPassword() {
         return $('#password');
     }
 
-    public get btnSubmit () {
+    public get btnSubmit() {
         return $('button[type="submit"]');
     }
 
@@ -48,7 +48,7 @@ class loginPage extends Page {
      * e.g. to login using username and password
      * missing await so the click executes before the setValue
      */
-    public async login_sync (username: string, password: string) {
+    public async login_sync(username: string, password: string) {
         global.log(`Logging in with '${username}' and '${password}'`)
         this.inputUsername.setValue(username);
         this.inputPassword.setValue(password);
@@ -72,7 +72,7 @@ class loginPage extends Page {
 
         // This button does not exist - failing the test
         let selector = await this.btnBogus.selector;
-        await helpers.log (`${selector}`)
+        await helpers.log(`${selector}`)
         await helpers.clickAdv(await this.btnBogus);
     }
 
@@ -110,19 +110,23 @@ class loginPage extends Page {
 
 
 
-   /**
-     * Opens a sub page of the page or the url provided
-     * @param path optional path of the sub page (e.g. /path/to/page.html)
-     */
-public open(): Promise<void>;
-public open(path: string): Promise<void>;
-public open(path?: string): Promise<void> {
-    if (typeof path !== 'undefined' ) {
+    /**
+      * Opens a sub page of the page or the url provided
+      * @param path optional path of the sub page (e.g. /path/to/page.html)
+      */
+    // public open(): Promise<void>;
+    // public open(path: string): Promise<void>;
+    // public open(path?: string): Promise<void> {
+    //     if (typeof path !== 'undefined' && typeof path === 'string') {
+    //         return super.open(path);
+    //     } else {
+    //         return super.open();
+    //     }
+    // }
+
+    public open(path: string = "login"|| "") {
         return super.open(path);
-    } else {
-        return super.open();
     }
-}
 
 }
 
