@@ -3,7 +3,7 @@ import SecurePage from "../pageObjects/secure.page";
 
 describe("Ch2: Fortress of Solitude", () => {
   it("should login with valid credentials", async () => {
-    await LoginPage.open("login");
+    await LoginPage.open();
 
     await LoginPage.login("tomsmith", "SuperSecretPassword!");
     await expect(SecurePage.flashAlert).toBeExisting();

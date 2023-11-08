@@ -20,7 +20,7 @@ const addToElement = true
 
 
 let baseUrl: string
-let env = process.env.Env
+let env = process.env.Env || 'uat'
 let urls = {
     uat: 'https://the-internet.herokuapp.com',
     dev: 'https://candymapperR2.com/',
@@ -396,7 +396,7 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
         // Option #2: Run browser 3/4 screen on single monitor
         // Allow VS Code Terminal visible on bottom of the screen
         await global.log(`Changing window size`);
-        await browser.setWindowSize(1920, 770);
+        //await browser.setWindowSize(1920, 770);
     },
     /**
      * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling

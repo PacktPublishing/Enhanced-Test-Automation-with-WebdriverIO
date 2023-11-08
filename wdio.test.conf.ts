@@ -9,10 +9,8 @@ export const config: WebdriverIO.Config = {
                 'goog:chromeOptions': {
                     args: ['--disable-gpu', '--enable-automation', '--disable-infobars', '--disable-notifications'] },
                 acceptInsecureCerts: true,
-            },
-            {
-                //browserName: 'firefox'
             }
+
         ]
     }
 }

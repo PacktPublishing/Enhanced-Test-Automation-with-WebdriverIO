@@ -1,4 +1,10 @@
 import { ASB } from "../../helpers/globalObjects";
+import candymapperPage from "../pageObjects/candymapper.page";
+import halloweenAttendPartyPage from "../pageObjects/halloweenAttendParty.page";
+import halloweenHostPartyPage from "../pageObjects/halloweenHostParty.page";
+import halloweenPartyPage from "../pageObjects/halloweenParty.page";
+import halloweenPartyLocationPage from "../pageObjects/halloweenPartyLocation.page";
+import halloweenPartyTimerPage from "../pageObjects/halloweenPartyTimer.page";
 
 class StateDrivenUtils {
 
@@ -42,7 +48,7 @@ class StateDrivenUtils {
     let success = false;
     let retry = 2
 
-    this.parseTestData(testData);  // Parse the test data to set the ASB
+    this.parseTestData(testData);  // Parse the test data to set the ASB 
 
     while (complete === false) { // Loop until the final page is found or page did not change or an error occurs
 
@@ -51,35 +57,45 @@ class StateDrivenUtils {
       pageName = pageName.toLowerCase();
       pageName = pageName.replace(" ", "-");
       ASB.set("page", pageName);
-      
-      console.log(`************* PageName: ${pageName} **************`);
 
-      // // Exit Point #1: Page did not change
+      halloweenAttendPartyPage.build(testData);
+      halloweenHostPartyPage.build(testData);
+      halloweenPartyLocationPage.build(testData);
+      halloweenPartyPage.build(testData);
+      halloweenPartyTimerPage.build(testData);
+      candymapperPage.build(testData);
+
+
+      // Exit Point #1: Page did not change
       // if (lastPage === pageName) {
       //   complete = true;
       //   console.log(`Page did not change: ${pageName} - Exiting Journey`);
       // }
 
-      // // Exit Point #2: Unknown page enountered
+      // Exit Point #2: Unknown page enountered
       // let knownPage = false;
       // if (ASB.get("page") === "unknown") {
       //   knownPage = false;
       // } else {
       //   knownPage = true;
       // }
+
       // if (knownPage == false) {
       //   complete = true;
       //   console.log(`Unknown Page detected: ${ASB.get("page")} - Exiting Journey`);
       // }
 
-      // // Exit Point #3: Halloween Party Home page reached
-      // if (ASB.get("page") === "halloween-party") {
-      //   complete = true;
-      //   console.log("Halloween Party Home page reached")
-      // }
+      // Exit Point #3: We were scared and went back -Halloween Party Home page reached - error 404 in prod / works in stage
+      if (ASB.get("page") === "halloween-party") {
+        complete = true;
+        console.log("Halloween Party Home page reached")
+      }
+
+
+
 
       lastPage = ASB.get("page"); // Save the last page name
-      complete = false;
+
     }
   }
 }
