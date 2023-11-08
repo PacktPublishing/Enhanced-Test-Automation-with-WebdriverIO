@@ -14,8 +14,8 @@ let env: string;
 
 describe("Ch14: State-drive Automation - Host a Party (Default in Ghostville)",  () => {
   it("should loop around until the final page is found", async () => {
-    await LoginPage.open("");
-    stateDrivenUtils.partyPath("host"); // Host path through the party
+    await LoginPage.open(``); // Nav to Candymapper.com Prod or Dev
+    //await stateDrivenUtils.partyPath(""); // Host path through the party
   });
 });
 

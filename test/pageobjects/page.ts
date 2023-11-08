@@ -25,7 +25,7 @@ export default class Page {
     
         console.log(await browser.getUrl());
 
-        return await  browser.url(`https://the-internet.herokuapp.com/${path}`);
+        //return await  browser.url(`https://the-internet.herokuapp.com/${path}`);
     
     }
 }

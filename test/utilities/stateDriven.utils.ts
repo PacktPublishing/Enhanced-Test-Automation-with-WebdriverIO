@@ -51,30 +51,32 @@ class StateDrivenUtils {
       pageName = pageName.toLowerCase();
       pageName = pageName.replace(" ", "-");
       ASB.set("page", pageName);
+      
+      console.log(`************* PageName: ${pageName} **************`);
 
-      // Exit Point #1: Page did not change
-      if (lastPage === pageName) {
-        complete = true;
-        console.log(`Page did not change: ${pageName} - Exiting Journey`);
-      }
+      // // Exit Point #1: Page did not change
+      // if (lastPage === pageName) {
+      //   complete = true;
+      //   console.log(`Page did not change: ${pageName} - Exiting Journey`);
+      // }
 
-      // Exit Point #2: Unknown page enountered
-      let knownPage = false;
-      if (ASB.get("page") === "unknown") {
-        knownPage = false;
-      } else {
-        knownPage = true;
-      }
-      if (knownPage == false) {
-        complete = true;
-        console.log(`Unknown Page detected: ${ASB.get("page")} - Exiting Journey`);
-      }
+      // // Exit Point #2: Unknown page enountered
+      // let knownPage = false;
+      // if (ASB.get("page") === "unknown") {
+      //   knownPage = false;
+      // } else {
+      //   knownPage = true;
+      // }
+      // if (knownPage == false) {
+      //   complete = true;
+      //   console.log(`Unknown Page detected: ${ASB.get("page")} - Exiting Journey`);
+      // }
 
-      // Exit Point #3: Halloween Party Home page reached
-      if (ASB.get("page") === "halloween-party") {
-        complete = true;
-        console.log("Halloween Party Home page reached")
-      }
+      // // Exit Point #3: Halloween Party Home page reached
+      // if (ASB.get("page") === "halloween-party") {
+      //   complete = true;
+      //   console.log("Halloween Party Home page reached")
+      // }
 
       lastPage = ASB.get("page"); // Save the last page name
       complete = false;
