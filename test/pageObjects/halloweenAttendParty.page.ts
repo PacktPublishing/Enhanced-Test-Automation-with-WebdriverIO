@@ -24,17 +24,22 @@ class HalloweenAttendPartyPage extends Page {
 
     public async build(testdata) {
         let success: boolean = false; // Return false if this is not the current page.
-        let location = testdata.Location.toLowerCase()
-        // Is this the page to process?   	 
-        const path = {
-            zombieton: async () => success = await helpers.clickAdv(await this.btnZombieton),
-            ghostville: async () => success = await helpers.clickAdv(await this.btnGhostville),
-            scared: async () => success = await helpers.clickAdv(await this.btnScared),
-            default: () => allureReporter.addAttachment(`Invalid location type: ${location}`, "", "text/plain"),
-        };
+        // let location = testdata.Location.toLowerCase()
+        let location = testdata.toLowerCase()
 
-        // If the location is not in the path object, use the default.
-        path[location]();
+        // Is this the page to process?
+        if (await ASB.get("page").includes("host-a-party")) {
+            const path = {
+                zombieton: async () => success = await helpers.clickAdv(await this.btnZombieton),
+                ghostville: async () => success = await helpers.clickAdv(await this.btnGhostville),
+                scared: async () => success = await helpers.clickAdv(await this.btnScared),
+                default: () => allureReporter.addAttachment(`Invalid location type: ${location}`, "", "text/plain"),
+            };
+
+            // If the location is not in the path object, use the default.
+            (path[location]||path["default"])();
+        }
+
 
         return success;
     }

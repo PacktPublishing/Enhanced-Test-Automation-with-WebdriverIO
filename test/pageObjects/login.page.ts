@@ -114,17 +114,7 @@ class loginPage extends Page {
       * Opens a sub page of the page or the url provided
       * @param path optional path of the sub page (e.g. /path/to/page.html)
       */
-    // public open(): Promise<void>;
-    // public open(path: string): Promise<void>;
-    // public open(path?: string): Promise<void> {
-    //     if (typeof path !== 'undefined' && typeof path === 'string') {
-    //         return super.open(path);
-    //     } else {
-    //         return super.open();
-    //     }
-    // }
-
-    public open(path: string = "login" ) {
+    public open(path: string = "login") {
         return super.open(path);
     }
 

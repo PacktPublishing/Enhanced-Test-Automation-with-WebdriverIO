@@ -12,10 +12,11 @@ let env: string;
   // env = process.env.ENV || "prod";
 //});
 
+
 describe("Ch14: State-drive Automation - Host a Party (Default in Ghostville)",  () => {
   it("should loop around until the final page is found", async () => {
     await LoginPage.open(``); // Nav to Candymapper.com Prod or Dev
-    await stateDrivenUtils.partyPath("host"); // Host path through the party
+    await stateDrivenUtils.partyPath("Host"); // Host path through the party
   });
 });
 

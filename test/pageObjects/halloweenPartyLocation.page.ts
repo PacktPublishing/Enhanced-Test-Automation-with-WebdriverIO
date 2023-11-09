@@ -1,7 +1,6 @@
 import Page from './page';
 import * as helpers from "../../helpers/helpers";
 import { ASB } from '../../helpers/globalObjects';
-import allureReporter from "@wdio/allure-reporter";
 
 /** 
  * sub page with selectors for a specific page 

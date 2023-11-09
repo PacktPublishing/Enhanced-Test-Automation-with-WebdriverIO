@@ -18,16 +18,5 @@ export default class Page {
         }else {
             return browser.url(`https://the-internet.herokuapp.com/${path}`);
         }
-        
-        // if (path===(``)) {
-        //     // Use the default path passed in from Env=prod or Jenkins
-        //     await browser.url(`${browser.options.baseUrl}`);
-        // }
-
-    
-        // console.log(await browser.getUrl());
-
-
-    
     }
 }
