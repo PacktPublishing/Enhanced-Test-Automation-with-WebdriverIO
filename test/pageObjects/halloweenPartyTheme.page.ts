@@ -28,8 +28,10 @@ class HalloweenThemePartyPage extends Page {
         if (await ASB.get("page").includes("host-a-party")) {
             console.log("inside PartyTheme host-a-party: " + await ASB.get("page"))
            
-            let theme = ASB.get("theme").toLowerCase()
+            let theme = ASB.get("theme")
+
             console.log("**************** theme '" + theme + "'")
+            
             const path = {
                 zombies: async () => await helpers.clickAdv(await this.btnZombies),
                 ghosts: async () =>  await helpers.clickAdv(await this.btnGhosts),

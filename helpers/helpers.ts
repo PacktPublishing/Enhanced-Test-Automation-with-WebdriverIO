@@ -722,12 +722,16 @@ export async function getPageName(): Promise<string> {
 
 export function parseToASB(testData: string) {
   let parts = testData.split(" ");
-
+  console.log(`*********  Setting testdata to ASB ${testData}`);
   parts.forEach(part => {
     if (part.includes('=')) {
       let [key, value] = part.split("=");
-      ASB.set(key, parseInt(value));
+      console.log(`*********  Setting key '${key.toLowerCase()}' to '${value}' in ASB SwitchBoard`);
+      
+      // Always save value as a string
+      ASB.set(key.toLowerCase(), value.toLowerCase());
+
+      console.log(`ASB("${key.toLowerCase()}") set to "${ASB.get(key.toLowerCase())}"`);
     }
   });
-
 }

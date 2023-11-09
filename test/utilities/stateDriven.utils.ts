@@ -6,6 +6,7 @@ import halloweenPartyPage from "../pageObjects/halloweenParty.page";
 import halloweenPartyLocationPage from "../pageObjects/halloweenPartyLocation.page";
 import halloweenPartyThemePage from "../pageObjects/halloweenPartyTheme.page";
 import halloweenPartyTimerPage from "../pageObjects/halloweenPartyTimer.page";
+import * as helpers from "../../helpers/helpers";
 
 class StateDrivenUtils {
 
@@ -20,9 +21,10 @@ class StateDrivenUtils {
       // }
 
       // setting default values
+      ASB.set("hostOrAttend", "host");
       ASB.set("location", "zombieton");
       ASB.set("theme", "zombies");
-
+    
       // Overriding default values
       if (testData.includes(" host")) {
         ASB.set("hostOrAttend", "host");
@@ -95,6 +97,7 @@ class StateDrivenUtils {
     let retry = 2
 
     this.parseTestData(testData);  // Parse the test data to set the ASB
+    helpers.parseToASB(testData);   // Parse the test data to set the ASB
 
     while (complete === false) { // Loop until the final page is found or page did not change or an error occurs
 
