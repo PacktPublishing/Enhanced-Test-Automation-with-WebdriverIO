@@ -96,8 +96,7 @@ class StateDrivenUtils {
 
    
       let pageName = await browser.getUrl();
-
-     
+      ASB.set("page", pageName);
       //pageName.replace(" ", "-");
    
 
@@ -113,18 +112,17 @@ class StateDrivenUtils {
 
       pageName = await browser.getUrl();
       console.log("*****************1  ", pageName);
+      pageName = extractPathFromUrl(pageName)
 
-      pageName = await extractPathFromUrl(pageName) 
-      console.log("***************** 2 ", pageName);
       ASB.set("page", pageName);
+      console.log("***************** 2 ", pageName);
+
       // unknownPage =  
       //         await halloweenAttendPartyPage.build() ||
       //         await halloweenHostPartyPage.build() ||
       //         await halloweenPartyLocationPage.build() ||
       //         await halloweenPartyPage.build() ||
       //         await halloweenPartyTimerPage.build();
-      
-
 
       // Exit Point #1: Page did not change
       if (lastPage === pageName) {
@@ -159,7 +157,6 @@ class StateDrivenUtils {
       if (ASB.get("page") === "halloween-party") {
         console.log("Halloween Party Home page reached")
         complete = true;
-     
       }
       
 
@@ -170,7 +167,7 @@ class StateDrivenUtils {
 
 
 }
-function extractPathFromUrl(url) {
+function extractPathFromUrl(url: string) {
   const urlParts = url.split('/');
   return urlParts[urlParts.length - 1];
 }
