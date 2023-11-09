@@ -11,38 +11,42 @@ class HalloweenAttendPartyPage extends Page {
      * define selectors using getter methods 
      */
     public get btnZombieton() {
-        return $(`//button[contains(normalize-space(),'Zombieton')]`);
+        return $(`//a[contains(normalize-space(),'Zombieton')]`);
     }
 
     public get btnGhostville() {
-        return $(`//button[contains(normalize-space(),'Ghostville')]`);
+        return $(`//a[contains(normalize-space(),'Ghostville')]`);
     }
 
     public get btnScared() {
-        return $(`//button[contains(normalize-space(),'Back')]`);
+        return $(`//a[contains(normalize-space(),'Back')]`);
     }
 
     public async build() {
-        let success: boolean = false; // Return false if this is not the current page.
-
+        
         // Is this th""e page to process?
-        console.log("AttendnPartyPage: " + await ASB.get("page") )
+        console.log("AttendPartyPage: " + await ASB.get("page") )
+        
         if (await ASB.get("page").includes("attend-a-party")) {
-            console.log("inside AttendnPartyPage attend-a-party: " + await ASB.get("page"))
-            let location = ASB.get("location").toLowerCase()
+            //let location = ASB.get("location").toLowerCase()
+           
+            let location = ASB.get("location")
+
+            console.log("********************* inside AttendnPartyPage attend-a-party: " + await ASB.get("page") + " location: '" + location +"'" )
+            
             const path = {
-                zombieton: async () => success = await helpers.clickAdv(await this.btnZombieton),
-                ghostville: async () => success = await helpers.clickAdv(await this.btnGhostville),
-                scared: async () => success = await helpers.clickAdv(await this.btnScared),
+                ghostville: async () =>  await helpers.clickAdv(await this.btnGhostville),
+                scared: async () =>  await helpers.clickAdv(await this.btnScared),
+                zombieton: async () =>  await helpers.clickAdv(await this.btnZombieton),
                 default: () => allureReporter.addAttachment(`Invalid location type: ${location}`, "", "text/plain"),
             };
 
             // If the location is not in the path object, use the default.
-            (path[location]||path["default"])();
+            return (path[location]||path["default"])();
         }
 
+        return false; //This is not the page to process
 
-        return success;
     }
 }
 

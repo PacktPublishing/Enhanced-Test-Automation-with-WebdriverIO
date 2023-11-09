@@ -19,24 +19,23 @@ class HalloweenHostPartyPage extends Page {
     }
 
     public async build() {
-        let success: boolean = false; // Return false if this is not the current page.
         console.log("HostPartyPage: " + await ASB.get("page") )
 
         // Is this the page to process?
-        if (await ASB.get("page") === "attend-a-party") {
-            console.log("inside HostPartyPage attend-a-party: " + await ASB.get("page"))
+        if (await ASB.get("page") === "party-location") {
+            console.log("inside HostPartyPage party-location: " + await ASB.get("page"))
 
             let location = ASB.get("location").toLowerCase()
             const path = {
-            zombieton: async () => success = await helpers.clickAdv(await this.btnZombieton),
-            ghostville: async () => success = await helpers.clickAdv(await this.btnGhostville),
+            zombieton: async () => await helpers.clickAdv(await this.btnZombieton),
+            ghostville: async () =>  await helpers.clickAdv(await this.btnGhostville),
             default: () => allureReporter.addAttachment(`Invalid location: ${location}`, "", "text/plain"),
         };
 
-        (path[location]||path["default"])();
+        return (path[location]||path["default"])();
     }
 
-        return success;
+        return false; //This is not the page to process
     }
 }
 

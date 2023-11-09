@@ -19,57 +19,63 @@ class StateDrivenUtils {
       //   ASB.set("hostOrAttend", "attend");
       // }
 
-      // 
-      // switch (true) {
-      //   case testData.includes(" host"):
-      //     ASB.set("hostOrAttend", "host");
-      //   case testData.includes(" attend"):
-      //     ASB.set("hostOrAttend", "attend");
-      //   case testData.includes(" zombie"):
-      //     ASB.set("location", "zombieton");
-      //   case testData.includes(" ghost"):
-      //     ASB.set("location", "ghostville");
-      //   case testData.includes(" scared"):
-      //   case testData.includes(" skip"):
-      //     ASB.set("location", "skip");
-      // }
-      //
+      // setting default values
+      ASB.set("location", "zombieton");
+      ASB.set("theme", "zombies");
+
+      // Overriding default values
+      if (testData.includes(" host")) {
+        ASB.set("hostOrAttend", "host");
+      }
+      if (testData.includes(" attend")) {
+        ASB.set("hostOrAttend", "attend");
+      }
+      if (testData.includes(" zombie")) {
+        ASB.set("location", "zombieton");
+      }
+      if (testData.includes(" ghost")) {
+        ASB.set("location", "ghostville");
+      }
+      if (testData.includes(" scared")) {
+        ASB.set("location", "scared");
+      }
+      
 
 
       // switch (testData !== '' ) {
-      switch (true) {
-        case testData.includes(" host"): {
-          ASB.set("hostOrAttend", "host");
-        }
-         // break;
-        case testData.includes(" attend"): {
-          ASB.set("hostOrAttend", "attend");
-        }
-          //break;
-        case testData.includes(" zombie"): {
-          ASB.set("location", "zombieton");
-        }
-         // break;
-        case testData.includes(" ghost"): {
-          ASB.set("location", "ghostville");
-        }
-         // break;
-        case testData.includes(" scared"): {
-          ASB.set("location", "scared");
-        }
-         // break;
-        case testData.includes(" skip"): {
-          ASB.set("location", "skip");
-        }
-          //break;
-        case testData.includes(" theme"): {
-          ASB.set("theme", "zombies");
-        }
-         // break;
-        default:
-          ASB.set("hostOrAttend", "host");
+      // switch (true) {
+      //   case testData.includes(" host"): {
+      //     ASB.set("hostOrAttend", "host");
+      //   }
+      //   // break;
+      //   case testData.includes(" attend"): {
+      //     ASB.set("hostOrAttend", "attend");
+      //   }
+      //   //break;
+      //   case testData.includes(" scared"): {
+      //     console.log("************ scared **************")
+      //     ASB.set("location", "scared");
+      //   }
+      //   case testData.includes(" zombie"): {
+      //     console.log("********** zombie **************")
+      //     ASB.set("location", "zombieton");
+      //   }
+      //   // break;
+      //   case testData.includes(" ghost"): {
+      //     console.log("********** ghost **************")
+      //     ASB.set("location", "ghostville");
+      //   }
+      //   // break;
 
-      }
+
+      //   case testData.includes(" theme"): {
+      //     ASB.set("theme", "zombies");
+      //   }
+      //   // break;
+      //   //default:
+      //   //  ASB.set("hostOrAttend", "host");
+
+      // }
 
       //  Set the environment - default to prod: candymapper.com
       //  stage: candymapperR2.com
@@ -113,7 +119,7 @@ class StateDrivenUtils {
       ASB.set("page", pageName);
 
       await halloweenPartyPage.build() // Move us from party page to host or attend page
-      await halloweenHostPartyPage.build() // Move us from party page to host or attend page
+      //await halloweenHostPartyPage.build() // Move us from party page to host or attend page
       await halloweenPartyLocationPage.build() // Move us from party location page to timer page
       await halloweenPartyThemePage.build() // Move us from party page to host or attend page
       await halloweenAttendPartyPage.build() // Move us from party page to host or attend page
@@ -134,16 +140,16 @@ class StateDrivenUtils {
       // Exit Point #1: Page did not change
 
       if (lastPage === pageName) {
-        
+
         retry--;
 
-        if (retry ===  0) {
+        if (retry === 0) {
 
-        complete = true;
-        // console.log(`Page did not change 2 : ${pageName} - Exiting Journey`);
-        console.log(`Page did not change 3 : ${lastPage} - Exiting Journey`);
-        } 
-      } else{
+          complete = true;
+          // console.log(`Page did not change 2 : ${pageName} - Exiting Journey`);
+          console.log(`Page did not change 3 : ${lastPage} - Exiting Journey`);
+        }
+      } else {
         // Page moved on
         console.log(`Page retry: ${retry})`);
         retry = 2;
