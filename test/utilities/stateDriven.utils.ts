@@ -8,15 +8,15 @@ import halloweenPartyTimerPage from "../pageObjects/halloweenPartyTimer.page";
 
 class StateDrivenUtils {
 
-  public parseTestData(testData: string) {
+  public parseTestData(testData: string = '') {
     if (testData != "") {
       testData = " " + testData.toLowerCase(); // Add space to make sure we match whole words and convert to lowercase once
 
-      if (testData.includes(" host")) {
-        ASB.set("hostOrAttend", "host");
-      } else if (testData.includes(" attend")) {
-        ASB.set("hostOrAttend", "attend");
-      }
+      // if (testData.includes(" host")) {
+      //   ASB.set("hostOrAttend", "host");
+      // } else if (testData.includes(" attend")) {
+      //   ASB.set("hostOrAttend", "attend");
+      // }
 
       // 
       // switch (true) {
@@ -32,6 +32,40 @@ class StateDrivenUtils {
       //   case testData.includes(" skip"):
       //     ASB.set("location", "skip");
       // }
+      //
+
+
+      // switch (testData !== '' ) {
+      switch (true ) {
+        case testData.includes(" host"): {
+          ASB.set("hostOrAttend", "host");
+        }
+          break;
+        case testData.includes(" attend"): {
+          ASB.set("hostOrAttend", "attend");
+        }
+          break;
+        case testData.includes(" zombie"): {
+          ASB.set("location", "zombieton");
+        }
+          break;
+        case testData.includes(" ghost"): {
+          ASB.set("location", "ghostville");
+        }
+          break;
+        case testData.includes(" scared"): {
+          ASB.set("location", "scared");
+        }
+          break;
+        case testData.includes(" skip"): {
+          ASB.set("location", "skip");
+        }
+          break;
+
+        default:
+          ASB.set("hostOrAttend", "host");
+
+      }
 
       //  Set the environment - default to prod: candymapper.com
       //  stage: candymapperR2.com
@@ -50,6 +84,7 @@ class StateDrivenUtils {
     let lastPage: string = ""
     let success = false;
     let retry = 2
+    // let pageName: string;
 
     this.parseTestData(testData);  // Parse the test data to set the ASB
 
@@ -57,9 +92,13 @@ class StateDrivenUtils {
     while (complete === false ) { // Loop until the final page is found or page did not change or an error occurs
 
       //Get Page Name
+      // pageName = await browser.getTitle();
+      // pageName = pageName.toLowerCase();
+      // pageName = pageName.replace(" ", "-");
+      // ASB.set("page", pageName);
       let pageName = await browser.getTitle();
-      pageName = pageName.toLowerCase();
-      pageName = pageName.replace(" ", "-");
+      pageName.toLowerCase();
+      pageName.replace(" ", "-");
       ASB.set("page", pageName);
 
       candymapperPage.build(testData);
@@ -72,21 +111,22 @@ class StateDrivenUtils {
       // Exit Point #1: Page did not change
       if (lastPage === pageName) {
         complete = true;
-        console.log(`Page did not change: ${pageName} - Exiting Journey`);
+        console.log(`Page did not change 2 : ${pageName} - Exiting Journey`);
+        console.log(`Page did not change 3 : ${lastPage} - Exiting Journey`);
       }
-
-      // Exit Point #2: Unknown page encountered
-      let knownPage = false;
-
-      if (ASB.get("page") === "unknown") {
-        knownPage = false;
-      } else {
-        knownPage = true;
-      } if (knownPage == false) {
-        complete = true;
-        console.log(`Unknown Page detected: ${ASB.get("page")} - Exiting Journey`);
-      }
-
+      //
+      // // Exit Point #2: Unknown page encountered
+      // let knownPage = false;
+      //
+      // if (ASB.get("page") === "unknown") {
+      //   knownPage = false;
+      // } else {
+      //   knownPage = true;
+      // } if (knownPage == false) {
+      //   complete = true;
+      //   console.log(`Unknown Page detected: ${ASB.get("page")} - Exiting Journey`);
+      // }
+      //
       // Exit Point #3: We were scared and went back -Halloween Party Home page reached - error 404 in prod / works in stage
       if (ASB.get("page") === "halloween-party") {
         complete = true;
@@ -95,6 +135,10 @@ class StateDrivenUtils {
 
 
       lastPage = ASB.get("page"); // Save the last page name
+      // complete = true;
+    }
+    if(complete === true){
+      console.log(`We have a winner : ${lastPage} - Exiting Journey`);
 
     }
   }
