@@ -8,8 +8,11 @@
     "_journey_comment": "'host' (default Happy Path), 'attend' or 'skip' ",
     "JOURNEY": "host",
     "_location_comment": "'zombieton' (default Happy Path) or 'ghostville' ",
-    "LOCATION": "zombieton",
+    "location": "zombieton",
     "_environment_comment": "'prod' (default Happy Path) or 'stage' ",
+    "theme": "zombies",
+    "_theme_comment": "'zombies' (default Happy Path) or 'ghosts' ",
+    
     "ENV": "PROD"
   }
 }
