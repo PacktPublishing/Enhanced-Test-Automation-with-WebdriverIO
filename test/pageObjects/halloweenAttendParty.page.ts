@@ -22,13 +22,12 @@ class HalloweenAttendPartyPage extends Page {
         return $(`//button[contains(normalize-space(),'Back')]`);
     }
 
-    public async build(testdata) {
+    public async build() {
         let success: boolean = false; // Return false if this is not the current page.
-        // let location = testdata.Location.toLowerCase()
-        let location = testdata.toLowerCase()
 
         // Is this the page to process?
         if (await ASB.get("page").includes("host-a-party")) {
+            let location = ASB.get("location").toLowerCase()
             const path = {
                 zombieton: async () => success = await helpers.clickAdv(await this.btnZombieton),
                 ghostville: async () => success = await helpers.clickAdv(await this.btnGhostville),

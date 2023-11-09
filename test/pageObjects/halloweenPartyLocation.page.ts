@@ -17,7 +17,7 @@ class HalloweenPartyLocationPage extends Page {
         return $(`#guests`); // This is a list inside an iFrameof additional 1 or 2 guests
     }
 
-    public async build(testdata) {
+    public async build() {
         let success: boolean = false; // Return false if this is not the current page.
         
         //if page contains "party-location" then click on find out more button

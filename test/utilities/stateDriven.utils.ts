@@ -93,17 +93,38 @@ class StateDrivenUtils {
       // pageName = pageName.toLowerCase();
       // pageName = pageName.replace(" ", "-");
       // ASB.set("page", pageName);
-      let pageName = await browser.getTitle();
-      pageName.toLowerCase();
-      pageName.replace(" ", "-");
-      ASB.set("page", pageName);
 
-      candymapperPage.build(testData);
-      halloweenAttendPartyPage.build(testData);
-      halloweenHostPartyPage.build(testData);
-      halloweenPartyLocationPage.build(testData);
-      halloweenPartyPage.build(testData);
-      halloweenPartyTimerPage.build(testData);
+   
+      let pageName = await browser.getUrl();
+
+     
+      //pageName.replace(" ", "-");
+   
+
+     // let unknownPage = false;
+
+      //knownPage =  
+      await candymapperPage.build() 
+      await halloweenAttendPartyPage.build() 
+      await halloweenHostPartyPage.build() 
+      await halloweenPartyLocationPage.build() 
+      await halloweenPartyPage.build() 
+      await halloweenPartyTimerPage.build();
+
+      pageName = await browser.getUrl();
+      console.log("*****************1  ", pageName);
+
+      pageName = await extractPathFromUrl(pageName) 
+      console.log("***************** 2 ", pageName);
+      ASB.set("page", pageName);
+      // unknownPage =  
+      //         await halloweenAttendPartyPage.build() ||
+      //         await halloweenHostPartyPage.build() ||
+      //         await halloweenPartyLocationPage.build() ||
+      //         await halloweenPartyPage.build() ||
+      //         await halloweenPartyTimerPage.build();
+      
+
 
       // Exit Point #1: Page did not change
       if (lastPage === pageName) {
@@ -113,30 +134,45 @@ class StateDrivenUtils {
       }
 
       // // Exit Point #2: Unknown page encountered
+      //if (unknownPage) {
+        // One of the build methods returned true
+    //} else {
+        // None of the build methods returned true
+    //}
+
       // let knownPage = false;
-      //
+      
       // if (ASB.get("page") === "unknown") {
-      //   // knownPage = false;
+      //   knownPage = false;
+      // }
+      // else {
       //   knownPage = true;
       // }
-      // // else {
-      // //   knownPage = true;
-      // // }
       // if (knownPage == false) {
       //   complete = true;
       //   console.log(`Unknown Page detected: ${ASB.get("page")} - Exiting Journey`);
       // }
 
-      // // Exit Point #3: We were scared and went back -Halloween Party Home page reached - error 404 in prod / works in stage
-      // if (ASB.get("page") === "halloween-party") {
-      //   complete = true;
-      //   console.log("Halloween Party Home page reached")
-      // }
-      //
+      // Exit Point #3: We were scared and went back -Halloween Party Home page reached - error 404 in prod / works in stage
+     console.log(`*****************  Page Name: ${ASB.get("page")}`)
+
+      if (ASB.get("page") === "halloween-party") {
+        console.log("Halloween Party Home page reached")
+        complete = true;
+     
+      }
+      
 
       lastPage = ASB.get("page"); // Save the last page name
     }
   }
+
+
+
+}
+function extractPathFromUrl(url) {
+  const urlParts = url.split('/');
+  return urlParts[urlParts.length - 1];
 }
 
 export default new StateDrivenUtils();

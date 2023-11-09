@@ -17,7 +17,7 @@ class HalloweenPartyPage extends Page {
         return $(`//a[contains(normalize-space(),'ttend')]`);
     }
 
-    public async build(testdata:string) {
+    public async build() {
 
         let success: boolean = false; // Return false if this is not the current page.
 

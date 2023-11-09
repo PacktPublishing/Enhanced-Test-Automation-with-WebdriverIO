@@ -10,7 +10,7 @@ class CandymapperPage extends Page {
 
     // public btnPopupClose() {
     public get btnPopupClose() {
-        return $(`//a[name()="svg"][contains(@id,"close-icon")]`);
+        return $(`//*[name()="svg"][contains(@id,"close-icon")]`);
     }
 
     public get btnHalloweenParty() {
@@ -18,20 +18,21 @@ class CandymapperPage extends Page {
     }
 
 
-    public async build(testdata: string) {
+    public async build() {
         // Is this the page to process?  
-     //await helpers.log ("****************  Page: " +ASB.get("page"))
-        if (await ASB.get("page").includes("candymapper")) {
+        let success = false;
+        if (await ASB.get("page").toLowerCase().includes("candymapper")) {
             // Close the popup if it exists
-                console.log('=============>>>>>>>>>>>> I am here ')
-            // if (await this.btnPopupClose().isDisplayed()) {
-            if (await this.btnPopupClose.isDisplayed()) {
-                console.log('=============>>>>>>>>>>>> ', await this.btnPopupClose.isDisplayed())
-                // await helpers.clickAdv(await this.btnPopupClose());
+
+            if (await (await this.btnPopupClose).isDisplayed()) {
+
                 await helpers.clickAdv(await this.btnPopupClose);
+
             }
             await helpers.clickAdv(await this.btnHalloweenParty);
+            success = true;
         }
+        return success;
     }
 
 }

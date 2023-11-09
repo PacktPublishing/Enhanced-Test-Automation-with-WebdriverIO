@@ -10,7 +10,7 @@ class HalloweenPartyTimerPage extends Page {
      * define selectors using getter methods 
      */
 
-    public async build(testdata) {
+    public async build() {
 
         let success: boolean = false; // Return false if this is not the current page.
 
