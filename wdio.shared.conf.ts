@@ -392,7 +392,7 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
      */
     beforeTest: async function (test, context) {
         //Option #1: Run browser full screen on dual monitors
-        //browser.maximizeWindow();
+        // await browser.maximizeWindow();
         // Option #2: Run browser 3/4 screen on single monitor
         // Allow VS Code Terminal visible on bottom of the screen
         await global.log(`Changing window size`);

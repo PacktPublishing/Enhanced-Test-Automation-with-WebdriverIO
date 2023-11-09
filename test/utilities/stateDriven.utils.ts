@@ -79,16 +79,13 @@ class StateDrivenUtils {
 
   public async partyPath(testData) {
 
-    // let complete: Boolean = false;
     let complete: Boolean = false;
     let lastPage: string = ""
     let success = false;
     let retry = 2
-    // let pageName: string;
 
     this.parseTestData(testData);  // Parse the test data to set the ASB
 
-    // while (complete === false) { // Loop until the final page is found or page did not change or an error occurs
     while (complete === false ) { // Loop until the final page is found or page did not change or an error occurs
 
       //Get Page Name
@@ -111,35 +108,33 @@ class StateDrivenUtils {
       // Exit Point #1: Page did not change
       if (lastPage === pageName) {
         complete = true;
-        console.log(`Page did not change 2 : ${pageName} - Exiting Journey`);
+        // console.log(`Page did not change 2 : ${pageName} - Exiting Journey`);
         console.log(`Page did not change 3 : ${lastPage} - Exiting Journey`);
       }
-      //
+
       // // Exit Point #2: Unknown page encountered
       // let knownPage = false;
       //
       // if (ASB.get("page") === "unknown") {
-      //   knownPage = false;
-      // } else {
+      //   // knownPage = false;
       //   knownPage = true;
-      // } if (knownPage == false) {
+      // }
+      // // else {
+      // //   knownPage = true;
+      // // }
+      // if (knownPage == false) {
       //   complete = true;
       //   console.log(`Unknown Page detected: ${ASB.get("page")} - Exiting Journey`);
       // }
-      //
-      // Exit Point #3: We were scared and went back -Halloween Party Home page reached - error 404 in prod / works in stage
-      if (ASB.get("page") === "halloween-party") {
-        complete = true;
-        console.log("Halloween Party Home page reached")
-      }
 
+      // // Exit Point #3: We were scared and went back -Halloween Party Home page reached - error 404 in prod / works in stage
+      // if (ASB.get("page") === "halloween-party") {
+      //   complete = true;
+      //   console.log("Halloween Party Home page reached")
+      // }
+      //
 
       lastPage = ASB.get("page"); // Save the last page name
-      // complete = true;
-    }
-    if(complete === true){
-      console.log(`We have a winner : ${lastPage} - Exiting Journey`);
-
     }
   }
 }

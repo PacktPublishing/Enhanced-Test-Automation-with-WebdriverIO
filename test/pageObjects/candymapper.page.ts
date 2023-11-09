@@ -10,7 +10,7 @@ class CandymapperPage extends Page {
 
     // public btnPopupClose() {
     public get btnPopupClose() {
-        return $('//*[name()="svg"][contains(@id,"close-icon")]');
+        return $(`//a[name()="svg"][contains(@id,"close-icon")]`);
     }
 
     public get btnHalloweenParty() {
@@ -23,8 +23,10 @@ class CandymapperPage extends Page {
      //await helpers.log ("****************  Page: " +ASB.get("page"))
         if (await ASB.get("page").includes("candymapper")) {
             // Close the popup if it exists
+                console.log('=============>>>>>>>>>>>> I am here ')
             // if (await this.btnPopupClose().isDisplayed()) {
             if (await this.btnPopupClose.isDisplayed()) {
+                console.log('=============>>>>>>>>>>>> ', await this.btnPopupClose.isDisplayed())
                 // await helpers.clickAdv(await this.btnPopupClose());
                 await helpers.clickAdv(await this.btnPopupClose);
             }

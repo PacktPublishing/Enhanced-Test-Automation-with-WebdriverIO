@@ -9,14 +9,25 @@ export default class Page {
      */
     public async open(path: string ) {
 
+        // if (path.startsWith(`http`)) {
+        //     await browser.url(path); // Overwrite the path
+        // } else if (path.startsWith(`components`)) {
+        //     await browser.url(`https://www.telerik.com/kendo-react-ui/${path}`);
+        // } else if (path === ``){
+        //     await browser.url(`${browser.options.baseUrl}`);
+        // }else {
+        //     return browser.url(`https://the-internet.herokuapp.com/${path}`);
+        // }
+
         if (path.startsWith(`http`)) {
             await browser.url(path); // Overwrite the path
-        } else if (path.startsWith(`components`)) {
-            await browser.url(`https://www.telerik.com/kendo-react-ui/${path}`);
-        } else if (path===(``)){
-            await browser.url(`${browser.options.baseUrl}`);
-        }else {
-            return browser.url(`https://the-internet.herokuapp.com/${path}`);
         }
+        if (path.startsWith(`components`)) {
+            await browser.url(`https://www.telerik.com/kendo-react-ui/${path}`);
+        }
+        if (path === ``){
+            await browser.url(`${browser.options.baseUrl}`);
+        }
+            return browser.url(`https://the-internet.herokuapp.com/${path}`);
     }
 }
