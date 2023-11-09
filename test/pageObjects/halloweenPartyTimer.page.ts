@@ -13,9 +13,12 @@ class HalloweenPartyTimerPage extends Page {
     public async build() {
 
         let success: boolean = false; // Return false if this is not the current page.
+        console.log("HalloweenPartyTimerPage: " + await ASB.get("page") )
 
         // Is this the page to process?   	 
         if (await ASB.get("page") === "party-time") {
+            console.log("Inside HalloweenPartyTimerPage: " + await ASB.get("page") )
+        
             // End of path reached!
             allureReporter.addAttachment(`Party Timer Page reached - Path Complete`, "", "text/plain");
             success = true;

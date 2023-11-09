@@ -10,7 +10,8 @@ class HalloweenPartyLocationPage extends Page {
      * define selectors using getter methods 
      */
     public get btnFindOutMore() {
-        return $(`//button[contains(normalize-space(),'Find Out More')]`);
+        //return $(`//button[contains(normalize-space(),'Find Out More')]`); // self-healing locator
+        return $(`//a[normalize-space()='Find out more']`);
     }
 
     public get listAdditionalGuests() {
@@ -19,11 +20,11 @@ class HalloweenPartyLocationPage extends Page {
 
     public async build() {
         let success: boolean = false; // Return false if this is not the current page.
-        
+        console.log("HalloweenPartyLocationPage: " + await ASB.get("page") )
         //if page contains "party-location" then click on find out more button
         if ((await ASB.get("page")).includes("party-location")) {
             // Implicitly move to the next page
-            
+            console.log("Inside HalloweenPartyLocationPage: " + await ASB.get("page") )
            success = await helpers.clickAdv(await this.btnFindOutMore);
         }
 

@@ -96,26 +96,30 @@ class StateDrivenUtils {
 
    
       let pageName = await browser.getUrl();
+      pageName = extractPathFromUrl(pageName)
       ASB.set("page", pageName);
-      //pageName.replace(" ", "-");
    
 
      // let unknownPage = false;
 
       //knownPage =  
-      await candymapperPage.build() 
-      await halloweenAttendPartyPage.build() 
-      await halloweenHostPartyPage.build() 
-      await halloweenPartyLocationPage.build() 
-      await halloweenPartyPage.build() 
-      await halloweenPartyTimerPage.build();
-
+      await candymapperPage.build() // Move us from main to party page
       pageName = await browser.getUrl();
-      console.log("*****************1  ", pageName);
       pageName = extractPathFromUrl(pageName)
-
       ASB.set("page", pageName);
-      console.log("***************** 2 ", pageName);
+
+      await halloweenPartyPage.build() // Move us from party page to host or attend page
+      await halloweenHostPartyPage.build() // Move us from party page to host or attend page
+      await halloweenPartyLocationPage.build() // Move us from party location page to timer page
+
+      await halloweenAttendPartyPage.build() // Move us from party page to host or attend page
+     
+     
+     
+      pageName = await browser.getUrl();
+      pageName = extractPathFromUrl(pageName)
+      ASB.set("page", pageName);
+ 
 
       // unknownPage =  
       //         await halloweenAttendPartyPage.build() ||
@@ -130,6 +134,8 @@ class StateDrivenUtils {
         // console.log(`Page did not change 2 : ${pageName} - Exiting Journey`);
         console.log(`Page did not change 3 : ${lastPage} - Exiting Journey`);
       }
+      
+      lastPage = pageName
 
       // // Exit Point #2: Unknown page encountered
       //if (unknownPage) {
@@ -158,7 +164,9 @@ class StateDrivenUtils {
         console.log("Halloween Party Home page reached")
         complete = true;
       }
-      
+
+      // Exit Point #3: We were scared and went back -Halloween Party Home page reached - error 404 in prod / works in stage      
+      await halloweenPartyTimerPage.build(); // End of all paths except unknown page
 
       lastPage = ASB.get("page"); // Save the last page name
     }

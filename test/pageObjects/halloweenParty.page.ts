@@ -19,21 +19,25 @@ class HalloweenPartyPage extends Page {
 
     public async build() {
 
-        let success: boolean = false; // Return false if this is not the current page.
+        //let success: boolean = false; // Return false if this is not the current page.
 
-        // Is this the page to process?   	 
+        // Is this the page to process?   
+        
+        console.log("HalloweenPartyPage: " + await ASB.get("page") )
+
         if (await ASB.get("page") === "halloween-party") {
-
+            console.log("inside HalloweenPartyPage: " + await ASB.get("page") )
             // Host or attend the party based on the ASB
-            if (await ASB.get("hostOrAttend").toLowerCase() === `attend`) {
-                success = await helpers.clickAdv(await this.attendParty);
-            } else {
-                //Default to host
-                success = await helpers.clickAdv(await this.hostParty);
+            if (ASB.get("hostOrAttend").toLowerCase() === `attend`) {
+                return await helpers.clickAdv(await this.attendParty); 4
             }
+
+            //Default to host
+            return await helpers.clickAdv(await this.hostParty);
         }
 
-        return success;
+        //This was not the page to process
+        return false;
 
     }
 }

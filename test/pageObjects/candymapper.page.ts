@@ -21,8 +21,10 @@ class CandymapperPage extends Page {
     public async build() {
         // Is this the page to process?  
         let success = false;
-        if (await ASB.get("page").toLowerCase().includes("candymapper")) {
+        console.log("candymapper Main: " + await ASB.get("page") )
+        if (await ASB.get("page") === "") {
             // Close the popup if it exists
+            console.log(" inside candymapper Main: " + await ASB.get("page") )
 
             if (await (await this.btnPopupClose).isDisplayed()) {
 

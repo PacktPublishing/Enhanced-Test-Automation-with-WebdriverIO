@@ -25,8 +25,10 @@ class HalloweenAttendPartyPage extends Page {
     public async build() {
         let success: boolean = false; // Return false if this is not the current page.
 
-        // Is this the page to process?
+        // Is this th""e page to process?
+        console.log("AttendnPartyPage: " + await ASB.get("page") )
         if (await ASB.get("page").includes("host-a-party")) {
+            console.log("inside AttendnPartyPage host-a-party: " + await ASB.get("page"))
             let location = ASB.get("location").toLowerCase()
             const path = {
                 zombieton: async () => success = await helpers.clickAdv(await this.btnZombieton),
