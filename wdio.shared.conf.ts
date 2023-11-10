@@ -14,10 +14,9 @@ const addToElement = true
 /**
  *  The baseUrl will only be used if in your script you don't specify a url
  *  loadPage('/')
- *  if you specify on then its ignored
- *  loadPage('https://dckduckgo.com')
+ *  if you specify one then its ignored
+ *  loadPage('https://www.candymapper.com')
  */
-
 
 let baseUrl: string
 let env = process.env.Env || 'uat'
