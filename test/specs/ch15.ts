@@ -10,8 +10,8 @@ describe("Ch15: State-drive Automation from Jenkins", () => {
         // Determins the environment to run the test in from the command line
         // Default to prod: candymapper.com
         // stage: candymapperR2.com
-        let env = process.env.ENV || "prod";
-        await LoginPage.open(env);
+        // let env = process.env.ENV || "prod";
+        await LoginPage.open('');
         let testData = process.env.JOURNEY || ""; // Get test data from JOURNEY environment variable set by Jenkins
         await stateDrivenUtils.partyPath(testData); // Attend path through the party
     });
