@@ -11,11 +11,11 @@ class HalloweenHostPartyPage extends Page {
      * define selectors using getter methods 
      */
     public get btnZombieton() {
-        return $(`//button[contains(normalize-space(),'Zombie')]`);
+        return $(`//a[contains(normalize-space(),'Zombie')]`);
     }
 
     public get btnGhostville() {
-        return $(`//button[contains(normalize-space(),'Ghostville')]`);
+        return $(`//a[contains(normalize-space(),'Ghostville')]`);
     }
 
     public async build() {

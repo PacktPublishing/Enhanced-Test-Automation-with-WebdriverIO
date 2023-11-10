@@ -30,9 +30,9 @@
         "ch12": "yarn wdio --spec ./test/specs/ch12.ts",
         "ch13": "yarn wdio --spec ./test/specs/ch13.ts",
         "ch14": "cross-env Env=dev yarn wdio --spec ./test/specs/ch14.ts",
-        "ch15": "cross-env Env=dev wdio wdio.lambdatest.conf.ts --spec ./test/specs/ch15.ts",
+        "ch15": "cross-env wdio wdio.lambdatest.conf.ts --spec ./test/specs/ch15.ts",
         "uat": "yarn wdio --spec ./test/specs/ch3.ts",
-        "dev": "Env=dev wdio wdio.dev.conf.ts --spec ./test/specs/ch13.ts",
+        "dev": "Env=prod wdio wdio.dev.conf.ts --spec ./test/specs/ch13.ts",
         "prod": "Env=prod wdio wdio.prod.conf.ts --spec ./test/specs/ch2.ts"
     },
     "dependencies": {

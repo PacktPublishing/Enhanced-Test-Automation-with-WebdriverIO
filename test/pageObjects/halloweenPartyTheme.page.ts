@@ -42,8 +42,7 @@ class HalloweenThemePartyPage extends Page {
            return (path[theme]||path["default"])();
         }
 
-
-       // return success;
+        return false; //This is not the page to process
     }
 }
 

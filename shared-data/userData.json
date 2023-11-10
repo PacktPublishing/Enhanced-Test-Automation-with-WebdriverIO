@@ -3,10 +3,11 @@
     "_comment": "User credentials",
     "username": "tomsmith",
     "password": "SuperSecretPassword!"
-  },
+  }
+  ,
   "journeyData": {
-    "_journey_comment": "'host' (default Happy Path), 'attend' or 'skip' ",
-    "JOURNEY": "host",
+    "_hostorattend_comment": "'host' (default Happy Path), 'attend' or 'skip' ",
+    "hostorattend": "host",
     "_location_comment": "'zombieton' (default Happy Path) or 'ghostville' ",
     "location": "zombieton",
     "_environment_comment": "'prod' (default Happy Path) or 'stage' ",

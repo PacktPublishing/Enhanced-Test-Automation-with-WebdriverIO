@@ -394,7 +394,7 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
         // await browser.maximizeWindow();
         // Option #2: Run browser 3/4 screen on single monitor
         // Allow VS Code Terminal visible on bottom of the screen
-        await global.log(`Changing window size`);
+        global.log(`Changing window size`);
         await browser.setWindowSize(1920, 770);
     },
     /**
@@ -485,14 +485,17 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
  * log wrapper
  * @param text to be output to the console window
  */
+let lastLoggedText = '';
+
 global.log = async (text: any) => {
-    if (text) {
+    if (text && text !== lastLoggedText) {
         //truthy value check
         if (text === Promise) {
             console.log(`--->     WARN: Log was passed a Promise object`);
             console.trace();
         } else {
             console.log(`---> ${text}`);
+            lastLoggedText = text;
         }
     }
 };
