@@ -6,10 +6,8 @@ logs
 all-logs
 driver-logs
 *.png
-screenshots
-*.log
 .idea
 .vscode
-.env
 reports
+.env
 yarn-error.log
