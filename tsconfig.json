@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "allowSyntheticDefaultImports": true,
+        "types": [
+            "node",
+            "@wdio/globals/types",
+            "@wdio/jasmine-framework",
+            "expect-webdriverio",
+        ],
+    }
+}
