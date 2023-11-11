@@ -1,4 +1,3 @@
-import type { Options } from '@wdio/types';
 import { ASB } from './helpers/globalObjects';
 
 const DEBUG =
@@ -9,10 +8,8 @@ let timeout = DEBUG === true ? 1_000_000 : 10_000;
 console.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`);
 
 const addToElement = true //
-//const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
-// Chapter 4 - Automation SwitchBoard
 
-export const config = {
+export const config= {
     //
     // ====================
     // Runner Configuration
@@ -172,19 +169,35 @@ export const config = {
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
-    reporters: ["spec", ["allure", { outputDir: "reports/allure-results" }]],
+    reporters: ["spec", ["allure", { outputDir: "allure-results" }]],
 
     //
     // Options to be passed to Jasmine.
     jasmineOpts: {
+        // Jasmine default timeout
         defaultTimeoutInterval: timeout,
+        //
+        // The Jasmine framework allows interception of each assertion in order to log the state of the application
+        // or website depending on the result. For example, it is pretty handy to take a screenshot every time
+        // an assertion fails.
         expectationResultHandler: async function (passed, assertion) {
+            /**
+             * only take screenshot if assertion failed
+             */
             if (passed) {
                 return;
             }
-            await browser.saveScreenshot(
-                `reports/assertionError_${assertion.error}.png`
-            );
+
+            try {
+                await console.log(`Jasmine screenshot of ${await assertion.error.message}.`)
+                await console.log(`Waiting for ${timeout / 60000} min...`)
+                await browser.saveScreenshot(
+                    `assertionError_${await assertion.error.message}.png`);
+                await browser.pause(timeout);
+                await console.log(`DEBUG wait done`)
+            } catch (error) {
+                await console.log(`The screen capture failed. Check for a missing await statement. ${error}`)
+            }
         },
     },
 
@@ -235,44 +248,35 @@ export const config = {
     // },
 
     /**
-        * Gets executed just before initialising the webdriver session and test framework. It allows you
-        * to manipulate configurations depending on the capability or spec.
-        * @param {commandName} wdio command
-        * @param {args} arguments passed to the command
-        */
+     * Gets executed just before initialising the webdriver session and test framework. It allows you
+     * to manipulate configurations depending on the capability or spec.
+     * @param {commandName} wdio command
+     * @param {args} arguments passed to the command
+     */
     beforeCommand: function (commandName, args) {
         // Chapter 5 - Keep the current object locator for future manipulation
         let elementSelectorType:String
         let elementSelector: String
-        let paddedCommandName: String = commandName.padEnd(12, ' ');         
+        let paddedCommandName: String = commandName.padEnd(12, ' ');
         switch (commandName) {
             case 'findElements':
             case 'findElement':
-                // Pass the class and locator to the Automation Switchboard  
-                if (args[1].length > 0){
-                    if (args[1] !== ASB.get("selector")){
-                        elementSelectorType = args[0];
-                        elementSelector = args[1];
-                        global.log(`beforeCommand ${paddedCommandName}: ASB.get("selectorType") will return '${elementSelectorType}'`)
-                        global.log(`beforeCommand ${paddedCommandName}: ASB.get("selector") will return '${elementSelector}'`)
-                        ASB.set("selectorType", elementSelectorType)
-                        ASB.set("selector", elementSelector)    
-                    } 
-                }
-                
+                // Pass the class and locator to the Automation Switchboard
+                elementSelectorType = args[0];
+                elementSelector = args[1];
+                global.log(`beforeCommand ${paddedCommandName}: ASB.get("selectorType") will return '${elementSelectorType}'`)
+                global.log(`beforeCommand ${paddedCommandName}: ASB.get("selector") will return '${elementSelector}'`)
+                ASB.set("selectorType", elementSelectorType)
+                ASB.set("selector", elementSelector)
                 break;
 
-            case 'url':
-                global.log(`beforeCommand ${paddedCommandName}: Navigate to: '${args[0]}'`);
-                break;    
-
             default:
-                // X-Ray Vision - see all the commands that get executed 
+                // X-Ray Vision - see all the commands that get executed
                 // Uncomment to see all commands executed, but logging will mpact execution run time.
                 // global.log(`beforeCommand ${commandName}`);
                 break;
         }
-    
+
     },
 
     /**
@@ -297,8 +301,6 @@ export const config = {
         global.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`)
 
         // Samples of overidding and adding custom methods.
-
-
 
         // browser.addCommand("clickAdv", async function ()
         // {
@@ -372,7 +374,7 @@ export const config = {
         // Option #2: Run browser 3/4 screen on single monitor
         // Allow VS Code Terminal visible on bottom of the screen
         await global.log(`Changing window size`);
-        await browser.setWindowSize(1200, 770);
+        await browser.setWindowSize(1920, 770);
     },
     /**
      * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
@@ -469,14 +471,17 @@ export const config = {
  * log wrapper
  * @param text to be output to the console window
  */
+let lastLoggedText = '';
+
 global.log = async (text: any) => {
-    if (text) {
+    if (text && text !== lastLoggedText) {
         //truthy value check
         if (text === Promise) {
             console.log(`--->     WARN: Log was passed a Promise object`);
             console.trace();
         } else {
             console.log(`---> ${text}`);
+            lastLoggedText = text;
         }
     }
 };
