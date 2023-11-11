@@ -13,7 +13,7 @@ export default class Page {
             await browser.url(path); // Overwrite the path
         } else if (path.startsWith(`components`)) {
             await browser.url(`https://www.telerik.com/kendo-react-ui/${path}`);
-        } else if (path === ``){
+        } else if (path === ``){ //uses baseUrl from wdio.shared.conf.ts
             await browser.url(`${browser.options.baseUrl}`);
         }else {
             return browser.url(`https://the-internet.herokuapp.com/${path}`);

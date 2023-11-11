@@ -1,4 +1,3 @@
-"strict mode";
 import LoginPage from "../pageObjects/login.page";
 import SecurePage from "../pageObjects/secure.page";
 import LandingPage from "../pageObjects/landing.page";
@@ -32,7 +31,6 @@ describe("Chapter 5: Fail Last clickAdv with pageSync and autoscrolln", () => {
     // await helpers.log(Promise) // Unit test log returns warning when anything but string is passsed
     await LandingPage.open();
     await LandingPage.navToTypos();
-
     // await expect(typosPage.typoText).toHaveTextContaining(   'You logged into a secure area!');
   });
 

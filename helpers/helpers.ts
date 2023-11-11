@@ -19,12 +19,12 @@ export async function clickAdv(element: WebdriverIO.Element) {
     }
     await highlightOn(element);
     //@ts-ignore
-    await element.click({ block: "center" });
+    await element.click() //({ block: "center" });
     await pageSync();
     success = true;
   } catch (error: any) {
     await log(`  ERROR: ${SELECTOR} was not clicked.\n       ${error.message}`);
-    expect(`to be clickable`).toEqual(SELECTOR);
+    //expect(`to be clickable`).toEqual(true);
     // Throw the error to stop the test
     //@ts-ignore
     await element.click({ block: "center" });
@@ -721,17 +721,22 @@ export async function getPageName(): Promise<string> {
  */
 
 export function parseToASB(testData: string) {
-  let parts = testData.split(" ");
-  console.log(`*********  Setting testdata to ASB ${testData}`);
-  parts.forEach(part => {
-    if (part.includes('=')) {
-      let [key, value] = part.split("=");
-      console.log(`*********  Setting key '${key.toLowerCase()}' to '${value}' in ASB SwitchBoard`);
-      
-      // Always save value as a string
-      ASB.set(key.toLowerCase(), value.toLowerCase());
+    
+  const regex = /(\w+)=("([^"]*)"|\b\w+\b)/g;
+  let match;
+  
+  while ((match = regex.exec(testData)) !== null) {
+    let key = match[1];
+    let value = match[2];
 
-      console.log(`ASB("${key.toLowerCase()}") set to "${ASB.get(key.toLowerCase())}"`);
+    // Remove quotes if present
+    if (value.startsWith('"') && value.endsWith('"')) {
+      value = value.slice(1, -1);
     }
-  });
+
+    // Always save value as a string
+    ASB.set(key.toLowerCase(), value);
+
+    console.log(`ASB("${key.toLowerCase()}") set to "${ASB.get(key.toLowerCase())}"`);
+  }
 }

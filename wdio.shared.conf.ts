@@ -14,10 +14,9 @@ const addToElement = true
 /**
  *  The baseUrl will only be used if in your script you don't specify a url
  *  loadPage('/')
- *  if you specify on then its ignored
- *  loadPage('https://dckduckgo.com')
+ *  if you specify one then its ignored
+ *  loadPage('https://www.candymapper.com')
  */
-
 
 let baseUrl: string
 let env = process.env.Env || 'uat'
@@ -395,7 +394,7 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
         // await browser.maximizeWindow();
         // Option #2: Run browser 3/4 screen on single monitor
         // Allow VS Code Terminal visible on bottom of the screen
-        await global.log(`Changing window size`);
+        global.log(`Changing window size`);
         await browser.setWindowSize(1920, 770);
     },
     /**
@@ -486,14 +485,17 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
  * log wrapper
  * @param text to be output to the console window
  */
+let lastLoggedText = '';
+
 global.log = async (text: any) => {
-    if (text) {
+    if (text && text !== lastLoggedText) {
         //truthy value check
         if (text === Promise) {
             console.log(`--->     WARN: Log was passed a Promise object`);
             console.trace();
         } else {
             console.log(`---> ${text}`);
+            lastLoggedText = text;
         }
     }
 };
