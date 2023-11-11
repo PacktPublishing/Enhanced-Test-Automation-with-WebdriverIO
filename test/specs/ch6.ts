@@ -1,6 +1,5 @@
-"strict mode";
-import LoginPage from "../pageobjects/login.page";
-import KeyPressesPage from "../pageobjects/inputs.page";
+import LoginPage from "../pageObjects/login.page";
+import KeyPressesPage from "../pageObjects/inputs.page";
 import * as helpers from "../../helpers/helpers";
 
 describe("The setValue Wrapper – Entering Text and Dynamic Data Replacement", () => {
