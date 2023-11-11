@@ -2,7 +2,7 @@ import LoginPage from '../pageObjects/login.page';
 import SecurePage from '../pageObjects/secure.page';
 
 describe("Ch4: Super Speed : Time Travel Paradoxes and Broken Promises", () => {
-    fit('should report text in order 1,2,3 even though the code is in 2, 3, 1 order', () => {
+    it('should report text in order 1,2,3 even though the code is in 2, 3, 1 order', () => {
         // Microtasks, Macrotasks and Main thread execute out of order
         Promise.resolve().then(_ => console.log(`2: Promise Microtask - First line of code executes second!`)); //Microtask
         setTimeout(_ => console.log(`3: SetTimeout Macrotask - Second Line of code executes third!`), 0); // Macrotask

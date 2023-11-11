@@ -471,14 +471,17 @@ export const config= {
  * log wrapper
  * @param text to be output to the console window
  */
+let lastLoggedText = '';
+
 global.log = async (text: any) => {
-    if (text) {
+    if (text && text !== lastLoggedText) {
         //truthy value check
         if (text === Promise) {
             console.log(`--->     WARN: Log was passed a Promise object`);
             console.trace();
         } else {
             console.log(`---> ${text}`);
+            lastLoggedText = text;
         }
     }
 };
