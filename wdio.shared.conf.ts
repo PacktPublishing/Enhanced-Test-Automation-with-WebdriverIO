@@ -185,10 +185,10 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     // Services take over a specific job you don't want to take care of. They enhance
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
-    services: [
-        "chromedriver",
-        "geckodriver",
-    ],
+    // services: [
+    //     "chromedriver",
+    //     "geckodriver",
+    // ],
 
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
@@ -317,7 +317,6 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
      * @param {Object}         browser      instance of created browser/device session
      */
     before: function (capabilities, specs) {
-        //Set
         //helpers.log(`process.env.DEBUG: ${process.env.DEBUG}`) // ---> process.env.DEBUG: -LH:*
         ASB.set("DEBUG", (process.env.DEBUG === undefined) ? false : (process.env.DEBUG === `true`));
         ASB.set("spinnerTimeoutInSeconds", 30);
@@ -328,48 +327,6 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
         let timeout = ASB.get("timeout");
 
         global.log(`timeout = ${Math.ceil(timeout / 60000)} min.`);
-
-        // Samples of overidding and adding custom methods.
-        // browser.addCommand("clickAdv", async function ()
-        // {
-        //     // `this` is return value of $(selector)
-        //     //await this.waitForDisplayed()
-        //     helpers.log(`Clicking ${this.selector} ...`)
-        //     let locator = "ELEMENT NOT FOUND"
-        //     try
-        //     {
-        //         if (ASB.get(`alreadyFailed`) === true)
-        //         {
-        //             helpers.log(`  SKIPPED: browser.clickAdv(${this.selector})`);
-        //         } else
-        //         {
-        //             await this.click({ block: 'center' })
-        //             helpers.log(`  button clicked.`)
-        //             await helpers.pageSync()
-        //         }
-        //     } catch (error)
-        //     {
-        //         helpers.log(`Element was not clicked.\n${error}`)
-        //         //Skip any remaining steps
-        //         ASB.set(`alreadyFailed`, false)
-        //     }
-        // }, addToElement)
-        // Override the default click command
-        // browser.overwriteCommand('click', async (element: ElementFinder) => {
-        //     // Do something before clicking the element
-        //     console.log('Overwrite the intrinsic click command...');
-        //     // Perform the click action
-        //     try
-        //     {
-        //         helpers.log(`Clicking ${this.selector} ...`)
-        //         await this.click({ block: 'center' })
-        //         await helpers.pageSync()
-        //         helpers.log(`done`)
-        //     } catch (error)
-        //     {
-        //         helpers.log(`Element was not clicked.\n${error}`)
-        //     }
-        // })
     },
     /**
      * Runs before a WebdriverIO command gets executed.
@@ -386,12 +343,12 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     // },
     /**
      * Function to be executed before a test (in Mocha/Jasmine) starts.
+     * Option #1: Run browser full screen on dual monitors
+     *   browser.maximizeWindow();
+     * Option #2: Run browser 3/4 screen on single monitor
+     *   Allow VS Code Terminal visible on bottom of the screen
      */
     beforeTest: async function (test, context) {
-        //Option #1: Run browser full screen on dual monitors
-        //browser.maximizeWindow();
-        // Option #2: Run browser 3/4 screen on single monitor
-        // Allow VS Code Terminal visible on bottom of the screen
         await global.log(`Changing window size`);
         await browser.setWindowSize(1920, 770);
     },
@@ -400,7 +357,7 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
      * beforeEach in Mocha)
      */
     // beforeHook: function (test, context) {
-    //   // Create custom commands here
+    //  Create custom commands here
     // },
     /**
      * Hook that gets executed _after_ a hook within the suite starts (e.g. runs after calling

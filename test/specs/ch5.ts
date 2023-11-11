@@ -71,7 +71,7 @@ describe("Chapter 5: Fail Last clickAdv with pageSync and autoscrolln", () => {
         );
     });
 
-    it("should login with valid credentials", async () => {
+    fit("should login with valid credentials", async () => {
         // await helpers.log(Promise) // Unit test log returns warning when anything but string is passsed
         await LoginPage.open();
         await LoginPage.login("tomsmith", "SuperSecretPassword!");

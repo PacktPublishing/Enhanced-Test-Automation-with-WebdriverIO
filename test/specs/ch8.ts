@@ -1,8 +1,5 @@
 import LoginPage from "../pageobjects/login.page";
-import SecurePage from "../pageobjects/secure.page";
-import LandingPage from "../pageobjects/landing.page";
 import * as helpers from "../../helpers/helpers";
-import dynamicLoadingPage from "../pageobjects/dynamicLoading.page";
 
 describe("Chapter 8: The expect / assert / softAssert", () => {
 
