@@ -1,6 +1,3 @@
-
-import { Browser } from "webdriverio";
-
 const DEBUG =
   process.env.DEBUG === undefined ? true : process.env.DEBUG === `true`;
 console.log(`DEBUG: ${DEBUG}`);
