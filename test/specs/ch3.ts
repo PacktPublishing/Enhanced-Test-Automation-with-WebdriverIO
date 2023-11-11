@@ -18,6 +18,5 @@ describe("Ch3: Cybernetic Enhancements", () => {
     await expect(SecurePage.flashAlert).toHaveTextContaining(
         "You logged into a secure area!"
     );
-
   });
 });

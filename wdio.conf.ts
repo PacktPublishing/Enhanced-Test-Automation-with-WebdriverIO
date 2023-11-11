@@ -1,3 +1,5 @@
+import type { Options } from "@wdio/types";
+
 const DEBUG =
   process.env.DEBUG === undefined ? true : process.env.DEBUG === `true`;
 console.log(`DEBUG: ${DEBUG}`);
@@ -5,7 +7,7 @@ console.log(`DEBUG: ${DEBUG}`);
 let timeout = DEBUG === true ? 1_000_000 : 10_000;
 console.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`);
 
-export const config = {
+export const config= {
     //
     // ====================
     // Runner Configuration
@@ -144,19 +146,35 @@ export const config = {
     reporters: ['spec',['allure', {outputDir: 'allure-results'}]],
 
 
+  // Options to be passed to Jasmine.
+  jasmineOpts: {
+    // Jasmine default timeout
+    defaultTimeoutInterval: timeout,
     //
-    // Options to be passed to Jasmine.
-    jasmineOpts: {
-        defaultTimeoutInterval: timeout,
-        expectationResultHandler: async function (passed, assertion) {
-            if (passed) {
-                return;
-            }
-            await browser.saveScreenshot(
-                `assertionError_${assertion.error.message}.png`
-            );
-        },
+    // The Jasmine framework allows interception of each assertion in order to log the state of the application
+    // or website depending on the result. For example, it is pretty handy to take a screenshot every time
+    // an assertion fails.
+    expectationResultHandler: async function (passed, assertion) {
+      /**
+       * only take screenshot if assertion failed
+       */
+      if (passed) {
+        return;
+      }
+
+      try {
+        await console.log (`Jasmine screenshot of ${assertion.error.message}.`)
+        await console.log (`Waiting for ${timeout/60000} min...`)
+        await browser.saveScreenshot(
+            `assertionError_${assertion.error.message}.png`);
+        await browser.pause(timeout);
+        await console.log(`DEBUG wait done`)
+      } catch (error) {
+            await console.log(`The screen capture failed. Check for a missing await statement. ${error}`)
+      }
     },
+  },
+
   //
   // =====
   // Hooks
@@ -226,6 +244,11 @@ export const config = {
   // },
   /**
    * Function to be executed before a test (in Mocha/Jasmine) starts.
+   * Option #1: Run browser full screen on dual monitors
+   *    browser.maximizeWindow();
+   *
+   * Option #2: Run browser 3/4 screen on single monitor
+   *   Allow VS Code Terminal visible on bottom of the screen
    */
   beforeTest: async function (test, context) {
     await global.log(`Changing window size`);
@@ -236,6 +259,7 @@ export const config = {
    * beforeEach in Mocha)
    */
   // beforeHook: function (test, context) {
+  //   // Create custom commands here
   // },
   /**
    * Hook that gets executed _after_ a hook within the suite starts (e.g. runs after calling
@@ -254,13 +278,13 @@ export const config = {
    * @param {object}  result.retries   informations to spec related retries, e.g. `{ attempts: 0, limit: 0 }`
    */
   afterTest: async function (
-      test,
-      context,
-      { error, result, duration, passed, retries }
+    test,
+    context,
+    { error, result, duration, passed, retries }
   ) {
-      if (!passed) {
-          await browser.takeScreenshot();
-      }
+    if (!passed) {
+        await browser.takeScreenshot();
+    }
   },
 };
 /**
@@ -314,6 +338,7 @@ export const config = {
 // }
 global.log = async (text: any) => {
   if (text) {
+    //truthy value check
     if (text === Promise) {
       console.log(`--->     WARN: Log was passed a Promise object`);
       console.trace();
