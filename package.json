@@ -7,8 +7,9 @@
     "license": "ISC",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
+        "allTest": "wdio run wdio.conf.ts",
         "wdio": "wdio run wdio.conf.ts",
-        "ch2": "wdio run wdio.conf.ts --spec ./test/specs/ch2.ts"
+        "ch2": "yarn wdio --spec ./test/specs/ch2.ts"
     },
     "dependencies": {
         "@types/jasmine": "^4.3.5",
