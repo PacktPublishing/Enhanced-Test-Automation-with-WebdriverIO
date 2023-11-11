@@ -3,7 +3,16 @@
     "version": "1.0.0",
     "description": "",
     "keywords": [],
-    "author": "Paul Grossman",
+    "authors": [
+        {
+            "name": "Paul Grossman",
+            "github": ""
+        },
+        {
+            "name": "Larry Goddard",
+            "github": "https://github.com/klassijs"
+        }
+    ],
     "license": "ISC",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
@@ -21,7 +30,7 @@
         "@wdio/jasmine-framework": "^8.11.2",
         "@wdio/local-runner": "^8.11.2",
         "@wdio/spec-reporter": "^8.11.2",
-        "chromedriver": "^114.0.2",
+        "chromedriver": "^116.0.0",
         "ts-node": "^10.9.1",
         "typescript": "^5.1.6",
         "wdio-chromedriver-service": "^8.1.1"

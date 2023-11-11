@@ -1,5 +1,5 @@
-import LoginPage from '../pageobjects/login.page';
-import SecurePage from '../pageobjects/secure.page';
+import LoginPage from '../pageObjects/login.page';
+import SecurePage from '../pageObjects/secure.page';
 
 describe("Ch4: Super Speed : Time Travel Paradoxes and Broken Promises", () => {
     it('should report text in order 1,2,3 even though the code is in 2, 3, 1 order', () => {

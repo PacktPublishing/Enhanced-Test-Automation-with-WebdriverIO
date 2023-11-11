@@ -1,5 +1,5 @@
-import LoginPage from "../pageobjects/login.page";
-import SecurePage from "../pageobjects/secure.page";
+import LoginPage from "../pageObjects/login.page";
+import SecurePage from "../pageObjects/secure.page";
 
 describe("Ch3: Cybernetic Enhancements", () => {
   it('should give detailed report and resize browser', async () => {
