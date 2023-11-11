@@ -1,14 +1,22 @@
 {
-    "compilerOptions": {
-        "alwaysStrict": true,
-        "moduleResolution": "node",
-
-        "types": [
-            "node",
-            "@wdio/globals/types",
-            "@wdio/jasmine-framework",
-            "expect-webdriverio"
-        ],
-        "target": "es2022"
-    }
+  "compilerOptions": {
+    "moduleResolution": "node",
+//    "skipLibCheck": true,
+//    "noEmit": true,
+//    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+//    "isolatedModules": true,
+    "alwaysStrict": true,
+//    "noUnusedLocals": true,
+//    "noUnusedParameters": true,
+//    "noFallthroughCasesInSwitch": true,
+    "allowSyntheticDefaultImports": true,
+    "types": [
+      "node",
+      "@wdio/globals/types",
+      "@wdio/jasmine-framework",
+      "expect-webdriverio"
+    ],
+    "target": "es2022",
+  }
 }
