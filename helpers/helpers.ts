@@ -1,8 +1,5 @@
-import * as fs from "fs";
-import * as path from "path";
 import { ASB } from "./globalObjects";
 import allureReporter from "@wdio/allure-reporter";
-import * as clipboardy from 'clipboardy';
 
 export async function clickAdv(element: WebdriverIO.Element) {
     let success: boolean = false;

@@ -20,9 +20,10 @@
     },
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
+        "allTest": "wdio run wdio.conf.ts",
         "wdio": "wdio run wdio.conf.ts",
-        "ch2": "wdio run wdio.conf.ts --spec ./test/specs/ch2.ts",
-        "ch3": "wdio run wdio.conf.ts --spec ./test/specs/ch3.ts"
+        "ch2": "yarn wdio --spec ./test/specs/ch2.ts",
+        "ch3": "yarn wdio --spec ./test/specs/ch3.ts"
     },
     "dependencies": {
         "@types/jasmine": "^4.3.6",
@@ -36,8 +37,5 @@
         "jasmine": "^5.0.2",
         "ts-node": "^10.9.1",
         "typescript": "^5.1.6"
-    },
-    "devDependencies": {
-        "clipboardy": "^3.0.0"
     }
 }
