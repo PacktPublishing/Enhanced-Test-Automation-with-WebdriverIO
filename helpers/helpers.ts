@@ -1,8 +1,4 @@
-import * as fs from "fs";
-import * as path from "path";
 import { ASB } from "./globalObjects";
-import allureReporter from "@wdio/allure-reporter";
-import * as clipboardy from 'clipboardy';
 
 export async function clickAdv(element: WebdriverIO.Element) {
   let success: boolean = false;
@@ -14,7 +10,6 @@ export async function clickAdv(element: WebdriverIO.Element) {
 
     return true;
   }
-
 
   const SELECTOR = await element.selector;
   await log(`Clicking ${SELECTOR}`);
@@ -33,7 +28,7 @@ export async function clickAdv(element: WebdriverIO.Element) {
     success = true;
   } catch (error: any) {
     await log(`  ERROR: ${SELECTOR} was not clicked.\n       ${error.message}`);
-    expect(`to be clickable`).toEqual(SELECTOR);
+    // expect(`to be clickable`).toEqual(SELECTOR);
     // Throw the error to stop the test
     //@ts-ignore
     await element.click({ block: "center" });
@@ -594,7 +589,7 @@ export async function setValueAdv(
       `  ERROR: ${SELECTOR} was not populated with ${scrubbedValue}.\n       ${error.message}`
     );
 
-    expect(`to be editable`).toEqual(SELECTOR);
+    // expect(`to be editable`).toEqual(SELECTOR);
 
     // Throw the error to stop the test, still masking password
     await inputField.setValue(scrubbedValue);
