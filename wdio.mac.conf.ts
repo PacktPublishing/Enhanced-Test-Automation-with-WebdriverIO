@@ -1,6 +1,6 @@
 import { config as sharedConfig } from './wdio.shared.conf'
 
-export const config: WebdriverIO.Config = {
+export const config = {
     ...sharedConfig,
     ...{
         capabilities: [

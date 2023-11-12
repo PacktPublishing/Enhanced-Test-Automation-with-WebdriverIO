@@ -30,7 +30,7 @@
         "ch12": "yarn wdio --spec ./test/specs/ch12.ts",
         "ch13": "yarn wdio --spec ./test/specs/ch13.ts",
         "windows": "Env=dev wdio wdio.dev.conf.ts --spec ./test/specs/ch13.ts",
-        "mac": "Env=prod wdio wdio.prod.conf.ts --spec ./test/specs/ch13.ts",
+        "mac": "Env=prod wdio wdio.mac.conf.ts --spec ./test/specs/ch13.ts",
         "lt": "Env=uat wdio wdio.lambdatest.conf.ts --spec ./test/specs/ch13.ts"
     },
     "dependencies": {
@@ -42,13 +42,16 @@
         "@wdio/local-runner": "^8.12.1",
         "@wdio/spec-reporter": "^8.12.2",
         "allure-commandline": "^2.23.0",
-        "chromedriver": "^114.0.2",
+        "dotenv": "^16.3.1",
         "expect-webdriverio": "^4.2.7",
-        "geckodriver": "^4.0.5",
         "ts-node": "^10.9.1",
         "typescript": "^5.1.6",
         "utility-types": "^3.10.0",
         "wdio-chromedriver-service": "^8.1.1",
         "wdio-geckodriver-service": "^5.0.2"
+    },
+    "devDependencies": {
+        "chromedriver": "^116.0.0",
+        "geckodriver": "^4.0.5"
     }
 }
