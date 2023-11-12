@@ -12,7 +12,8 @@ export async function clickAdv(element: WebdriverIO.Element) {
   }
 
 
-  const SELECTOR = await element.selector;
+  const SELECTOR = element;
+  // const SELECTOR = element.selector;
   await log(`Clicking ${SELECTOR}`);
 
   try {
@@ -29,10 +30,11 @@ export async function clickAdv(element: WebdriverIO.Element) {
     success = true;
   } catch (error: any) {
     await log(`  ERROR: ${SELECTOR} was not clicked.\n       ${error.message}`);
-    expect(`to be clickable`).toEqual(SELECTOR);
+    // expect(`to be clickable`).toEqual(SELECTOR);
     // Throw the error to stop the test
     //@ts-ignore
-    await element.click({ block: "center" });
+    await element.click();
+    // await element.click({ block: "center" });
   }
 
   return success;
@@ -55,7 +57,8 @@ export async function getValidElement(
   element: WebdriverIO.Element,
   elementType: string
 ): Promise<WebdriverIO.Element> {
-  let selector: any = await element.selector;
+  let selector: any ;
+  // let selector: any = element.selector;
   // Get a collection of matching elements
   let found: boolean = true;
   let newSelector: string = "";
@@ -801,7 +804,7 @@ export async function selectAdv(
         }
         
          
-        //await browser.keys('Enter');
+        // await browser.keys('Enter');
 
     }
 

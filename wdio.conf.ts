@@ -186,17 +186,20 @@ export const config= {
              */
             if (passed) {
                 return;
-            }
+            } else {
 
-            try {
-                await console.log(`Jasmine screenshot of ${await assertion.error.message}.`)
-                await console.log(`Waiting for ${timeout / 60000} min...`)
-                await browser.saveScreenshot(
-                    `assertionError_${await assertion.error.message}.png`);
-                await browser.pause(timeout);
-                await console.log(`DEBUG wait done`)
-            } catch (error) {
-                await console.log(`The screen capture failed. Check for a missing await statement. ${error}`)
+                try {
+                    await console.log(`Jasmine screenshot of ${await assertion.error.message}.`)
+                    await console.log(`Waiting for ${timeout / 60000} min...`)
+                    await browser.saveScreenshot(
+                        `assertionError_${await assertion.error.message}.png`);
+                    await browser.pause(timeout);
+                    await console.log(`DEBUG wait done`)
+                } catch (error) {
+                    await console.log(`The screen capture failed. Check for a missing await statement. ${error}`)
+                }
+
+
             }
         },
     },
@@ -374,7 +377,7 @@ export const config= {
         // Option #2: Run browser 3/4 screen on single monitor
         // Allow VS Code Terminal visible on bottom of the screen
         await global.log(`Changing window size`);
-        await browser.setWindowSize(1920, 770);
+        await browser.setWindowSize(1920, 960);
     },
     /**
      * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
