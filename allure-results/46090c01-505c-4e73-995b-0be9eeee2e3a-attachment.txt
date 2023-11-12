@@ -1,4 +1,0 @@
-{
-  "using": "css selector",
-  "value": "div:not([style*=\"visibility: hidden\"])"
-}

@@ -1,9 +1,0 @@
-{
-  "script": "arguments[0].style.border = '5px solid green';",
-  "args": [
-    {
-      "element-6066-11e4-a52e-4f735466cecf": "E2ADED21DAA0534767D994D9FCD1C4B2_element_84",
-      "ELEMENT": "E2ADED21DAA0534767D994D9FCD1C4B2_element_84"
-    }
-  ]
-}

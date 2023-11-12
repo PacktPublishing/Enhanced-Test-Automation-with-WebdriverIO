@@ -1,4 +1,0 @@
-{
-  "using": "xpath",
-  "value": "//h4[contains(text(),'Hello World')]"
-}

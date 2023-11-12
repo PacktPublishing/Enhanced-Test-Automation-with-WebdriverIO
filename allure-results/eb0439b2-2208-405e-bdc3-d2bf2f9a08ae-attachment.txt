@@ -1,4 +1,0 @@
-{
-  "using": "css selector",
-  "value": "[class=\"k-input-inner\"]"
-}
