@@ -1,4 +1,3 @@
-import type { Options } from '@wdio/types';
 import {ASB} from './helpers/globalObjects';
 
 const DEBUG =

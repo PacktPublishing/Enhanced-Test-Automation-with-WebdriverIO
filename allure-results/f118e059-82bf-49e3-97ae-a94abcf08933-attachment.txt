@@ -1,0 +1,4 @@
+{
+  "using": "css selector",
+  "value": "[class=\"link-sc-6kfngc-0 HwYv\"]"
+}

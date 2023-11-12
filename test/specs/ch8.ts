@@ -1,11 +1,5 @@
-"strict mode";
-import LoginPage from "../pageobjects/login.page";
-import SecurePage from "../pageobjects/secure.page";
-import LandingPage from "../pageobjects/landing.page";
+import LoginPage from "../pageObjects/login.page";
 import * as helpers from "../../helpers/helpers";
-import dynamicLoadingPage from "../pageobjects/dynamicLoading.page";
-
-import allureReporter from "@wdio/allure-reporter";
 
 describe("Chapter 8: The expect / assert / Should wrapper", () => {
 
