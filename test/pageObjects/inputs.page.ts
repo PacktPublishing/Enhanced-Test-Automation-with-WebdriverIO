@@ -26,12 +26,12 @@ class KeyPressesPage extends Page {
     helpers.pause(2000);
 
     await helpers.setValueAdv(await this.fldTarget,
-        `next week is ${helpers.getToday(7, 'dd-mm-yyyy')} and last week was ${helpers.getToday(-7, 'dd-mm-yyyy')}`);
-    helpers.pause(2000);
+      `next week is ${helpers.getToday(7, 'dd-mm-yyyy')} and last week was ${helpers.getToday(-7, 'dd-mm-yyyy')}`);
+      helpers.pause(2000);
 
-    await helpers.setValueAdv(await this.fldTarget,
-        `Last year is ${helpers.getToday(-365, 'dd-mm-yyyy')}`);
-    helpers.pause(2000);
+      await helpers.setValueAdv(await this.fldTarget, 
+      `Last year is ${helpers.getToday(-365, 'dd-mm-yyyy')}`);
+      helpers.pause(2000);
 
   }
 }

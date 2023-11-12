@@ -28,7 +28,7 @@ export async function clickAdv(element: WebdriverIO.Element) {
     success = true;
   } catch (error: any) {
     await log(`  ERROR: ${SELECTOR} was not clicked.\n       ${error.message}`);
-    // expect(`to be clickable`).toEqual(SELECTOR);
+    expect(`to be clickable`).toEqual(SELECTOR);
     // Throw the error to stop the test
     //@ts-ignore
     await element.click({ block: "center" });
@@ -51,8 +51,8 @@ async function findElement(selector: string): Promise<WebdriverIO.Element> {
 }
 
 export async function getValidElement(
-  element: WebdriverIO.Element,
-  elementType: string
+    element: WebdriverIO.Element,
+    elementType: string
 ): Promise<WebdriverIO.Element> {
   let selector: any = await element.selector;
   // Get a collection of matching elements
@@ -114,7 +114,7 @@ export async function getValidElement(
       // Successful class switch
       if (found) {
         await log(
-          `  WARNING: Replaced ${selector}\n                    with ${newSelector}`
+            `  WARNING: Replaced ${selector}\n                    with ${newSelector}`
         );
       }
     }
@@ -144,70 +144,70 @@ async function getElementType(element: WebdriverIO.Element) {
 }
 
 
-/** 
-* Returns the first non-null property from the prioritized list: 'name', 'id', 'type', and 'class'. 
-* Can be amended to add other attributes such as “aria-label”  
-* @param {WebdriverIO.Element} element - The WebdriverIO element to get the name of the field 
-* @returns {string | null} The field name, or null if no properties have a value 
-*/ 
+/**
+ * Returns the first non-null property from the prioritized list: 'name', 'id', 'type', and 'class'.
+ * Can be amended to add other attributes such as “aria-label”
+ * @param {WebdriverIO.Element} element - The WebdriverIO element to get the name of the field
+ * @returns {string | null} The field name, or null if no properties have a value
+ */
 
-async function getFieldName(element: WebdriverIO.Element) { 
+async function getFieldName(element: WebdriverIO.Element) {
 // Add any custom properties here, e.g.: 
 // const customPropertyName = await element.getAttribute("aria-label"); 
 // if (customPropertyName) return custom; 
 
 // Get the 'name' property of the element 
-  const name = await element.getAttribute("name"); 
-  if (name) return name; 
- 
+  const name = await element.getAttribute("name");
+  if (name) return name;
+
   // Get the 'id' property of the element 
-  const id = await element.getAttribute("id"); 
-  if (id) return id; 
+  const id = await element.getAttribute("id");
+  if (id) return id;
 
   // Get the 'type' property of the element 
-  const type = await element.getAttribute("type"); 
-  if (type) return type; 
+  const type = await element.getAttribute("type");
+  if (type) return type;
 
   // Return the 'class' property of the element if others are empty 
-  const className = await element.getAttribute("class"); 
-  return className; 
-} 
+  const className = await element.getAttribute("class");
+  return className;
+}
 
 /**
  * Returns the current date plus or minus a specified number of days in a specified format.
  * @param offset  Number of days to add or subtract from the current date. Default is 0.
  * @param format The format of the returned date string. Default is "yyyy-MM-dd".
  * @return The current date plus or minus the specified number of days in the specified format.
-Format options:
-"yyyy" or "yy" - to represent the 4 or 2 digit year, respectively.
-"MM" or "M" - to represent the month with leading zero or without leading zero respectively
-"dd" or "d" - to represent the date with leading zero or without leading zero respectively
+ Format options:
+ "yyyy" or "yy" - to represent the 4 or 2 digit year, respectively.
+ "MM" or "M" - to represent the month with leading zero or without leading zero respectively
+ "dd" or "d" - to represent the date with leading zero or without leading zero respectively
 
-// helpers.log(getToday());  // returns current date in MM-dd-yyyy format
-// helpers.log(getToday("+5", "d/M/yyyy"));  // returns current date plus 5 days in d/M/yyyy format
-// helpers.log(getToday("-3", "yyyy/MM/dd"));  // returns current date minus 3 days in yyyy/MM/dd format
-*/
-export function getToday(offset: number = 0, format: string = "MM-dd-yyyy") {
+ // helpers.log(getToday());  // returns current date in MM-dd-yyyy format
+ // helpers.log(getToday("+5", "d/M/yyyy"));  // returns current date plus 5 days in d/M/yyyy format
+ // helpers.log(getToday("-3", "yyyy/MM/dd"));  // returns current date minus 3 days in yyyy/MM/dd format
+ */
+export function getToday(offset: number = 0, format: string = "dd-mm-yyyy") {
   const currentDate = new Date();
   currentDate.setDate(currentDate.getDate() + offset);
   return currentDate.toLocaleDateString(undefined, {
     year: format.includes("yyyy") ? "numeric" : undefined,
-    month: format.includes("MM")
-      ? "2-digit"
-      : format.includes("M")
-      ? "numeric"
-      : undefined,
+    month: format.includes("mm")
+        ? "2-digit"
+        : format.includes("m")
+            ? "numeric"
+            : undefined,
     day: format.includes("dd")
-      ? "2-digit"
-      : format.includes("d")
-      ? "numeric"
-      : undefined,
+        ? "2-digit"
+        : format.includes("d")
+            ? "numeric"
+            : undefined,
   });
 }
 
 export async function highlightOn(
-  element: WebdriverIO.Element,
-  color: string = "green"
+    element: WebdriverIO.Element,
+    color: string = "green"
 ): Promise<boolean> {
   let elementSelector: any;
   let visible: boolean = true;
@@ -215,8 +215,8 @@ export async function highlightOn(
     elementSelector = await element.selector;
     try {
       await browser.execute(
-        `arguments[0].style.border = '5px solid ${color}';`,
-        element
+          `arguments[0].style.border = '5px solid ${color}';`,
+          element
       );
       visible = await isElementVisible(element);
     } catch (error: any) {
@@ -225,8 +225,8 @@ export async function highlightOn(
       ASB.set("element", newElement);
       ASB.set("staleElement", true);
       await browser.execute(
-        `arguments[0].style.border = '5px solid ${color}';`,
-        newElement
+          `arguments[0].style.border = '5px solid ${color}';`,
+          newElement
       );
       //log (`  highlightOn ${elementSelector} refresh success`)
     }
@@ -238,7 +238,7 @@ export async function highlightOn(
 }
 
 export async function highlightOff(
-  element: WebdriverIO.Element
+    element: WebdriverIO.Element
 ): Promise<boolean> {
   let visible: boolean = true;
   try {
@@ -251,7 +251,7 @@ export async function highlightOff(
 }
 
 export async function isElementVisible(
-  element: WebdriverIO.Element
+    element: WebdriverIO.Element
 ): Promise<boolean> {
   try {
     const displayed = await element.isDisplayed();
@@ -268,7 +268,7 @@ function isEmpty(text: string | null): boolean {
 }
 
 export async function isElementInViewport(
-  element: WebdriverIO.Element
+    element: WebdriverIO.Element
 ): Promise<boolean> {
   let isInViewport = await element.isDisplayedInViewport();
   return isInViewport;
@@ -287,21 +287,21 @@ async function isExists(element: WebdriverIO.Element) {
 *    - Prints trace if not passed string or number
 * @param message
 */
- export async function log(message: any): Promise<void> {
-   try {
-     if (typeof message === "string" || typeof message === "number") {
-       if (message) {
-         console.log(`---> ${message}`);
-         if (message.toString().includes(`[object Promise]`)) {
-           console.log(`    Possiblly missing await statement`);
-           console.trace();
-         }
-       }
-     }
-   } catch (error: any) {
-     console.log(`--->   helpers.console(): ${error.message}`);
-   }
- }
+export async function log(message: any): Promise<void> {
+  try {
+    if (typeof message === "string" || typeof message === "number") {
+      if (message) {
+        console.log(`---> ${message}`);
+        if (message.toString().includes(`[object Promise]`)) {
+          console.log(`    Possiblly missing await statement`);
+          console.trace();
+        }
+      }
+    }
+  } catch (error: any) {
+    console.log(`--->   helpers.console(): ${error.message}`);
+  }
+}
 
 
 /**
@@ -353,8 +353,8 @@ function normalizeElementType(elementType: string) {
 let LAST_URL: String = "";
 
 export async function pageSync(
-  ms: number = 25,
-  waitOnSamePage: boolean = false
+    ms: number = 25,
+    waitOnSamePage: boolean = false
 ): Promise<boolean> {
   await waitForSpinner();
 
@@ -437,9 +437,9 @@ export async function pageSync(
 
     if (duration > timeout) {
       await log(
-        `  WARN: pageSync() completed in ${
-          duration / 1000
-        } sec  (${duration} ms) `
+          `  WARN: pageSync() completed in ${
+              duration / 1000
+          } sec  (${duration} ms) `
       );
     } else {
       //log(`  pageSync() completed in ${duration} ms`); // Optional debug messaging
@@ -467,7 +467,7 @@ export async function pause(ms: number) {
 
 //Resolves stale element
 async function refreshElement(
-  element: WebdriverIO.Element
+    element: WebdriverIO.Element
 ): Promise<WebdriverIO.Element> {
   return await browser.$(element.selector);
 }
@@ -493,13 +493,13 @@ function replaceTags(text: string) {
         if (match) {
           const days = parseInt(match[0]);
         }
-        
+
         newText = newText.replace(tag, getToday(days, format));
         break;
 
-      //case tagLower.includes("<otherTag"):
-      // Tage replacemente code here
-      // break;
+        //case tagLower.includes("<otherTag"):
+        // Tage replacemente code here
+        // break;
 
       default:
         log(`ERROR: Unknown tag <${tag}>`);
@@ -529,19 +529,19 @@ export async function sleep(ms: number) {
 
 
 export async function setValueAdv(
-  inputField: WebdriverIO.Element,
-  text: string
+    inputField: WebdriverIO.Element,
+    text: string
 ) {
   let success: boolean = false;
 
   inputField = await getValidElement(inputField, "field");
-  
+
   const SELECTOR = await inputField.selector;
 
   let newValue: string = replaceTags(text);
   let scrubbedValue: string = newValue
   let fieldName: string = await getFieldName(inputField)
-  
+
   //Mask Passwords in output
   if (fieldName.includes("ssword") ){
     scrubbedValue = maskValue(scrubbedValue)
@@ -571,8 +571,8 @@ export async function setValueAdv(
     require('child_process').execSync('printf ' + escape([text]) + ' | pbcopy');
 
     // Paste the text for speed
-     // Use the sendKeys method with Control-V (or Command-V on macOS) to paste the text
-     inputField.sendKeys(['Control', 'v']); // On macOS, use ['Command', 'v']
+    // Use the sendKeys method with Control-V (or Command-V on macOS) to paste the text
+    inputField.sendKeys(['Control', 'v']); // On macOS, use ['Command', 'v']
 
     // Check for accuracy
     if (!(await inputField.getValue()).includes(text)) {
@@ -582,13 +582,14 @@ export async function setValueAdv(
         await inputField.addValue(letter);
       }
     }
-    
+
     success = true;
   } catch (error: any) {
     await log(
-      `  ERROR: ${SELECTOR} was not populated with ${scrubbedValue}.\n       ${error.message}`
+        `  ERROR: ${SELECTOR} was not populated with ${scrubbedValue}.\n       ${error.message}`
     );
 
+    //TODO what exactly is being tested here
     // expect(`to be editable`).toEqual(SELECTOR);
 
     // Throw the error to stop the test, still masking password
@@ -629,7 +630,7 @@ export async function waitForSpinner(): Promise<boolean> {
       // Spinner no longer exists
     }
     await log(
-      `  Spinner Elapsed time: ${Math.floor(performance.now() - startTime)} ms`
+        `  Spinner Elapsed time: ${Math.floor(performance.now() - startTime)} ms`
     );
   }
   return spinnerDetected;
@@ -638,8 +639,8 @@ export async function waitForSpinner(): Promise<boolean> {
 
 
 export async function waitForElementToStopMoving(
-  element: WebdriverIO.Element,
-  timeout: number = 1500
+    element: WebdriverIO.Element,
+    timeout: number = 1500
 ): Promise<boolean> {
   let rect = await browser.options.waitforTimeout;
   pause(100);
@@ -666,4 +667,3 @@ export async function waitForElementToStopMoving(
 
   return !isMoving;
 }
-
