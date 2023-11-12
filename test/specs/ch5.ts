@@ -1,4 +1,3 @@
-"strict mode";
 import LoginPage from "../pageObjects/login.page";
 import SecurePage from "../pageObjects/secure.page";
 import LandingPage from "../pageObjects/landing.page";

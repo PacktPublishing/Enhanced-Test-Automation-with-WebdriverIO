@@ -11,3 +11,4 @@ driver-logs
 reports
 .env
 yarn-error.log
+allure-results

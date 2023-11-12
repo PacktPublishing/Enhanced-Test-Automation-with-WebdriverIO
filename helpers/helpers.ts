@@ -14,6 +14,10 @@ export async function clickAdv(element: WebdriverIO.Element) {
   const SELECTOR = await element.selector;
   await log(`Clicking ${SELECTOR}`);
 
+  // const SELECTOR = element;
+  // // const SELECTOR = element.selector;
+  // await log(`Clicking ${SELECTOR}`);
+
   try {
     //await element.waitForDisplayed();
 
@@ -60,6 +64,7 @@ export async function getValidElement(
   let newSelector: string = "";
   let newElement: any = element;
   let elements: WebdriverIO.Element[];
+  // let elements: any;
   let elementText: string = "";
 
   try {
@@ -97,6 +102,13 @@ export async function getValidElement(
             newSelector = `//input[contains(@name,'${elementText}'])`;
             await isElementVisible(await $(newSelector));
           }
+          break;
+
+        case "//select":
+          elementText = selector.match(/=".*"/)[0].slice(2, -1);
+          // Find a div with the text above a combobox
+          newSelector = `//div[contains(text(),'${elementText}')]//following::input`;
+          found = await isElementVisible(await $(newSelector));
           break;
 
         case "//*":
@@ -145,11 +157,11 @@ async function getElementType(element: WebdriverIO.Element) {
 
 
 /**
- * Returns the first non-null property from the prioritized list: 'name', 'id', 'type', and 'class'.
- * Can be amended to add other attributes such as “aria-label”
- * @param {WebdriverIO.Element} element - The WebdriverIO element to get the name of the field
- * @returns {string | null} The field name, or null if no properties have a value
- */
+* Returns the first non-null property from the prioritized list: 'name', 'placeholder', 'area-label'.
+* if the Element class is an input field, the parent div text is returned.
+* @param {WebdriverIO.Element} element - The WebdriverIO element to get the name of the field
+* @returns {string | null} The field name, or null if no properties have a value
+*/
 
 async function getFieldName(element: WebdriverIO.Element) {
 // Add any custom properties here, e.g.: 
@@ -160,18 +172,50 @@ async function getFieldName(element: WebdriverIO.Element) {
   const name = await element.getAttribute("name");
   if (name) return name;
 
-  // Get the 'id' property of the element 
-  const id = await element.getAttribute("id");
-  if (id) return id;
+  // Get the 'placeholder' property of the element
+  const placeholder = await element.getAttribute("placeholder");
+  if (placeholder) return placeholder;
 
-  // Get the 'type' property of the element 
+  // Get the 'type' property of the element
   const type = await element.getAttribute("type");
   if (type) return type;
 
-  // Return the 'class' property of the element if others are empty 
+  // Return the 'class' property of the element if others are empty
   const className = await element.getAttribute("class");
+
+  if (className == "input"){  // combobox
+    // Find the first parent div element using XPath
+    const parentDivElement = await element.$('ancestor::div[1]');
+    return parentDivElement.getText();
+  }
   return className;
 }
+
+async function getListName(element: WebdriverIO.Element) {
+  // Add any custom properties here, e.g.:
+  // const customPropertyName = await element.getAttribute("aria-label");
+  // if (customPropertyName) return customPropertyName;
+
+    // Get the 'name' property of the element
+    const ariaLable = await element.getAttribute("aria-label");
+    if (ariaLable) return ariaLable;
+
+    // Get the 'name' property of the element
+    const name = await element.getAttribute("aria-label");
+    if (name) return name;
+
+    // Get the 'id' property of the element
+    const id = await element.getAttribute("id");
+    if (id) return id;
+
+    // Get the 'type' property of the element
+    const type = await element.getAttribute("type");
+    if (type) return type;
+
+    // Return the 'class' property of the element if others are empty
+    const className = await element.getAttribute("class");
+    return className;
+  }
 
 /**
  * Returns the current date plus or minus a specified number of days in a specified format.
@@ -449,6 +493,77 @@ export async function pageSync(
   return result;
 }
 
+
+export async function setValueAdv(
+  inputField: WebdriverIO.Element,
+  text: string
+) {
+  let success: boolean = false;
+
+  inputField = await getValidElement(inputField, "field");
+
+  const SELECTOR = await inputField.selector;
+
+  let newValue: string = replaceTags(text);
+  let scrubbedValue: string = newValue
+  let fieldName: string = await getFieldName(inputField)
+
+  //Mask Passwords in output
+  if (fieldName.includes("ssword") ){
+    scrubbedValue = maskValue(scrubbedValue)
+  }
+
+  await log(`Entering '${scrubbedValue}' into ${SELECTOR}`);
+
+  try {
+    //await element.waitForDisplayed();
+
+    if (!(await isElementInViewport(inputField))) {
+      await scrollIntoView(inputField);
+      await waitForElementToStopMoving(inputField);
+    }
+
+    await highlightOn(inputField);
+
+    //Check if text was entered
+    // Clear input field
+    await inputField.click();
+
+    // Clear the field.
+    await inputField.setValue("");
+
+
+    // const escape = require('shell-escape');
+    // require('child_process').execSync('printf ' + escape([text]) + ' | pbcopy');
+
+    // Paste the text for speed
+     // Use the sendKeys method with Control-V (or Command-V on macOS) to paste the text
+     // inputField.sendKeys(['Control', 'v']); // On macOS, use ['Command', 'v']
+
+    // Check for accuracy
+    if (!(await inputField.getValue()).includes(text)) {
+      await inputField.setValue("");
+      // Send text to input field character by character
+      for (const letter of text) {
+        await inputField.addValue(letter);
+      }
+    }
+
+    success = true;
+  } catch (error: any) {
+    await log(
+      `  ERROR: ${SELECTOR} was not populated with ${scrubbedValue}.\n       ${error.message}`
+    );
+
+    // expect(`to be editable`).toEqual(SELECTOR);
+
+    // Throw the error to stop the test, still masking password
+    await inputField.setValue(scrubbedValue);
+  }
+
+  return success;
+}
+
 /**
  * Wrapper for browser.pause
  * @param ms reports if wait is more than 1/2 second
@@ -526,80 +641,15 @@ export async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-
-
-export async function setValueAdv(
-    inputField: WebdriverIO.Element,
-    text: string
-) {
-  let success: boolean = false;
-
-  inputField = await getValidElement(inputField, "field");
-
-  const SELECTOR = await inputField.selector;
-
-  let newValue: string = replaceTags(text);
-  let scrubbedValue: string = newValue
-  let fieldName: string = await getFieldName(inputField)
-
-  //Mask Passwords in output
-  if (fieldName.includes("ssword") ){
-    scrubbedValue = maskValue(scrubbedValue)
-  }
-
-  await log(`Entering '${scrubbedValue}' into ${SELECTOR}`);
-
-  try {
-    //await element.waitForDisplayed();
-
-    if (!(await isElementInViewport(inputField))) {
-      await scrollIntoView(inputField);
-      await waitForElementToStopMoving(inputField);
-    }
-
-    await highlightOn(inputField);
-
-    //Check if text was entered
-    // Clear input field
-    await inputField.click();
-
-    // Clear the field.
-    await inputField.setValue("");
-
-
-    var escape = require('shell-escape');
-    require('child_process').execSync('printf ' + escape([text]) + ' | pbcopy');
-
-    // Paste the text for speed
-    // Use the sendKeys method with Control-V (or Command-V on macOS) to paste the text
-    inputField.sendKeys(['Control', 'v']); // On macOS, use ['Command', 'v']
-
-    // Check for accuracy
-    if (!(await inputField.getValue()).includes(text)) {
-      await inputField.setValue("");
-      // Send text to input field character by character 
-      for (const letter of text) {
-        await inputField.addValue(letter);
-      }
-    }
-
-    success = true;
-  } catch (error: any) {
-    await log(
-        `  ERROR: ${SELECTOR} was not populated with ${scrubbedValue}.\n       ${error.message}`
-    );
-
-    //TODO what exactly is being tested here
-    // expect(`to be editable`).toEqual(SELECTOR);
-
-    // Throw the error to stop the test, still masking password
-    await inputField.setValue(scrubbedValue);
-  }
-
-  return success;
+// Wrapper of selectByVisibleText
+export async function select(
+  listElement: WebdriverIO.Element,
+  item: string
+): Promise<boolean>
+{
+  //@ts-ignore
+  return await listElement.selectByVisibleText(item);
 }
-
-
 
 export async function waitForSpinner(): Promise<boolean> {
   let spinnerDetected: boolean = false;
@@ -667,3 +717,122 @@ export async function waitForElementToStopMoving(
 
   return !isMoving;
 }
+
+export async function selectAdv(
+  listElement: WebdriverIO.Element,
+  item: string
+): Promise<boolean>
+{
+  let success: boolean = false;
+  let itemValue: String = "No Item selected"
+  let listItems: WebdriverIO.Element[]
+  let listItem: WebdriverIO.Element
+  let textContent:string = " "
+  // Empty item list - do nothing
+  if (item.length === 0){
+    await log(`  ERROR: ${listElement} had no list item passed.\n`)
+    return true;
+  }
+
+  //Get a valid list element
+  let newListElement: WebdriverIO.Element = await getValidElement(listElement, "list");
+
+  // Get the name of the element
+  //let listname = await getListName(await newListElement);
+
+  // Comboboxes look like input fields
+  let isCombobox = listElement.selector.toString().includes("//input") || listElement.selector.toString().includes("::input")
+
+  if (isCombobox===true) {
+    //@ts-ignore
+    await listElement.doubleClick() //Selects all the text in the combobox
+
+    // Allow user to pass a number like 3 for March
+    if (typeof (item) === 'number') {
+
+      // Try number select
+      const index: number = item;
+      try {
+        await (await $(`//span[normalize-space()='${item}']`)).click();
+        itemValue = await listElement.getText();
+      // Report actual item selected
+         global.log (`  Item selected: "${itemValue}"`)
+        success = true;
+      } catch (error: any) {
+        await log(`  ERROR: ${listElement} could not select "${item}" was not selected\n
+        ${error.message}`);
+      }
+    } else {
+        // Click the item
+        //await browser.keys(`${item}`)
+
+        // Clear the field.
+        await listElement.click() // Select All Clear Mac and Windows
+        await browser.keys(['Home']);
+        await browser.keys(['Shift','End']);
+        await browser.keys(['Delete']);
+        await browser.keys(`${item}`)
+1
+        await browser.pause(3000); // Demo
+
+        // Find the item in the list
+        try {
+          //listItem = await browser.$(`//li/*[contains(text(),'${item}')])`)
+
+          listItems = await browser.$$(`//li/*`)
+
+          for (const listItem of listItems) {
+            if ((await listItem.getText()).includes(item)) // Found the element
+            break;
+          }
+
+          clickAdv(listItem)
+        } catch (error) {
+
+          // no such item
+          listItems = await browser.$$(`//li/*`)
+          for (const listItem of listItems) {
+             textContent += await listItem.getText() + " | "; // Get the text content of the element
+
+        }
+
+          await log(`  ERROR: "${item}" was not found in combobox: \n ${textContent}`)
+
+        }
+
+
+        // await browser.keys('Enter');
+
+    }
+
+  } else {
+
+    try {
+      // Get the list of options in the select element
+      const optionsList: string = await getListValues(listElement);
+      console.log(optionsList); // This will print the list of options text in the select element
+
+      if (typeof (item) === 'number') {
+        const index: number = item;
+        await (await listElement).selectByIndex(index);
+      } else {
+        await (await listElement).selectByVisibleText (item)
+      }
+      global.log (`  Item selected: "${item}"`)
+      success = true;
+    } catch (error: any) {
+      await log(`  ERROR: ${listElement} could not select "${item}"\n
+      ${error.message}`);
+    }
+
+  }
+  return success;
+}
+
+async function getListValues(selectElement:  WebdriverIO.Element
+  ): Promise<string> {
+
+  const optionElements = await (await selectElement).getText();
+  return optionElements;
+}
+
