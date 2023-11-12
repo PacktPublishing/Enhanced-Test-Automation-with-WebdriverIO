@@ -2,7 +2,6 @@ import * as fs from "fs";
 import * as path from "path";
 import { ASB } from "./globalObjects";
 import allureReporter from "@wdio/allure-reporter";
-import * as clipboardy from 'clipboardy';
 
 export async function clickAdv(element: WebdriverIO.Element) {
   let success: boolean = false;
@@ -14,7 +13,6 @@ export async function clickAdv(element: WebdriverIO.Element) {
 
     return true;
   }
-
 
   const SELECTOR = await element.selector;
   await log(`Clicking ${SELECTOR}`);
@@ -56,14 +54,15 @@ export async function clickAdv(element: WebdriverIO.Element) {
 // }
 
 export async function getValidElement(
-  element: WebdriverIO.Element,
-  elementType: string
+    element: WebdriverIO.Element,
+    elementType: string
 ): Promise<WebdriverIO.Element> {
   let selector: any = await element.selector;
   // Get a collection of matching elements
   let found: boolean = true;
   let newSelector: string = "";
   let newElement: any = element;
+  // let elements: WebdriverIO.Element[];
   let elements: any;
   let elementText: string = "";
 
@@ -111,7 +110,6 @@ export async function getValidElement(
           found = await isElementVisible(await $(newSelector));
           break;
 
-
         case "//*":
           elementText = selector.match(/=".*"/)[0].slice(2, -1);
           newSelector = `//*[contains(@id,'${elementText}'])`;
@@ -127,7 +125,7 @@ export async function getValidElement(
       // Successful class switch
       if (found) {
         await log(
-          `  WARNING: Replaced ${selector}\n                    with ${newSelector}`
+            `  WARNING: Replaced ${selector}\n                    with ${newSelector}`
         );
       }
     }
@@ -164,15 +162,15 @@ async function getElementType(element: WebdriverIO.Element) {
 * @returns {string | null} The field name, or null if no properties have a value
 */
 
-async function getFieldName(element: WebdriverIO.Element) {
-// Add any custom properties here, e.g.:
-// const customPropertyName = await element.getAttribute("aria-label");
-// if (customPropertyName) return custom;
+async function getFieldName(element: WebdriverIO.Element) { 
+// Add any custom properties here, e.g.: 
+// const customPropertyName = await element.getAttribute("aria-label"); 
+// if (customPropertyName) return custom; 
 
-// Get the 'name' property of the element
-  const name = await element.getAttribute("name");
-  if (name) return name;
-
+// Get the 'name' property of the element 
+  const name = await element.getAttribute("name"); 
+  if (name) return name; 
+ 
   // Get the 'placeholder' property of the element
   const placeholder = await element.getAttribute("placeholder");
   if (placeholder) return placeholder;
@@ -251,8 +249,8 @@ export function getToday(offset: number = 0, format: string = "dd-mm-yyyy") {
 }
 
 export async function highlightOn(
-  element: WebdriverIO.Element,
-  color: string = "green"
+    element: WebdriverIO.Element,
+    color: string = "green"
 ): Promise<boolean> {
   let elementSelector: any;
   let visible: boolean = true;
@@ -260,8 +258,8 @@ export async function highlightOn(
     elementSelector = await element.selector;
     try {
       await browser.execute(
-        `arguments[0].style.border = '5px solid ${color}';`,
-        element
+          `arguments[0].style.border = '5px solid ${color}';`,
+          element
       );
       visible = await isElementVisible(element);
     } catch (error: any) {
@@ -270,8 +268,8 @@ export async function highlightOn(
       ASB.set("element", newElement);
       ASB.set("staleElement", true);
       await browser.execute(
-        `arguments[0].style.border = '5px solid ${color}';`,
-        newElement
+          `arguments[0].style.border = '5px solid ${color}';`,
+          newElement
       );
       //log (`  highlightOn ${elementSelector} refresh success`)
     }
@@ -313,7 +311,7 @@ function isEmpty(text: string | null): boolean {
 }
 
 export async function isElementInViewport(
-  element: WebdriverIO.Element
+    element: WebdriverIO.Element
 ): Promise<boolean> {
   let isInViewport = await element.isDisplayedInViewport();
   return isInViewport;
@@ -431,7 +429,8 @@ export async function pageSync(
     LAST_URL = thisUrl;
     // const waitforTimeout = browser.options.waitforTimeout;
     let visibleSpans: string = 'div:not([style*="visibility: hidden"])';
-    let elements: ElementArrayType = await $$(visibleSpans);
+    // let elements: ElementArrayType = await $$(visibleSpans);
+    let elements = await $$(visibleSpans);
 
     let exit: boolean = false;
     let count: number = elements.length;
@@ -593,7 +592,7 @@ export async function pause(ms: number) {
 
 //Resolves stale element
 async function refreshElement(
-  element: WebdriverIO.Element
+    element: WebdriverIO.Element
 ): Promise<WebdriverIO.Element> {
   return await browser.$(element.selector);
 }
@@ -619,7 +618,7 @@ function replaceTags(text: string) {
         if (match) {
           const days = parseInt(match[0]);
         }
-        
+
         newText = newText.replace(tag, getToday(days, format));
         break;
 
@@ -652,14 +651,93 @@ export async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+// Wrapper of selectByVisibleText
+export async function select(
+  listElement: WebdriverIO.Element,
+  item: string
+): Promise<boolean>
+{
+  //@ts-ignore
+  return await listElement.selectByVisibleText(item);
+}
+
+export async function waitForSpinner(): Promise<boolean> {
+  let spinnerDetected: boolean = false;
+  // This spinner locator is unique to each project
+  const spinnerLocator: string = `//img[contains(@src,'loader')]`;
+  await pause(100); // Let browser begin building spinner on page
+  let spinner = await browser.$(spinnerLocator);
+  let found = await highlightOn(spinner);
+  let timeout = ASB.get("spinnerTimeoutInSeconds");
+  const start = Date.now();
+  if (found) {
+    const startTime = performance.now();
+    spinnerDetected = true;
+    try {
+      while (found) {
+        found = await highlightOn(spinner);
+        if (!found) break;
+        await pause(100);
+        found = await highlightOff(spinner);
+        if (!found) break;
+        await pause(100);
+        if (Date.now() - start > timeout * 1000) {
+          await log(`ERROR: Spinner did not close after ${timeout} seconds`);
+          break;
+        }
+      }
+    } catch (error) {
+      // Spinner no longer exists
+    }
+    await log(
+        `  Spinner Elapsed time: ${Math.floor(performance.now() - startTime)} ms`
+    );
+  }
+  return spinnerDetected;
+}
+
+
+
+// export async function waitForElementToStopMoving(
+//     element: WebdriverIO.Element,
+//     timeout: number = 1500
+// ): Promise<boolean> {
+//   let rect = await browser.options.waitforTimeout;
+//   pause(100);
+//   let isMoving = rect !== (await browser.options.waitforTimeout);
+//   let startTime = Date.now();
+//
+//   // Keep checking the element's position until it stops moving or the timeout is reached
+//   while (isMoving) {
+//     // If the element's position hasn't changed, it is not moving
+//     if (rect === (await browser.options.waitforTimeout)) {
+//       await log(`  Element is static`);
+//       isMoving = false;
+//     } else {
+//       await log(`  Element is moving...`);
+//       pause(100);
+//     }
+//     // If the timeout has been reached, stop the loop
+//     if (Date.now() - startTime > timeout) {
+//       break;
+//     }
+//     // Wait for a short amount of time before checking the element's position again
+//     await pause(100);
+//   }
+//
+//   return !isMoving;
+// }
+
 export async function selectAdv(
-    listElement: WebdriverIO.Element,
-    item: string
+  listElement: WebdriverIO.Element,
+  item: string
 ): Promise<boolean>
 {
   let success: boolean = false;
   let itemValue: String = "No Item selected"
-
+  let listItems: WebdriverIO.Element[]
+  let listItem: WebdriverIO.Element
+  let textContent:string = " "
   // Empty item list - do nothing
   if (item.length === 0){
     await log(`  ERROR: ${listElement} had no list item passed.\n`)
@@ -677,23 +755,64 @@ export async function selectAdv(
 
   if (isCombobox) {
     //@ts-ignore
-    await listElement.click({ block: 'center' })
+    await listElement.doubleClick() //Selects all the text in the combobox
 
     // Allow user to pass a number like 3 for March
     if (typeof (item) === 'number') {
+
       // Try number select
       const index: number = item;
       try {
         await (await $(`//span[normalize-space()='${item}']`)).click();
         itemValue = await listElement.getText();
-        // Report actual item selected
-        global.log (`  Item selected: "${itemValue}"`)
+      // Report actual item selected
+         global.log (`  Item selected: "${itemValue}"`)
         success = true;
       } catch (error: any) {
         await log(`  ERROR: ${listElement} could not select "${item}" was not selected\n
         ${error.message}`);
       }
     } else {
+        // Click the item
+        //await browser.keys(`${item}`)
+
+        // Clear the field.
+        await listElement.click() // Select All Clear Mac and Windows
+        await browser.keys(['Home']);
+        await browser.keys(['Shift','End']);
+        await browser.keys(['Delete']);
+        await browser.keys(`${item}`)
+1
+        await browser.pause(3000); // Demo
+
+        // Find the item in the list
+        try {
+          //listItem = await browser.$(`//li/*[contains(text(),'${item}')])`)
+
+          listItems = await browser.$$(`//li/*`)
+
+          for (const listItem of listItems) {
+            if ((await listItem.getText()).includes(item)) // Found the element
+            break;
+          }
+
+          clickAdv(listItem)
+        } catch (error) {
+
+          // no such item
+          listItems = await browser.$$(`//li/*`)
+          for (const listItem of listItems) {
+             textContent += await listItem.getText() + " | "; // Get the text content of the element
+
+        }
+
+          await log(`  ERROR: "${item}" was not found in combobox: \n ${textContent}`)
+
+        }
+
+
+        // await browser.keys('Enter');
+
       // Click the item
       await (await $(`//span[normalize-space()='${item}']`)).click();
     }
@@ -780,40 +899,40 @@ export async function selectAdv(
 // }
 
 
-export async function waitForSpinner(): Promise<boolean> {
-  let spinnerDetected: boolean = false;
-  // This spinner locator is unique to each project
-  const spinnerLocator: string = `//img[contains(@src,'loader')]`;
-  await pause(100); // Let browser begin building spinner on page
-  let spinner = await browser.$(spinnerLocator);
-  let found = await highlightOn(spinner);
-  let timeout = ASB.get("spinnerTimeoutInSeconds");
-  const start = Date.now();
-  if (found) {
-    const startTime = performance.now();
-    spinnerDetected = true;
-    try {
-      while (found) {
-        found = await highlightOn(spinner);
-        if (!found) break;
-        await pause(100);
-        found = await highlightOff(spinner);
-        if (!found) break;
-        await pause(100);
-        if (Date.now() - start > timeout * 1000) {
-          await log(`ERROR: Spinner did not close after ${timeout} seconds`);
-          break;
-        }
-      }
-    } catch (error) {
-      // Spinner no longer exists
-    }
-    await log(
-        `  Spinner Elapsed time: ${Math.floor(performance.now() - startTime)} ms`
-    );
-  }
-  return spinnerDetected;
-}
+// export async function waitForSpinner(): Promise<boolean> {
+//   let spinnerDetected: boolean = false;
+//   // This spinner locator is unique to each project
+//   const spinnerLocator: string = `//img[contains(@src,'loader')]`;
+//   await pause(100); // Let browser begin building spinner on page
+//   let spinner = await browser.$(spinnerLocator);
+//   let found = await highlightOn(spinner);
+//   let timeout = ASB.get("spinnerTimeoutInSeconds");
+//   const start = Date.now();
+//   if (found) {
+//     const startTime = performance.now();
+//     spinnerDetected = true;
+//     try {
+//       while (found) {
+//         found = await highlightOn(spinner);
+//         if (!found) break;
+//         await pause(100);
+//         found = await highlightOff(spinner);
+//         if (!found) break;
+//         await pause(100);
+//         if (Date.now() - start > timeout * 1000) {
+//           await log(`ERROR: Spinner did not close after ${timeout} seconds`);
+//           break;
+//         }
+//       }
+//     } catch (error) {
+//       // Spinner no longer exists
+//     }
+//     await log(
+//         `  Spinner Elapsed time: ${Math.floor(performance.now() - startTime)} ms`
+//     );
+//   }
+//   return spinnerDetected;
+// }
 
 // export async function isElementVisible(
 //     element: WebdriverIO.Element

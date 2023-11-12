@@ -1,5 +1,4 @@
-"strict mode";
-import WebListPage from "../pageobjects/weblist.page";
+import WebListPage from "../pageObjects/weblist.page";
 describe("The select Wrapper: Selecting from List and Combobox", () => {
 
     it("Chapter 7: Selecting from a AutoComplete list", async () => {
@@ -20,7 +19,7 @@ describe("The select Wrapper: Selecting from List and Combobox", () => {
         const iframe = await browser.findElement('css selector', 'iframe');
         await browser.switchToFrame(iframe);
         elem = await browser.$('[class="k-input-inner"]');
-        await elem.scrollIntoView();
+        // await elem.scrollIntoView();
         // await elem.doubleClick();
         // await elem.addValue('Belg');
         // await browser.keys('Enter');

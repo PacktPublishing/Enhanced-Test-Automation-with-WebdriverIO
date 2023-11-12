@@ -105,24 +105,23 @@ class LoginPage extends Page {
         await helpers.clickAdv(await this.btnSubmit);
     }
 
-    /**
-     * a method to encapsule automation code to interact with the page
-     * e.g. to login using username and password
-     * missing await so the click executes before the setValue
-     */
-    public async login_sync (username: string, password: string) {
-        global.log(`Logging in with '${username}' and '${password}'`)
-        this.inputUsername.setValue(username);
-        this.inputPassword.setValue(password);
-        this.btnSubmit.click();
-    }
-
-    /**
-     * overwrite specific options to adapt it to page object
-     */
-    public open(path: string = "login") {
-        return super.open(path);
-    }
+  /**
+   * a method to encapsule automation code to interact with the page
+   * e.g. to login using username and password
+   * missing await so the click executes before the setValue
+   */
+  public async login_sync (username: string, password: string) {
+    global.log(`Logging in with '${username}' and '${password}'`)
+    this.inputUsername.setValue(username);
+    this.inputPassword.setValue(password);
+    this.btnSubmit.click();
+  }
+  /**
+   * overwrite specific options to adapt it to page object
+   */
+  public open(path: string = "login") {
+    return super.open(path);
+  }
 }
 
 export default new LoginPage();
