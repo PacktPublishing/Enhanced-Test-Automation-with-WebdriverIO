@@ -1,8 +1,6 @@
-import * as fs from "fs";
-import * as path from "path";
 import { ASB } from "./globalObjects";
 import allureReporter from "@wdio/allure-reporter";
-import * as clipboardy from 'clipboardy';
+
 
 export async function clickAdv(element: WebdriverIO.Element) {
   let success: boolean = false;
@@ -487,7 +485,7 @@ export async function pageSync(
     LAST_URL = thisUrl;
     // const waitforTimeout = browser.options.waitforTimeout;
     let visibleSpans: string = 'div:not([style*="visibility: hidden"])';
-    let elements: ElementArrayType = await $$(visibleSpans);
+    let elements = await $$(visibleSpans);
 
     let exit: boolean = false;
     let count: number = elements.length;
