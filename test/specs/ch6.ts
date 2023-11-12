@@ -3,7 +3,6 @@ import KeyPressesPage from "../pageObjects/inputs.page";
 import * as helpers from "../../helpers/helpers";
 
 describe("The setValue Wrapper – Entering Text and Dynamic Data Replacement", () => {
-
     it("Chapter 6: setValue Wrapper", async () => {
         // await helpers.log(Promise) // Unit test log returns warning when anything but string is passsed
     

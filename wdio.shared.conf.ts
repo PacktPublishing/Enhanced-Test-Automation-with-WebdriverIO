@@ -1,4 +1,3 @@
-import type { Options } from '@wdio/types';
 import {ASB} from './helpers/globalObjects';
 require('dotenv').config();
 
@@ -310,48 +309,6 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
         let timeout = ASB.get("timeout");
 
         global.log(`timeout = ${Math.ceil(timeout / 60000)} min.`);
-
-        // Samples of overidding and adding custom methods.
-        // browser.addCommand("clickAdv", async function ()
-        // {
-        //     // `this` is return value of $(selector)
-        //     //await this.waitForDisplayed()
-        //     helpers.log(`Clicking ${this.selector} ...`)
-        //     let locator = "ELEMENT NOT FOUND"
-        //     try
-        //     {
-        //         if (ASB.get(`alreadyFailed`) === true)
-        //         {
-        //             helpers.log(`  SKIPPED: browser.clickAdv(${this.selector})`);
-        //         } else
-        //         {
-        //             await this.click({ block: 'center' })
-        //             helpers.log(`  button clicked.`)
-        //             await helpers.pageSync()
-        //         }
-        //     } catch (error)
-        //     {
-        //         helpers.log(`Element was not clicked.\n${error}`)
-        //         //Skip any remaining steps
-        //         ASB.set(`alreadyFailed`, false)
-        //     }
-        // }, addToElement)
-        // Override the default click command
-        // browser.overwriteCommand('click', async (element: ElementFinder) => {
-        //     // Do something before clicking the element
-        //     console.log('Overwrite the intrinsic click command...');
-        //     // Perform the click action
-        //     try
-        //     {
-        //         helpers.log(`Clicking ${this.selector} ...`)
-        //         await this.click({ block: 'center' })
-        //         await helpers.pageSync()
-        //         helpers.log(`done`)
-        //     } catch (error)
-        //     {
-        //         helpers.log(`Element was not clicked.\n${error}`)
-        //     }
-        // })
     },
     /**
      * Runs before a WebdriverIO command gets executed.

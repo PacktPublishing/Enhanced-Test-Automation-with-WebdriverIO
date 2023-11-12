@@ -5,19 +5,14 @@ export async function clickAdv(element: WebdriverIO.Element) {
   let success: boolean = false;
 
   element = await getValidElement(element, "button");
-
   if (ASB.get("ELEMENT_EXISTS") == false) {
     await log(`  IfExist: Skipping clicking ${ASB.get("ELEMENT_SELETOR")}`);
-
     return true;
   }
 
-  const SELECTOR = await element.selector;
+  const SELECTOR = element.selector;
   await log(`Clicking ${SELECTOR} selector`);
-
   try {
-    //await element.waitForDisplayed();
-
     if (!(await isElementInViewport(element))) {
       await scrollIntoView(element);
       await waitForElementToStopMoving(element, 1000);
@@ -39,19 +34,6 @@ export async function clickAdv(element: WebdriverIO.Element) {
   return success;
 }
 
-// async function findElement(selector: string): Promise<WebdriverIO.Element> {
-//   try {
-//     return await browser.$(selector);
-//   } catch (error: any) {
-//     if (error.message.includes("stale")) {
-//       // element is stale, so we need to recreate it
-//       return await browser.$(selector);
-//     } else {
-//       throw error;
-//     }
-//   }
-// }
-
 export async function getValidElement(
     element: WebdriverIO.Element,
     elementType: string
@@ -67,7 +49,6 @@ export async function getValidElement(
 
   try {
     elements = await $$(selector);
-
     if (elements.length === 0) {
       // Extract the element type if not provided
       if (elementType === "") {
@@ -81,7 +62,6 @@ export async function getValidElement(
         case "//a":
           elementText = selector.match(/=".*"/)[0].slice(2, -1);
           newSelector = `//button[contains(@type,'${elementText}')]`;
-
           break;
 
         case "//button":
@@ -92,10 +72,8 @@ export async function getValidElement(
 
         case "//input":
           elementText = selector.match(/=".*"/)[0].slice(2, -1);
-
           newSelector = `//input[contains(@id,'${elementText}'])`;
           found = await isElementVisible(await $(newSelector));
-
           if (!found) {
             newSelector = `//input[contains(@name,'${elementText}'])`;
             await isElementVisible(await $(newSelector));
@@ -135,14 +113,12 @@ export async function getValidElement(
   if (!found) {
     await log(`  ERROR: Unable to find ${selector}`);
   }
-
   return newElement;
 }
 
 async function getElementType(element: WebdriverIO.Element) {
   // get from existing element
   let tagName = await element.getTagName();
-
   if (tagName === null) {
     // get from non existing element instead of null
     let selector = element.selector.toString();
@@ -162,9 +138,6 @@ async function getElementType(element: WebdriverIO.Element) {
 */
 
 async function getFieldName(element: WebdriverIO.Element) {
-  // Add any custom properties here, e.g.:
-  // const customPropertyName = await element.getAttribute("aria-label");
-  // if (customPropertyName) return custom;
 
   // Get the 'name' property of the element
   const name = await element.getAttribute("name");
@@ -190,9 +163,6 @@ async function getFieldName(element: WebdriverIO.Element) {
 }
 
 async function getListName(element: WebdriverIO.Element) {
-  // Add any custom properties here, e.g.:
-  // const customPropertyName = await element.getAttribute("aria-label");
-  // if (customPropertyName) return customPropertyName;
 
   // Get the 'name' property of the element
   const ariaLable = await element.getAttribute("aria-label");
@@ -270,7 +240,6 @@ export async function highlightOn(
         `arguments[0].style.border = '5px solid ${color}';`,
         newElement
       );
-      //log (`  highlightOn ${elementSelector} refresh success`)
     }
   } catch (error) {
     // Element no longer exists
@@ -479,11 +448,8 @@ export async function pageSync(
 
   if (skipToEnd === false) {
     LAST_URL = thisUrl;
-    // const waitforTimeout = browser.options.waitforTimeout;
     let visibleSpans: string = 'div:not([style*="visibility: hidden"])';
-    // let elements: ElementArrayType = await $$(visibleSpans);
     let elements = await $$(visibleSpans);
-
     let exit: boolean = false;
     let count: number = elements.length;
     let lastCount: number = 0;
@@ -550,10 +516,8 @@ export async function pageSync(
       //log(`  pageSync() completed in ${duration} ms`); // Optional debug messaging
     }
   }
-
   return result;
 }
-
 
 export async function setValueAdv(
   inputField: WebdriverIO.Element,
@@ -593,14 +557,6 @@ export async function setValueAdv(
     // Clear the field.
     await inputField.setValue("");
 
-
-    // const escape = require('shell-escape');
-    // require('child_process').execSync('printf ' + escape([text]) + ' | pbcopy');
-
-    // Paste the text for speed
-     // Use the sendKeys method with Control-V (or Command-V on macOS) to paste the text
-     // inputField.sendKeys(['Control', 'v']); // On macOS, use ['Command', 'v']
-
     // Check for accuracy
     if (!(await inputField.getValue()).includes(text)) {
       await inputField.setValue("");
@@ -615,13 +571,9 @@ export async function setValueAdv(
     await log(
       `  ERROR: ${SELECTOR} was not populated with ${scrubbedValue}.\n       ${error.message}`
     );
-
-    // expect(`to be editable`).toEqual(SELECTOR);
-
     // Throw the error to stop the test, still masking password
     await inputField.setValue(scrubbedValue);
   }
-
   return success;
 }
 
@@ -640,13 +592,6 @@ export async function pause(ms: number) {
     now = Date.now();
   }
 }
-
-//Resolves stale element
-// async function refreshElement(
-//   element: WebdriverIO.Element
-// ): Promise<WebdriverIO.Element> {
-//   return await browser.$(element.selector);
-// }
 
 let TAGS: string[];
 
@@ -673,10 +618,6 @@ function replaceTags(text: string) {
         newText = newText.replace(tag, getToday(days, format));
         break;
 
-      //case tagLower.includes("<otherTag"):
-      // Tage replacemente code here
-      // break;
-
       default:
         log(`ERROR: Unknown tag <${tag}>`);
         break;
@@ -687,11 +628,8 @@ function replaceTags(text: string) {
   if (newText !== text) {
     log(`    Replaced tags in '${text}' with '${newText}'`);
   }
-
   return newText;
 }
-
-
 
 export async function scrollIntoView(element: WebdriverIO.Element) {
   await element.scrollIntoView({ block: "center", inline: "center" });
@@ -747,38 +685,6 @@ export async function waitForSpinner(): Promise<boolean> {
   return spinnerDetected;
 }
 
-
-
-// export async function waitForElementToStopMoving(
-//     element: WebdriverIO.Element,
-//     timeout: number = 1500
-// ): Promise<boolean> {
-//   let rect = await browser.options.waitforTimeout;
-//   pause(100);
-//   let isMoving = rect !== (await browser.options.waitforTimeout);
-//   let startTime = Date.now();
-//
-//   // Keep checking the element's position until it stops moving or the timeout is reached
-//   while (isMoving) {
-//     // If the element's position hasn't changed, it is not moving
-//     if (rect === (await browser.options.waitforTimeout)) {
-//       await log(`  Element is static`);
-//       isMoving = false;
-//     } else {
-//       await log(`  Element is moving...`);
-//       pause(100);
-//     }
-//     // If the timeout has been reached, stop the loop
-//     if (Date.now() - startTime > timeout) {
-//       break;
-//     }
-//     // Wait for a short amount of time before checking the element's position again
-//     await pause(100);
-//   }
-//
-//   return !isMoving;
-// }
-
 export async function selectAdv(
   listElement: WebdriverIO.Element,
   item: string
@@ -799,7 +705,7 @@ export async function selectAdv(
   listElement = await getValidElement(listElement, "list");
 
   // Get the name of the element
-  let listname = await getListName(await listElement);
+  // let listname = await getListName(listElement);
 
   // Comboboxes look like input fields
   let isCombobox = listElement.selector.toString().includes("//input")
@@ -824,45 +730,32 @@ export async function selectAdv(
         ${error.message}`);
       }
     } else {
-        // Click the item
-        //await browser.keys(`${item}`)
-
         // Clear the field.
         await listElement.click() // Select All Clear Mac and Windows
         await browser.keys(['Home']);
         await browser.keys(['Shift','End']);
         await browser.keys(['Delete']);
         await browser.keys(`${item}`)
-1
         await browser.pause(3000); // Demo
 
         // Find the item in the list
         try {
           //listItem = await browser.$(`//li/*[contains(text(),'${item}')])`)
-
           listItems = await browser.$$(`//li/*`)
 
           for (const listItem of listItems) {
             if ((await listItem.getText()).includes(item)) // Found the element
             break;
           }
-
-          clickAdv(listItem)
+          await clickAdv(listItem)
         } catch (error) {
-
           // no such item
           listItems = await browser.$$(`//li/*`)
           for (const listItem of listItems) {
              textContent += await listItem.getText() + " | "; // Get the text content of the element
-
         }
-
           await log(`  ERROR: "${item}" was not found in combobox: \n ${textContent}`)
-
         }
-
-
-        // await browser.keys('Enter');
 
       // Click the item
       await (await $(`//span[normalize-space()='${item}']`)).click();
@@ -892,110 +785,6 @@ export async function selectAdv(
   return success;
 }
 
-
-// export async function setValueAdv(
-//   inputField: WebdriverIO.Element,
-//   text: string
-// ) {
-//   let success: boolean = false;
-//
-//   inputField = await getValidElement(inputField, "field");
-//
-//   const SELECTOR = await inputField.selector;
-//
-//   let newValue: string = replaceTags(text);
-//
-//   await log(`Entering '${newValue}' into ${SELECTOR}`);
-//
-//   try {
-//     //await element.waitForDisplayed();
-//
-//     if (!(await isElementInViewport(inputField))) {
-//       await scrollIntoView(inputField);
-//       await waitForElementToStopMoving(inputField, 3000);
-//     }
-//
-//     await highlightOn(inputField);
-//
-//     //Check if text was entered
-//     // Clear input field
-//     await inputField.click();
-//
-//     // Do we need to clear the field?
-//     if (await inputField.getValue()) await inputField.setValue(newValue);
-//
-//     // Send text to input field
-//     for (const letter of text) {
-//       await inputField.addValue(letter);
-//     }
-//
-//     success = true;
-//   } catch (error: any) {
-//     await log(
-//         `  ERROR: ${SELECTOR} was not populated with ${text}.\n       ${error.message}`
-//     );
-//     expect(`to be editable`).toEqual(SELECTOR);
-//     // Throw the error to stop the test
-//     await inputField.setValue(text);
-//   }
-//
-//   return success;
-// }
-
-// export async function isElementInViewport(
-//     element: WebdriverIO.Element
-// ): Promise<boolean> {
-//   let isInViewport = await element.isDisplayedInViewport();
-//   return isInViewport;
-// }
-
-
-// export async function waitForSpinner(): Promise<boolean> {
-//   let spinnerDetected: boolean = false;
-//   // This spinner locator is unique to each project
-//   const spinnerLocator: string = `//img[contains(@src,'loader')]`;
-//   await pause(100); // Let browser begin building spinner on page
-//   let spinner = await browser.$(spinnerLocator);
-//   let found = await highlightOn(spinner);
-//   let timeout = ASB.get("spinnerTimeoutInSeconds");
-//   const start = Date.now();
-//   if (found) {
-//     const startTime = performance.now();
-//     spinnerDetected = true;
-//     try {
-//       while (found) {
-//         found = await highlightOn(spinner);
-//         if (!found) break;
-//         await pause(100);
-//         found = await highlightOff(spinner);
-//         if (!found) break;
-//         await pause(100);
-//         if (Date.now() - start > timeout * 1000) {
-//           await log(`ERROR: Spinner did not close after ${timeout} seconds`);
-//           break;
-//         }
-//       }
-//     } catch (error) {
-//       // Spinner no longer exists
-//     }
-//     await log(
-//         `  Spinner Elapsed time: ${Math.floor(performance.now() - startTime)} ms`
-//     );
-//   }
-//   return spinnerDetected;
-// }
-
-// export async function isElementVisible(
-//     element: WebdriverIO.Element
-// ): Promise<boolean> {
-//   try {
-//     const displayed = await element.isDisplayed();
-//     return displayed;
-//   } catch (error) {
-//     return false;
-//   }
-// }
-
 //Resolves stale element
 export async function refreshElement(
     element: WebdriverIO.Element
@@ -1024,19 +813,6 @@ export async function getListValues(selectElement:  WebdriverIO.Element
   const optionElements = await (await selectElement).getText();
   return optionElements;
 }
-
-// export async function isExists(element: WebdriverIO.Element) {
-//   try {
-//     return await element.isExisting();
-//   } catch (error) {
-//     return false;
-//   }
-// }
-
-// export async function scrollIntoView(element: WebdriverIO.Element) {
-//   await element.scrollIntoView({block: "center", inline: "center"});
-// }
-
 
 export async function waitForElementToStopMoving(element: WebdriverIO.Element, timeout: number): Promise<void> {
 

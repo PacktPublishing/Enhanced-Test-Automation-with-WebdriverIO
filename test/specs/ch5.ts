@@ -4,7 +4,6 @@ import LandingPage from "../pageObjects/landing.page";
 import * as helpers from "../../helpers/helpers";
 import dynamicLoadingPage from "../pageObjects/dynamicLoading.page";
 describe("Chapter 5: Fail Last clickAdv with pageSync and autoscrolln", () => {
-
   it("Chapter 5: Fail Last clickAdv with pageSync and autoscroll", async () => {
     // await helpers.log(Promise) // Unit test log returns warning when anything but string is passsed
     await LoginPage.open();

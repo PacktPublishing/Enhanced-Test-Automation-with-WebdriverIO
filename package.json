@@ -32,7 +32,7 @@
       "ch8": "yarn wdio --spec ./test/specs/ch8.ts",
       "ch12": "yarn wdio --spec ./test/specs/ch12.ts",
       "ch13": "yarn wdio --spec ./test/specs/ch13.ts",
-      "windows": "Env=dev wdio wdio.dev.conf.ts --spec ./test/specs/ch13.ts",
+      "windows": "Env=dev wdio wdio.windows.conf.ts --spec ./test/specs/ch13.ts",
       "mac": "Env=prod wdio wdio.mac.conf.ts --spec ./test/specs/ch13.ts",
       "lt": "Env=uat wdio wdio.lambdatest.conf.ts --spec ./test/specs/ch13.ts"
     },

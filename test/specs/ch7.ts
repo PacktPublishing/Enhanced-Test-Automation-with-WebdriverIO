@@ -1,6 +1,5 @@
 import WebListPage from "../pageObjects/weblist.page";
 describe("The select Wrapper: Selecting from List and Combobox", () => {
-
     it("Chapter 7: Selecting from a AutoComplete list", async () => {
         let elem;
         // Navigate to a sample weblist

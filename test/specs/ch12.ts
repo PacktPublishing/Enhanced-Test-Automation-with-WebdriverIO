@@ -4,7 +4,6 @@ import SecurePage from "../pageObjects/secure.page";
 import * as helpers from "../../helpers/helpers";
 import * as Data from "../../shared-data/userData.json";
 
-
 describe("Ch12: Using Data files to pass values", () => {
   it("should login with valid credentials", async () => {
     allureReporter.addStory("TA-001");

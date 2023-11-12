@@ -126,5 +126,4 @@ class LoginPage extends Page {
         return super.open(path);
     }
 }
-
 export default new LoginPage();

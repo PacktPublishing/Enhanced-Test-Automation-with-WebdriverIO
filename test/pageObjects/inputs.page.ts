@@ -1,4 +1,3 @@
-import { ChainablePromiseElement } from "webdriverio";
 import * as helpers from "../../helpers/helpers";
 import Page from "./page"; // This is in red
 
