@@ -1,7 +1,6 @@
 import { ASB } from "./globalObjects";
 import allureReporter from "@wdio/allure-reporter";
 
-
 export async function clickAdv(element: WebdriverIO.Element) {
   let success: boolean = false;
 
@@ -125,7 +124,7 @@ export async function getValidElement(
       // Successful class switch
       if (found) {
         await log(
-            `  WARNING: Replaced ${selector}\n                    with ${newSelector}`
+          `  WARNING: Replaced ${selector}\n                    with ${newSelector}`
         );
       }
     }
@@ -258,8 +257,8 @@ export async function highlightOn(
     elementSelector = await element.selector;
     try {
       await browser.execute(
-          `arguments[0].style.border = '5px solid ${color}';`,
-          element
+        `arguments[0].style.border = '5px solid ${color}';`,
+        element
       );
       visible = await isElementVisible(element);
     } catch (error: any) {
@@ -268,8 +267,8 @@ export async function highlightOn(
       ASB.set("element", newElement);
       ASB.set("staleElement", true);
       await browser.execute(
-          `arguments[0].style.border = '5px solid ${color}';`,
-          newElement
+        `arguments[0].style.border = '5px solid ${color}';`,
+        newElement
       );
       //log (`  highlightOn ${elementSelector} refresh success`)
     }
@@ -448,14 +447,14 @@ function normalizeElementType(elementType: string) {
   return elementText;
 }
 
-/**
- * pageSync - Dynamic wait for the page to stabilize.
- * Use after click
- * ms = default time wait between loops 125 = 1/8 sec
- *      Minimum 25 for speed / stability balance
- */
-let LAST_URL: String = "";
-
+  /**
+   * pageSync - Dynamic wait for the page to stabilize.
+   * Use after click
+   * ms = default time wait between loops 125 = 1/8 sec
+   *      Minimum 25 for speed / stability balance
+   */
+  let LAST_URL: String = "";
+  let waitforTimeout = browser.options.waitforTimeout;
 
 export async function pageSync(
     ms: number = 25,
@@ -643,11 +642,11 @@ export async function pause(ms: number) {
 }
 
 //Resolves stale element
-async function refreshElement(
-    element: WebdriverIO.Element
-): Promise<WebdriverIO.Element> {
-  return await browser.$(element.selector);
-}
+// async function refreshElement(
+//   element: WebdriverIO.Element
+// ): Promise<WebdriverIO.Element> {
+//   return await browser.$(element.selector);
+// }
 
 let TAGS: string[];
 
@@ -998,11 +997,11 @@ export async function selectAdv(
 // }
 
 //Resolves stale element
-// export async function refreshElement(
-//     element: WebdriverIO.Element
-// ): Promise<WebdriverIO.Element> {
-//   return await browser.$(element.selector);
-// }
+export async function refreshElement(
+    element: WebdriverIO.Element
+): Promise<WebdriverIO.Element> {
+  return await browser.$(element.selector);
+}
 
 async function findElement(selector: string): Promise<WebdriverIO.Element> {
   try {
@@ -1049,8 +1048,8 @@ export async function waitForElementToStopMoving(element: WebdriverIO.Element, t
     const checkMovement = () => {
       element.getLocation().then((currentLocation) => {
         if (
-              currentLocation.x === initialLocation.x &&
-              currentLocation.y === initialLocation.y
+            currentLocation.x === initialLocation.x &&
+            currentLocation.y === initialLocation.y
         ) {
           clearInterval(intervalId);
           resolve();
@@ -1079,11 +1078,12 @@ export async function expectAdv(actual: any, assertionType: any, expected: unkno
   const getAssertionType = {
     equals: () => (softAssert(actual).toEqual(expected)),
     contains: () => (softAssert(actual).toContain(expected)),
-    exist: () => (softAssert(actual).toBeExisting()),
+    exists: () => (softAssert(actual).toBeExisting()),
     isEnabled: () => (softAssert(actual).toBeEnabled()),
     isDisabled: () => (softAssert(actual).toBeDisabled()),
     doesNotExist: () => (softAssert(actual).not.toBeExisting()),
     doesNotContain: () => (softAssert(actual).not.toContain(expected)),
+    toHaveTextContaining: () => (softAssert(actual).toHaveTextContaining(expected)),
 
     default: () => (console.info('Invalid assertion type: ', assertionType)),
   };

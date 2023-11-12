@@ -8,6 +8,8 @@ describe("Chapter 8: The expect / assert / Should wrapper", () => {
     let elem = await browser.$('#login > button > i');
     let bnText = await elem.getText();
     await helpers.expectAdv(bnText, 'equals', 'Login');
+    await helpers.expectAdv(elem, 'toHaveTextContaining', (["You logged into a secure area!"]));
+    await helpers.expectAdv(elem, 'exists', null);
   });
 
   it("Chapter 8: using expectAdv to validate the assertion failure", async () => {
