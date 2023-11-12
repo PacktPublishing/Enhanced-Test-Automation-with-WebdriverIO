@@ -10,7 +10,7 @@ log(`timeout = ${Math.ceil(timeout / 60_000)} min.`);
 
 const addToElement = true
 
-export const config = {
+export const config= {
     //
     // ====================
     // Runner Configuration
@@ -145,11 +145,7 @@ export const config = {
     // Services take over a specific job you don't want to take care of. They enhance
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
-    // services: [
-    //     "chromedriver",
-    //     "geckodriver",
-    //     // ["lambdatest", {tunnel: true}]
-    // ],
+    services: ["chromedriver"],
 
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
@@ -247,23 +243,30 @@ export const config = {
      * @param {args} arguments passed to the command
      */
     beforeCommand: function (commandName, args) {
-        if (commandName === '$') {
-            const selector = args[0];
-            // Modify the selector or add additional functionality as needed
-            // For example, you can add a prefix to the selector
-            log(`BEFORE $ COMMAND: Selector ${selector} sent to ABS(elementSelector)`);
-            // Pass the locator to the switchboard
-            ASB.set("elementSelector", selector);
+        // Chapter 5 - Keep the current object locator for future manipulation
+        let elementSelectorType:String
+        let elementSelector: String
+        let paddedCommandName: String = commandName.padEnd(12, ' ');
+        switch (commandName) {
+            case 'findElements':
+            case 'findElement':
+                // Pass the class and locator to the Automation Switchboard
+                elementSelectorType = args[0];
+                elementSelector = args[1];
+                global.log(`beforeCommand ${paddedCommandName}: ASB.get("selectorType") will return '${elementSelectorType}'`)
+                global.log(`beforeCommand ${paddedCommandName}: ASB.get("selector") will return '${elementSelector}'`)
+                ASB.set("selectorType", elementSelectorType)
+                ASB.set("selector", elementSelector)
+                // break;
         }
-
         if (commandName === '$$') {
             const selector = args[0];
             // Modify the selector or add additional functionality as needed
             // For example, you can add a prefix to the selector
-            log(`BEFORE $$ COMMAND: Selector ${selector} sent to ABS(elementsSelector)`);
+            log (`BEFORE $$ COMMAND: Selector ${selector} sent to ABS(elementsSelector)`);
             // Pass the locator to the switchboard
-            ASB.set("elementsSelector", selector);
-        }
+            ASB.set("elementsSelector", selector)
+          }
 
     },
 
@@ -350,8 +353,8 @@ export const config = {
         //browser.maximizeWindow();
         // Option #2: Run browser 3/4 screen on single monitor
         // Allow VS Code Terminal visible on bottom of the screen
-        await log(`Changing window size`);
-        await browser.setWindowSize(1200, 770);
+        await global.log(`Changing window size`);
+        await browser.setWindowSize(1920, 960);
     },
     /**
      * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
@@ -435,20 +438,30 @@ export const config = {
         }
 
     },
+    /**
+     * Gets executed when a refresh happens.
+     * @param {String} oldSessionId session ID of the old session
+     * @param {String} newSessionId session ID of the new session
+     */
+    // onReload: function(oldSessionId, newSessionId) {
+    // }
 };
 
 /**
  * log wrapper
  * @param text to be output to the console window
  */
-// global.log = async (text: any) => {
-//     if (text) {
-//         //truthy value check
-//         if (text === Promise) {
-//             console.log(`--->     WARN: Log was passed a Promise object`);
-//             console.trace();
-//         } else {
-//             console.log(`---> ${text}`);
-//         }
-//     }
-// };
+let lastLoggedText = '';
+
+global.log = async (text: any) => {
+    if (text && text !== lastLoggedText) {
+        //truthy value check
+        if (text === Promise) {
+            console.log(`--->     WARN: Log was passed a Promise object`);
+            console.trace();
+        } else {
+            console.log(`---> ${text}`);
+            lastLoggedText = text;
+        }
+    }
+};

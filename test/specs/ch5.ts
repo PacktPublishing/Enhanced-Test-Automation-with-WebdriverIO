@@ -1,9 +1,8 @@
-"strict mode";
-import LoginPage from "../pageobjects/login.page";
-import SecurePage from "../pageobjects/secure.page";
-import LandingPage from "../pageobjects/landing.page";
+import LoginPage from "../pageObjects/login.page";
+import SecurePage from "../pageObjects/secure.page";
+import LandingPage from "../pageObjects/landing.page";
 import * as helpers from "../../helpers/helpers";
-import dynamicLoadingPage from "../pageobjects/dynamicLoading.page";
+import dynamicLoadingPage from "../pageObjects/dynamicLoading.page";
 describe("Chapter 5: Fail Last clickAdv with pageSync and autoscrolln", () => {
 
   it("Chapter 5: Fail Last clickAdv with pageSync and autoscroll", async () => {
@@ -50,7 +49,7 @@ describe("Chapter 5: Fail Last clickAdv with pageSync and autoscrolln", () => {
     await helpers.highlightOff(await dynamicLoadingPage.txtHelloWorld);
   });
 
-  it("Chapter 5: Self-healing Link", async () => {
+  fit("Chapter 5: Self-healing Link", async () => {
     // await helpers.log(Promise) // Unit test log returns warning when anything but string is passsed
     await LoginPage.open();
 
