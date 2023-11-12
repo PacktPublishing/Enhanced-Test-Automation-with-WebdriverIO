@@ -1,6 +1,6 @@
 import { ChainablePromiseElement } from "webdriverio";
 import * as helpers from "../../helpers/helpers";
-import Page from "./page"; // This is in red
+import Page from "../../allure-report/page"; // This is in red
 
 /**
  * sub page containing specific selectors and methods for a specific page

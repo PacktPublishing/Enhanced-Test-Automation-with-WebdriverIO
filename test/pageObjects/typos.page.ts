@@ -1,5 +1,5 @@
 
-import Page from './page';
+import Page from '../../allure-report/page';
 
 /**
  * sub page containing specific selectors and methods for a specific page

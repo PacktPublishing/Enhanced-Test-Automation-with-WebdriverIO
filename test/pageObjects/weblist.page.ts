@@ -1,4 +1,4 @@
-import Page from './page';
+import Page from '../../allure-report/page';
 import * as helpers from "../../helpers/helpers";
 /**
    * overwrite specific options to adapt it to page object
