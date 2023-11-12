@@ -4,7 +4,7 @@ import * as helpers from "../../helpers/helpers";
 
 describe("The setValue Wrapper – Entering Text and Dynamic Data Replacement", () => {
 
-    fit("Chapter 6: setValue Wrapper", async () => {
+    it("Chapter 6: setValue Wrapper", async () => {
         // await helpers.log(Promise) // Unit test log returns warning when anything but string is passsed
     
         await global.log(helpers.getToday()); // returns current date in dd-mm-yyyy format

@@ -11,10 +11,12 @@ export async function clickAdv(element: WebdriverIO.Element) {
     return true;
   }
 
-
-  const SELECTOR = element;
-  // const SELECTOR = element.selector;
+  const SELECTOR = await element.selector;
   await log(`Clicking ${SELECTOR}`);
+
+  // const SELECTOR = element;
+  // // const SELECTOR = element.selector;
+  // await log(`Clicking ${SELECTOR}`);
 
   try {
     //await element.waitForDisplayed();
@@ -30,11 +32,10 @@ export async function clickAdv(element: WebdriverIO.Element) {
     success = true;
   } catch (error: any) {
     await log(`  ERROR: ${SELECTOR} was not clicked.\n       ${error.message}`);
-    // expect(`to be clickable`).toEqual(SELECTOR);
+    expect(`to be clickable`).toEqual(SELECTOR);
     // Throw the error to stop the test
     //@ts-ignore
-    await element.click();
-    // await element.click({ block: "center" });
+    await element.click({ block: "center" });
   }
 
   return success;
@@ -54,20 +55,19 @@ async function findElement(selector: string): Promise<WebdriverIO.Element> {
 }
 
 export async function getValidElement(
-  element: WebdriverIO.Element,
-  elementType: string
+    element: WebdriverIO.Element,
+    elementType: string
 ): Promise<WebdriverIO.Element> {
-  let selector: any ;
-  // let selector: any = element.selector;
+  let selector: any = await element.selector;
   // Get a collection of matching elements
   let found: boolean = true;
   let newSelector: string = "";
   let newElement: any = element;
-  let elements: any;
+  let elements: WebdriverIO.Element[];
+  // let elements: any;
   let elementText: string = "";
 
   try {
-
     elements = await $$(selector);
 
     if (elements.length === 0) {
@@ -111,7 +111,6 @@ export async function getValidElement(
           found = await isElementVisible(await $(newSelector));
           break;
 
-
         case "//*":
           elementText = selector.match(/=".*"/)[0].slice(2, -1);
           newSelector = `//*[contains(@id,'${elementText}'])`;
@@ -122,13 +121,12 @@ export async function getValidElement(
           found = false;
           break;
       }
-
       newElement = await $(newSelector);
       found = await isElementVisible(newElement);
       // Successful class switch
       if (found) {
         await log(
-          `  WARNING: Replaced ${selector}\n                    with ${newSelector}`
+            `  WARNING: Replaced ${selector}\n                    with ${newSelector}`
         );
       }
     }
@@ -158,22 +156,22 @@ async function getElementType(element: WebdriverIO.Element) {
 }
 
 
-/** 
+/**
 * Returns the first non-null property from the prioritized list: 'name', 'placeholder', 'area-label'.
 * if the Element class is an input field, the parent div text is returned.
-* @param {WebdriverIO.Element} element - The WebdriverIO element to get the name of the field 
-* @returns {string | null} The field name, or null if no properties have a value 
-*/ 
+* @param {WebdriverIO.Element} element - The WebdriverIO element to get the name of the field
+* @returns {string | null} The field name, or null if no properties have a value
+*/
 
-async function getFieldName(element: WebdriverIO.Element) { 
+async function getFieldName(element: WebdriverIO.Element) {
 // Add any custom properties here, e.g.: 
 // const customPropertyName = await element.getAttribute("aria-label"); 
 // if (customPropertyName) return custom; 
 
 // Get the 'name' property of the element 
-  const name = await element.getAttribute("name"); 
-  if (name) return name; 
- 
+  const name = await element.getAttribute("name");
+  if (name) return name;
+
   // Get the 'placeholder' property of the element
   const placeholder = await element.getAttribute("placeholder");
   if (placeholder) return placeholder;
@@ -610,13 +608,13 @@ function replaceTags(text: string) {
         if (match) {
           const days = parseInt(match[0]);
         }
-        
+
         newText = newText.replace(tag, getToday(days, format));
         break;
 
-      //case tagLower.includes("<otherTag"):
-      // Tage replacemente code here
-      // break;
+        //case tagLower.includes("<otherTag"):
+        // Tage replacemente code here
+        // break;
 
       default:
         log(`ERROR: Unknown tag <${tag}>`);
@@ -653,7 +651,6 @@ export async function select(
   return await listElement.selectByVisibleText(item);
 }
 
-
 export async function waitForSpinner(): Promise<boolean> {
   let spinnerDetected: boolean = false;
   // This spinner locator is unique to each project
@@ -683,7 +680,7 @@ export async function waitForSpinner(): Promise<boolean> {
       // Spinner no longer exists
     }
     await log(
-      `  Spinner Elapsed time: ${Math.floor(performance.now() - startTime)} ms`
+        `  Spinner Elapsed time: ${Math.floor(performance.now() - startTime)} ms`
     );
   }
   return spinnerDetected;
@@ -692,8 +689,8 @@ export async function waitForSpinner(): Promise<boolean> {
 
 
 export async function waitForElementToStopMoving(
-  element: WebdriverIO.Element,
-  timeout: number = 1500
+    element: WebdriverIO.Element,
+    timeout: number = 1500
 ): Promise<boolean> {
   let rect = await browser.options.waitforTimeout;
   pause(100);
@@ -768,30 +765,30 @@ export async function selectAdv(
     } else {
         // Click the item
         //await browser.keys(`${item}`)
-        
+
         // Clear the field.
         await listElement.click() // Select All Clear Mac and Windows
         await browser.keys(['Home']);
         await browser.keys(['Shift','End']);
-        await browser.keys(['Delete']); 
+        await browser.keys(['Delete']);
         await browser.keys(`${item}`)
 1
-        await browser.pause(3000); // Demo 
+        await browser.pause(3000); // Demo
 
         // Find the item in the list
         try {
           //listItem = await browser.$(`//li/*[contains(text(),'${item}')])`)
 
           listItems = await browser.$$(`//li/*`)
-          
+
           for (const listItem of listItems) {
             if ((await listItem.getText()).includes(item)) // Found the element
             break;
           }
 
-          clickAdv(listItem)          
+          clickAdv(listItem)
         } catch (error) {
-          
+
           // no such item
           listItems = await browser.$$(`//li/*`)
           for (const listItem of listItems) {
@@ -802,8 +799,8 @@ export async function selectAdv(
           await log(`  ERROR: "${item}" was not found in combobox: \n ${textContent}`)
 
         }
-        
-         
+
+
         // await browser.keys('Enter');
 
     }
