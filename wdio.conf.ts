@@ -1,13 +1,14 @@
-import { ASB } from './helpers/globalObjects';
+import {ASB} from './helpers/globalObjects';
+import {log} from './helpers/helpers';
 
 const DEBUG =
     process.env.DEBUG === undefined ? true : process.env.DEBUG === `true`;
 console.log(`DEBUG: ${DEBUG}`);
 
 let timeout = DEBUG === true ? 1_000_000 : 10_000;
-console.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`);
+log(`timeout = ${Math.ceil(timeout / 60_000)} min.`);
 
-const addToElement = true //
+const addToElement = true
 
 export const config= {
     //
@@ -27,14 +28,12 @@ export const config= {
     // If you need to configure how ts-node runs please use the
     // environment variables for ts-node or use wdio config's autoCompileOpts section.
     //
-
     autoCompileOpts: {
         autoCompile: true,
         // see https://github.com/TypeStrong/ts-node#cli-and-programmatic-options
         // for all available options
         tsNodeOpts: {
             transpileOnly: true,
-            // project: "./tsconfig.json",
         },
         // tsconfig-paths is only used if "tsConfigPathsOpts" are provided, if you
         // do please make sure "tsconfig-paths" is installed as dependency
@@ -85,7 +84,7 @@ export const config= {
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
     // https://saucelabs.com/platform/platform-configurator
     //
-    // injectGlobals: true,
+    injectGlobals: true,
     // Inserts WebdriverIO's globals (e.g. `browser`, `$` and `$$`) into the global environment.
     // If you set to `false`, you should import from `@wdio/globals`. Note: WebdriverIO doesn't
     // handle injection of test framework specific globals.
@@ -96,8 +95,7 @@ export const config= {
         browserName: 'chrome',
         // or "firefox", "microsoftedge", "safari"
         'goog:chromeOptions': {
-            args: ['--disable-gpu', '--enable-automation', '--disable-infobars', '--disable-notifications']
-        },
+            args: ['--disable-gpu', '--enable-automation', '--disable-infobars', '--disable-notifications'] },
         acceptInsecureCerts: true,
     }],
     //
@@ -170,43 +168,27 @@ export const config= {
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
     reporters: ["spec", ["allure",
-        {
-            outputDir: "./reports/allure-results",
-            disableWebdriverStepsReporting: true,
-            disableWebdriverScreenshotsReporting: true,
-        }]],
+        { outputDir: "./reports/allure-results",
+          disableWebdriverStepsReporting: false,
+          disableWebdriverScreenshotsReporting: false,
+    }]],
 
     //
     // Options to be passed to Jasmine.
     jasmineOpts: {
-        // Jasmine default timeout
         defaultTimeoutInterval: timeout,
-        //
-        // The Jasmine framework allows interception of each assertion in order to log the state of the application
-        // or website depending on the result. For example, it is pretty handy to take a screenshot every time
-        // an assertion fails.
         expectationResultHandler: async function (passed, assertion) {
             /**
              * only take screenshot if assertion failed
              */
-            if (passed) {
-                return;
-            } else {
-
-                try {
-                    await console.log(`Jasmine screenshot of ${await assertion.error.message}.`)
-                    await console.log(`Waiting for ${timeout / 60000} min...`)
-                    await browser.saveScreenshot(
-                        `assertionError_${await assertion.error.message}.png`);
-                    await browser.pause(timeout);
-                    await console.log(`DEBUG wait done`)
-                } catch (error) {
-                    await console.log(`The screen capture failed. Check for a missing await statement. ${error}`)
-                }
-
-
+            if (!passed) {
+                console.log (`Jasmine screenshot of ${assertion}.`)
+                console.log (`Waiting for ${timeout/60000} min...`)
+                await browser.takeScreenshot();
+                await browser.pause(timeout);
+                console.log(`DEBUG wait done`);
             }
-        },
+        }
     },
 
     //
@@ -222,8 +204,8 @@ export const config= {
      * @param {Object} config wdio configuration object
      * @param {Array.<Object>} capabilities list of capabilities details
      */
-    // onPrepare: function (config, capabilities) {
-    // },
+    onPrepare: function (config, capabilities) {
+    },
     /**
      * Gets executed before a worker process is spawned and can be used to initialise specific service
      * for that worker as well as modify runtime environments in an async fashion.
@@ -254,7 +236,6 @@ export const config= {
      */
     // beforeSession: function (config, capabilities, specs, cid) {
     // },
-
     /**
      * Gets executed just before initialising the webdriver session and test framework. It allows you
      * to manipulate configurations depending on the capability or spec.
@@ -276,14 +257,16 @@ export const config= {
                 global.log(`beforeCommand ${paddedCommandName}: ASB.get("selector") will return '${elementSelector}'`)
                 ASB.set("selectorType", elementSelectorType)
                 ASB.set("selector", elementSelector)
-                break;
-
-            default:
-                // X-Ray Vision - see all the commands that get executed
-                // Uncomment to see all commands executed, but logging will mpact execution run time.
-                // global.log(`beforeCommand ${commandName}`);
-                break;
+                // break;
         }
+        if (commandName === '$$') {
+            const selector = args[0];
+            // Modify the selector or add additional functionality as needed
+            // For example, you can add a prefix to the selector
+            log (`BEFORE $$ COMMAND: Selector ${selector} sent to ABS(elementsSelector)`);
+            // Pass the locator to the switchboard
+            ASB.set("elementsSelector", selector)
+          }
 
     },
 
@@ -297,32 +280,28 @@ export const config= {
     before: function (capabilities, specs) {
         //Set
         //helpers.log(`process.env.DEBUG: ${process.env.DEBUG}`) // ---> process.env.DEBUG: -LH:*
+        ASB.set("DEBUG", (process.env.DEBUG === undefined) ? false : (process.env.DEBUG === `true`));
+        ASB.set("spinnerTimeoutInSeconds", 30);
 
-        ASB.set("DEBUG", (process.env.DEBUG === undefined) ? false : (process.env.DEBUG === `true`))
-        ASB.set("spinnerTimeoutInSeconds", 30)
+        log(`DEBUG: ${ASB.get("DEBUG")}`);
 
-        global.log(`DEBUG: ${ASB.get("DEBUG")}`)
+        ASB.set("timeout", (ASB.get("DEBUG") === true) ? 1000000 : 10000);
+        let timeout = ASB.get("timeout");
 
-        ASB.set("timeout", (ASB.get("DEBUG") === true) ? 1_000_000 : 10_000)
-        let timeout = ASB.get("timeout")
-
-        global.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`)
+        log(`timeout = ${Math.ceil(timeout / 60000)} min.`);
 
         // Samples of overidding and adding custom methods.
-
         // browser.addCommand("clickAdv", async function ()
         // {
         //     // `this` is return value of $(selector)
         //     //await this.waitForDisplayed()
         //     helpers.log(`Clicking ${this.selector} ...`)
         //     let locator = "ELEMENT NOT FOUND"
-
         //     try
         //     {
         //         if (ASB.get(`alreadyFailed`) === true)
         //         {
         //             helpers.log(`  SKIPPED: browser.clickAdv(${this.selector})`);
-
         //         } else
         //         {
         //             await this.click({ block: 'center' })
@@ -336,27 +315,21 @@ export const config= {
         //         ASB.set(`alreadyFailed`, false)
         //     }
         // }, addToElement)
-
         // Override the default click command
-
         // browser.overwriteCommand('click', async (element: ElementFinder) => {
-
         //     // Do something before clicking the element
         //     console.log('Overwrite the intrinsic click command...');
-
         //     // Perform the click action
         //     try
         //     {
         //         helpers.log(`Clicking ${this.selector} ...`)
         //         await this.click({ block: 'center' })
-
         //         await helpers.pageSync()
         //         helpers.log(`done`)
         //     } catch (error)
         //     {
         //         helpers.log(`Element was not clicked.\n${error}`)
         //     }
-
         // })
     },
     /**
@@ -378,7 +351,6 @@ export const config= {
     beforeTest: async function (test, context) {
         //Option #1: Run browser full screen on dual monitors
         //browser.maximizeWindow();
-
         // Option #2: Run browser 3/4 screen on single monitor
         // Allow VS Code Terminal visible on bottom of the screen
         await global.log(`Changing window size`);
@@ -421,7 +393,7 @@ export const config= {
      * @param {Object} suite suite details
      */
     afterSuite: function (suite) {
-        global.log("AFTER SUITE")
+        log("AFTER SUITE");
     },
     /**
      * Runs after a WebdriverIO command gets executed
@@ -440,7 +412,7 @@ export const config= {
      * @param {Array.<String>} specs List of spec file paths that ran
      */
     after: function (result, capabilities, specs) {
-        global.log("AFTER")
+        log("AFTER")
     },
     /**
      * Gets executed right after terminating the webdriver session.
@@ -449,7 +421,7 @@ export const config= {
      * @param {Array.<String>} specs List of spec file paths that ran
      */
     afterSession: function (config, capabilities, specs) {
-        global.log("AFTER SESSION")
+        log("AFTER SESSION")
     },
     /**
      * Gets executed after all workers got shut down and the process is about to exit. An error
@@ -460,7 +432,7 @@ export const config= {
      * @param {<Object>} results object containing test results
      */
     onComplete: function (exitCode, config, capabilities, results) {
-        global.log("ON COMPLETE")
+        log("ON COMPLETE")
         if (ASB.get("alreadyFailed")) {
             throw new Error('Test failed');
         }

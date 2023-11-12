@@ -20,6 +20,8 @@
         // "noEmit": true, /* Do not emit outputs */
         // "noEmitOnError": true, /* Do not emit outputs */
         "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "allowSyntheticDefaultImports": true,
 
         "types": [
             "node",

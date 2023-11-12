@@ -1,21 +1,20 @@
-import * as fs from "fs";
-import * as path from "path";
 import { ASB } from "./globalObjects";
 import allureReporter from "@wdio/allure-reporter";
+
 
 export async function clickAdv(element: WebdriverIO.Element) {
   let success: boolean = false;
 
   element = await getValidElement(element, "button");
 
-  if (ASB.get("ELEMENT_EXISTS") == false){
+  if (ASB.get("ELEMENT_EXISTS") == false) {
     await log(`  IfExist: Skipping clicking ${ASB.get("ELEMENT_SELETOR")}`);
 
     return true;
   }
 
   const SELECTOR = await element.selector;
-  await log(`Clicking ${SELECTOR}`);
+  await log(`Clicking ${SELECTOR} selector`);
 
   try {
     //await element.waitForDisplayed();
@@ -29,8 +28,9 @@ export async function clickAdv(element: WebdriverIO.Element) {
     await element.click({ block: "center" });
     await pageSync();
     success = true;
+    await log(`  PASS:  ${SELECTOR} selector was clicked!`);
   } catch (error: any) {
-    await log(`  ERROR: ${SELECTOR} was not clicked.\n       ${error.message}`);
+    await log(`  FAIL: ${SELECTOR} was not clicked.\n       ${error.message}`);
     expect(`to be clickable`).toEqual(SELECTOR);
     // Throw the error to stop the test
     //@ts-ignore
@@ -162,15 +162,15 @@ async function getElementType(element: WebdriverIO.Element) {
 * @returns {string | null} The field name, or null if no properties have a value
 */
 
-async function getFieldName(element: WebdriverIO.Element) { 
-// Add any custom properties here, e.g.: 
-// const customPropertyName = await element.getAttribute("aria-label"); 
-// if (customPropertyName) return custom; 
+async function getFieldName(element: WebdriverIO.Element) {
+  // Add any custom properties here, e.g.:
+  // const customPropertyName = await element.getAttribute("aria-label");
+  // if (customPropertyName) return custom;
 
-// Get the 'name' property of the element 
-  const name = await element.getAttribute("name"); 
-  if (name) return name; 
- 
+  // Get the 'name' property of the element
+  const name = await element.getAttribute("name");
+  if (name) return name;
+
   // Get the 'placeholder' property of the element
   const placeholder = await element.getAttribute("placeholder");
   if (placeholder) return placeholder;
@@ -182,7 +182,7 @@ async function getFieldName(element: WebdriverIO.Element) {
   // Return the 'class' property of the element if others are empty
   const className = await element.getAttribute("class");
 
-  if (className == "input"){  // combobox
+  if (className == "input") {  // combobox
     // Find the first parent div element using XPath
     const parentDivElement = await element.$('ancestor::div[1]');
     return parentDivElement.getText();
@@ -195,26 +195,26 @@ async function getListName(element: WebdriverIO.Element) {
   // const customPropertyName = await element.getAttribute("aria-label");
   // if (customPropertyName) return customPropertyName;
 
-    // Get the 'name' property of the element
-    const ariaLable = await element.getAttribute("aria-label");
-    if (ariaLable) return ariaLable;
+  // Get the 'name' property of the element
+  const ariaLable = await element.getAttribute("aria-label");
+  if (ariaLable) return ariaLable;
 
-    // Get the 'name' property of the element
-    const name = await element.getAttribute("aria-label");
-    if (name) return name;
+  // Get the 'name' property of the element
+  const name = await element.getAttribute("aria-label");
+  if (name) return name;
 
-    // Get the 'id' property of the element
-    const id = await element.getAttribute("id");
-    if (id) return id;
+  // Get the 'id' property of the element
+  const id = await element.getAttribute("id");
+  if (id) return id;
 
-    // Get the 'type' property of the element
-    const type = await element.getAttribute("type");
-    if (type) return type;
+  // Get the 'type' property of the element
+  const type = await element.getAttribute("type");
+  if (type) return type;
 
-    // Return the 'class' property of the element if others are empty
-    const className = await element.getAttribute("class");
-    return className;
-  }
+  // Return the 'class' property of the element if others are empty
+  const className = await element.getAttribute("class");
+  return className;
+}
 
 /**
  * Returns the current date plus or minus a specified number of days in a specified format.
@@ -236,15 +236,15 @@ export function getToday(offset: number = 0, format: string = "dd-mm-yyyy") {
   return currentDate.toLocaleDateString(undefined, {
     year: format.includes("yyyy") ? "numeric" : undefined,
     month: format.includes("mm")
-        ? "2-digit"
-        : format.includes("m")
-            ? "numeric"
-            : undefined,
+      ? "2-digit"
+      : format.includes("m")
+        ? "numeric"
+        : undefined,
     day: format.includes("dd")
-        ? "2-digit"
-        : format.includes("d")
-            ? "numeric"
-            : undefined,
+      ? "2-digit"
+      : format.includes("d")
+        ? "numeric"
+        : undefined,
   });
 }
 
@@ -331,21 +331,74 @@ async function isExists(element: WebdriverIO.Element) {
  *    - Prints trace if not passed string or number
  * @param message
  */
-  export async function log(message: any): Promise<void> {
+
+const ANSI_PASS = `\x1b[38;2;0;255;0m` // GREEN
+const ANSI_FAIL = `\x1b[38;2;255;0;0m`    // RED
+const ANSI_WARNING = `\x1b[38;2;255;255;0m`  // YELLOW
+const ANSI_LOCATOR = `\x1b[38;2;200;150;255m`  // Light Purple
+const ANSI_STRING = `\x1b[38;2;173;216;230m`  // Light Blue TEXT entered into a field
+const ANSI_TEXT = `\x1b[97m`  // White TEXT
+const ANSI_RESET = `\x1b[0m` //Reset
+let LAST_MESSAGE = "";
+let REPEATED_MESSAGE: number = 0;
+
+export async function log(message: any): Promise<void> {
+  //Skip repeated messages
+  if (LAST_MESSAGE === message) {
+    REPEATED_MESSAGE++;
+  } else {
+
+    if (REPEATED_MESSAGE > 0) {
+      // Note where excessive looping occurs
+      console.log(`--->   Last log message repeated ${REPEATED_MESSAGE} times`);
+      REPEATED_MESSAGE = 0;
+    }
+
+    LAST_MESSAGE = message;
+
+    let messageString: string = message;
+
     try {
       if (typeof message === "string" || typeof message === "number") {
         if (message) {
-          console.log(`---> ${message}`);
+
+          if (messageString.includes("WARN: ")) {
+            messageString = ANSI_WARNING + messageString + ANSI_RESET
+
+          } else if (messageString.includes("FAIL: ") || messageString.includes("ERROR: ") || messageString.includes("Promise")) {
+            messageString = ANSI_FAIL + messageString + ANSI_RESET
+
+          } else if (messageString.includes("PASS: ")) {
+            // PASS
+            messageString = ANSI_PASS + message + ANSI_RESET
+          } else {
+            messageString = ANSI_TEXT + message + ANSI_RESET
+          }
+
           if (message.toString().includes(`[object Promise]`)) {
-            console.log(`    Possiblly missing await statement`);
+            console.log(`--->    Possibly missing await statement`);
             console.trace();
           }
+          //Send colored content to Debug console
+
+          //Highlight CSS and XPath selectors in Purple
+          messageString = messageString.replace(/(#?[a-zA-Z/]+)\[([^\]]+)\]/g, `${ANSI_LOCATOR}$1[$2]${ANSI_RESET}`);
+
+          //Highlight CSS # selectors in Purple
+          messageString = messageString.replace(/#\w+/g, `${ANSI_LOCATOR}$&${ANSI_RESET}`);
+
+
+          // Highlight accent marks strings in White
+          messageString = messageString.replace(/`([^`]+)`/g, `${ANSI_STRING}$1${ANSI_RESET}`);
+
+          console.log(`--->   ${messageString}`);
         }
       }
     } catch (error: any) {
       console.log(`--->   helpers.console(): ${error.message}`);
     }
   }
+}
 
 
 /**
@@ -395,14 +448,14 @@ function normalizeElementType(elementType: string) {
   return elementText;
 }
 
-  /**
-   * pageSync - Dynamic wait for the page to stabilize.
-   * Use after click
-   * ms = default time wait between loops 125 = 1/8 sec
-   *      Minimum 25 for speed / stability balance
-   */
-  let LAST_URL: String = "";
-  let waitforTimeout = browser.options.waitforTimeout;
+/**
+ * pageSync - Dynamic wait for the page to stabilize.
+ * Use after click
+ * ms = default time wait between loops 125 = 1/8 sec
+ *      Minimum 25 for speed / stability balance
+ */
+let LAST_URL: String = "";
+
 
 export async function pageSync(
     ms: number = 25,
@@ -491,9 +544,8 @@ export async function pageSync(
 
     if (duration > timeout) {
       await log(
-          `  WARN: pageSync() completed in ${
-              duration / 1000
-          } sec  (${duration} ms) `
+        `  WARN: pageSync() completed in ${duration / 1000
+        } sec  (${duration} ms) `
       );
     } else {
       //log(`  pageSync() completed in ${duration} ms`); // Optional debug messaging
@@ -519,7 +571,7 @@ export async function setValueAdv(
   let fieldName: string = await getFieldName(inputField)
 
   //Mask Passwords in output
-  if (fieldName.includes("ssword") ){
+  if (fieldName.includes("ssword")) {
     scrubbedValue = maskValue(scrubbedValue)
   }
 
@@ -618,7 +670,7 @@ function replaceTags(text: string) {
         if (match) {
           const days = parseInt(match[0]);
         }
-
+        
         newText = newText.replace(tag, getToday(days, format));
         break;
 
@@ -828,9 +880,9 @@ export async function selectAdv(
         const index: number = item;
         await (await listElement).selectByIndex(index);
       } else {
-        await (await listElement).selectByVisibleText (item)
+        await (await listElement).selectByVisibleText(item)
       }
-      global.log (`  Item selected: "${item}"`)
+      global.log(`  Item selected: "${item}"`)
       success = true;
     } catch (error: any) {
       await log(`  ERROR: ${listElement} could not select "${item}"\n
@@ -997,8 +1049,8 @@ export async function waitForElementToStopMoving(element: WebdriverIO.Element, t
     const checkMovement = () => {
       element.getLocation().then((currentLocation) => {
         if (
-            currentLocation.x === initialLocation.x &&
-            currentLocation.y === initialLocation.y
+              currentLocation.x === initialLocation.x &&
+              currentLocation.y === initialLocation.y
         ) {
           clearInterval(intervalId);
           resolve();
@@ -1021,7 +1073,7 @@ export async function waitForElementToStopMoving(element: WebdriverIO.Element, t
  * @param assertionType
  * @param expected
  */
-export async function expectAdv(actual:any, assertionType:any, expected:unknown) {
+export async function expectAdv(actual: any, assertionType: any, expected: unknown) {
   const softAssert = expect;
 
   const getAssertionType = {
@@ -1041,10 +1093,14 @@ export async function expectAdv(actual:any, assertionType:any, expected:unknown)
     console.info('assertion type failure : =======>>>>>>>>>>> ', assertionType)
     allureReporter.addAttachment('Assertion Failure: ', `Invalid Assertion Type = ${assertionType}`, 'text/plain');
     allureReporter.addAttachment('Assertion Error: ', console.error, 'text/plain');
+    global.log(`FAIL: Invalid Assertion Type = ${assertionType}`);
+
   } else {
     allureReporter.addAttachment('Assertion Passes: ', `Valid Assertion Type = ${assertionType}`, 'text/plain');
     console.info('assertion type passed : =======>>>>>>>>>>> ', assertionType)
   }
+
+  allureReporter.endStep();
 }
 // For the full list of options please got to
 // https://github.com/webdriverio/expect-webdriverio/blob/main/docs/API.md

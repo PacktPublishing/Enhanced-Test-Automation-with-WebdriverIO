@@ -1,3 +1,4 @@
+import allureReporter from '@wdio/allure-reporter';
 import * as helpers from "../../helpers/helpers";
 import Page from "./page";
 
@@ -33,12 +34,12 @@ class LoginPage extends Page {
      * e.g. to login using username and password
      */
     public async login(username: string, password: string) {
-        await helpers.log(`Logging in with '${username}' and '${password}'`);
+        await helpers.log(`Logging in with \`${username}\` and \`${password}\``);
         await this.inputUsername.setValue(username);
         await helpers.log(`Entered '${username}'`);
         await this.inputPassword.setValue(password);
         await helpers.log(
-            `Entered '${password}' and clicking Submit with ClickAdv`
+            `Entered \`${password}\` and clicking Submit with ClickAdv`
         );
         // @ts-ignore
         await this.btnSubmit.click();
@@ -49,12 +50,12 @@ class LoginPage extends Page {
      * e.g. to login using username and password
      */
     public async loginFailLast(username: string, password: string) {
-        await helpers.log(`Logging in with '${username}' and '${password}'`);
+        await helpers.log(`Logging in with \`${username}\` and \`${password}\``);
         await this.inputUsername.setValue(username);
-        await helpers.log(`Entered '${username}'`);
+        await helpers.log(`Entered \`${username}\``);
         await this.inputPassword.setValue(password);
         await helpers.log(
-            `Entered '${password}' and clicking Submit with ClickAdv`
+            `Entered \`${password}\` and clicking Submit with ClickAdv`
         );
 
         await helpers.clickAdv(await this.btnSubmit);
@@ -66,12 +67,12 @@ class LoginPage extends Page {
      * e.g. to login using username and password
      */
     public async loginOld(username: string, password: string) {
-        await helpers.log(`Logging in with '${username}' and '${password}'`);
+        await helpers.log(`Logging in with \`${username}\` and \`${password}\``);
         await this.inputUsername.setValue(username);
-        await helpers.log(`Entered '${username}'`);
+        await helpers.log(`Entered \`${username}\``);
         await this.inputPassword.setValue(password);
         await helpers.log(
-            `Entered '${password}' and clicking Submit with ClickAdv`
+            `Entered \`${password}\` and clicking Submit with ClickAdv`
         );
         // Class switching
         await helpers.clickAdv(await this.lnkSubmit);
@@ -82,12 +83,12 @@ class LoginPage extends Page {
      * e.g. to login using username and password
      */
     public async loginFailFirst(username: string, password: string) {
-        await helpers.log(`Logging in with '${username}' and '${password}'`);
+        await helpers.log(`Logging in with \`${username}\` and \`${password}\``);
         await this.inputUsername.setValue(username);
-        await helpers.log(`Entered '${username}'`);
+        await helpers.log(`Entered \`${username}\``);
         await this.inputPassword.setValue(password);
         await helpers.log(
-            `Entered '${password}' and clicking Submit with ClickAdv`
+            `Entered \`${password}\` and clicking Submit with ClickAdv`
         );
         await helpers.clickAdv(await this.btnBogus);
         await helpers.clickAdv(await this.btnSubmit);
@@ -98,30 +99,32 @@ class LoginPage extends Page {
      * e.g. to login using username and password
      */
     public async loginSetValue(username: string, password: string) {
-        await helpers.log(`Logging in with user role '${username}'`);
+        await helpers.log(`Logging in with user role \`${username}\``);
         await helpers.setValueAdv(await this.inputUsername, username);
         // Automatcally Mask the Password
         await helpers.setValueAdv(await this.inputPassword, password);
         await helpers.clickAdv(await this.btnSubmit);
     }
 
-  /**
-   * a method to encapsule automation code to interact with the page
-   * e.g. to login using username and password
-   * missing await so the click executes before the setValue
-   */
-  public async login_sync (username: string, password: string) {
-    global.log(`Logging in with '${username}' and '${password}'`)
-    this.inputUsername.setValue(username);
-    this.inputPassword.setValue(password);
-    this.btnSubmit.click();
-  }
-  /**
-   * overwrite specific options to adapt it to page object
-   */
-  public open(path: string = "login") {
-    return super.open(path);
-  }
+    /**
+     * a method to encapsule automation code to interact with the page
+     * e.g. to login using username and password
+     * missing await so the click executes before the setValue
+     */
+    public async login_sync (username: string, password: string) {
+        global.log(`Logging in with \`${username}\` and \`${password}\``)
+        this.inputUsername.setValue(username);
+        this.inputPassword.setValue(password);
+        this.btnSubmit.click();
+    }
+
+    /**
+     * overwrite specific options to adapt it to page object
+     */
+    public open(path: string = "login") {
+        allureReporter.addAttachment('Navigating to url', path, 'string');
+        return super.open(path);
+    }
 }
 
 export default new LoginPage();

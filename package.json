@@ -28,7 +28,8 @@
       "ch5": "yarn wdio --spec ./test/specs/ch5.ts",
       "ch6": "yarn wdio --spec ./test/specs/ch6.ts",
       "ch7": "yarn wdio --spec ./test/specs/ch7.ts",
-      "ch8": "yarn wdio --spec ./test/specs/ch8.ts"
+      "ch8": "yarn wdio --spec ./test/specs/ch8.ts",
+      "ch12": "yarn wdio --spec ./test/specs/ch12.ts"
     },
     "dependencies": {
       "@types/jasmine": "^4.3.5",
