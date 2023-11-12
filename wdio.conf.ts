@@ -374,7 +374,7 @@ export const config= {
         // Option #2: Run browser 3/4 screen on single monitor
         // Allow VS Code Terminal visible on bottom of the screen
         await global.log(`Changing window size`);
-        await browser.setWindowSize(1920, 770);
+        await browser.setWindowSize(1920, 970);
     },
     /**
      * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
