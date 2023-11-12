@@ -1,0 +1,9 @@
+{
+  "script": "arguments[0].style.border = '5px solid green';",
+  "args": [
+    {
+      "element-6066-11e4-a52e-4f735466cecf": "8FB69545C626D7B1B273F4331F5CC89F_element_4",
+      "ELEMENT": "8FB69545C626D7B1B273F4331F5CC89F_element_4"
+    }
+  ]
+}
