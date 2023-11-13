@@ -1,8 +1,3 @@
-
-/**
-* main page object containing all methods, selectors and functionality
-* that is shared across all page objects
-*/
 import allureReporter from '@wdio/allure-reporter';
 import { baseUrl } from '../../wdio.shared.conf';
 
@@ -29,7 +24,6 @@ import { baseUrl } from '../../wdio.shared.conf';
     // public async getUrlAdv (path: string) {
     //     let thisUrl = await browser.getUrl();
     // }
-
 // }
 /**
  * main page object containing all methods, selectors and functionality
@@ -67,11 +61,5 @@ export default class Page {
             global.log(line);
             global.log(message);
             global.log(line);
-
     }
-
-    public async getUrlAdv (path: string) {
-        let thisUrl = await browser.getUrl();
-    }
-
 }
