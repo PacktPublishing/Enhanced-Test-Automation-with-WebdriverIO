@@ -53,10 +53,11 @@
         "utility-types": "^3.10.0",
         "wdio-chromedriver-service": "^8.1.1",
         "wdio-geckodriver-service": "^5.0.2",
-        "webdriver-manager": "^12.1.9"
+        
     },
     "devDependencies": {
         "chromedriver": "^119.0.0",
-        "geckodriver": "^4.0.5"
+        "geckodriver": "^4.0.5",
+        "webdriver-manager": "^12.1.9"
     }
 }
