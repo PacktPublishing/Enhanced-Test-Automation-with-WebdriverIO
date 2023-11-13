@@ -20,7 +20,6 @@
     },
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "alltest": "cross-env Env=uat wdio wdio.test.conf.ts",
         "report": "node_modules/.bin/allure generate --clean ./reports/allure-results && allure open -p 5050",
         "wdio": "cross-env Env=uat wdio wdio.test.conf.ts",
         "ch2": "yarn wdio --spec ./test/specs/ch2.ts",
