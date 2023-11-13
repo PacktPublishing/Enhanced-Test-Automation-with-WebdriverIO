@@ -1,6 +1,4 @@
-
 import { ASB } from './helpers/globalObjects';
-
 require('dotenv').config();
 
 const DEBUG =
@@ -21,13 +19,11 @@ const addToElement = true
 export let baseUrl: string
 let env = process.env.Env
 let urls = {
-    uat: 'https://the-internet.herokuapp.com', // 
-    dev: 'https://candymapperr2.com', // windows machine specific run
-    prod: 'https://candymapper.com' // mac machine specific run
+    uat: 'https://the-internet.herokuapp.com',
+    dev: 'https://candymapperr2.com',
+    prod: 'https://candymapper.com'
 }
 baseUrl = urls[env]
-
-
 
 const ANSI_PASS = `\x1b[38;2;0;255;0m` // GREEN
 const ANSI_FAIL = `\x1b[38;2;255;0;0m`    // RED
@@ -50,7 +46,6 @@ global.log = (message: any) => {
     LAST_MESSAGE_COUNT = ASB.get("LAST_MESSAGE_COUNT");
   
     if (LAST_MESSAGE === message) {
-  
       ASB.set("LAST_MESSAGE_COUNT", LAST_MESSAGE_COUNT++);
       return;
     }
@@ -59,9 +54,7 @@ global.log = (message: any) => {
       console.log(`   └ ─ >   This message repeated ${LAST_MESSAGE_COUNT} times`);
       ASB.set("LAST_MESSAGE_COUNT", 0);
     }
-  
     ASB.set("LAST_MESSAGE", message);
-
     let messageString: string = message;
 
     try {
@@ -75,35 +68,25 @@ global.log = (message: any) => {
 
                 if (messageString.includes("WARN: ")) {
                     messageString = ANSI_WARNING + messageString + ANSI_RESET
-
                 } else if (messageString.includes("FAIL: ") || messageString.includes("ERROR: ") || messageString.includes("Promise")) {
                     messageString = ANSI_FAIL + messageString + ANSI_RESET
-
                 } else if (messageString.includes("PASS: ")) {
                     // PASS
                     messageString = ANSI_PASS + message + ANSI_RESET
                 } else {
                     messageString = ANSI_TEXT + message + ANSI_RESET
                 }
-
-
                 //Send colored content to Debug console
-
                 //Highlight CSS and XPath selectors in Purple case-insensitive to 'Selector' and 'selector'
                 messageString = messageString.replace(/Selector '(.*?)'/ig, `Selector '${ANSI_LOCATOR}$1${ANSI_RESET}'`);
-
-               
-
                 // Highlight accent marks strings in White
                 messageString = messageString.replace(/`([^`]+)`/g, `${ANSI_STRING}$1${ANSI_RESET}`);
-
                 console.log(`--->   ${messageString}`);
             }
         }
     } catch (error: any) {
         console.log(`--->   helpers.console(): ${error.message}`);
     }
-
 };
 
 export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
