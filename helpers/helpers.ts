@@ -19,16 +19,16 @@ export async function clickAdv(element: WebdriverIO.Element) {
     }
     await highlightOn(element);
     //@ts-ignore
-    await element.click({ block: "center" });
+    await element.click(); // ({ block: "center" });
     await pageSync();
     success = true;
     await log(`  PASS:  ${SELECTOR} selector was clicked!`);
   } catch (error: any) {
     await log(`  FAIL: ${SELECTOR} was not clicked.\n       ${error.message}`);
-    expect(`to be clickable`).toEqual(SELECTOR);
+    expect(SELECTOR).toEqual('to be clickable');
     // Throw the error to stop the test
     //@ts-ignore
-    await element.click({ block: "center" });
+    await element.click() // ({ block: "center" });
   }
 
   return success;
@@ -157,7 +157,7 @@ async function getFieldName(element: WebdriverIO.Element) {
   if (className == "input") {  // combobox
     // Find the first parent div element using XPath
     const parentDivElement = await element.$('ancestor::div[1]');
-    return parentDivElement.getText();
+    return await parentDivElement.getText();
   }
   return className;
 }
@@ -308,20 +308,11 @@ const ANSI_STRING = `\x1b[38;2;173;216;230m`  // Light Blue TEXT entered into a 
 const ANSI_TEXT = `\x1b[97m`  // White TEXT
 const ANSI_RESET = `\x1b[0m` //Reset
 let LAST_MESSAGE = "";
-let REPEATED_MESSAGE: number = 0;
 
 export async function log(message: any): Promise<void> {
   //Skip repeated messages
   if (LAST_MESSAGE === message) {
-    REPEATED_MESSAGE++;
-  } else {
-
-    if (REPEATED_MESSAGE > 0) {
-      // Note where excessive looping occurs
-      console.log(`--->   Last log message repeated ${REPEATED_MESSAGE} times`);
-      REPEATED_MESSAGE = 0;
-    }
-
+  
     LAST_MESSAGE = message;
 
     let messageString: string = message;
@@ -329,6 +320,11 @@ export async function log(message: any): Promise<void> {
     try {
       if (typeof message === "string" || typeof message === "number") {
         if (message) {
+
+          if (messageString.toString().includes(`[object Promise]`)) {
+            messageString = (`--->  WARN: ${message} \n      Promise object detected. async function call missing await keyword.`);
+            console.trace();
+          }
 
           if (messageString.includes("WARN: ")) {
             messageString = ANSI_WARNING + messageString + ANSI_RESET
@@ -343,10 +339,7 @@ export async function log(message: any): Promise<void> {
             messageString = ANSI_TEXT + message + ANSI_RESET
           }
 
-          if (message.toString().includes(`[object Promise]`)) {
-            console.log(`--->    Possibly missing await statement`);
-            console.trace();
-          }
+ 
           //Send colored content to Debug console
 
           //Highlight CSS and XPath selectors in Purple
@@ -822,7 +815,7 @@ export async function waitForElementToStopMoving(element: WebdriverIO.Element, t
     let intervalId: NodeJS.Timeout;
 
     const checkMovement = () => {
-      element.getLocation().then((currentLocation) => {
+       element.getLocation().then((currentLocation) => {
         if (
             currentLocation.x === initialLocation.x &&
             currentLocation.y === initialLocation.y
