@@ -48,7 +48,6 @@
         "cross-env": "^7.0.3",
         "dotenv": "^16.3.1",
         "expect-webdriverio": "^4.2.7",
-        "geckodriver": "^4.0.5",
         "jasmine": "^5.0.2",
         "ts-node": "^10.9.1",
         "typescript": "^5.1.6",
@@ -56,5 +55,9 @@
         "wdio-chromedriver-service": "^8.1.1",
         "wdio-geckodriver-service": "^5.0.2",
         "wdio-lambdatest-service": "^2.0.3"
+    },
+    "devDependencies": {
+        "chromedriver": "^116.0.0",
+        "geckodriver": "^4.0.5"
     }
 }

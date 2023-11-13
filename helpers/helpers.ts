@@ -315,7 +315,7 @@ export async function pageSync(
     LAST_URL = thisUrl;
     // const waitforTimeout = browser.options.waitforTimeout;
     let visibleSpans: string = 'div:not([style*="visibility: hidden"])';
-    let elements: ElementArrayType = await $$(visibleSpans);
+    let elements = await $$(visibleSpans);
 
     let exit: boolean = false;
     let count: number = elements.length;
