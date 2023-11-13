@@ -119,6 +119,19 @@ class LoginPage extends Page {
     }
 
     /**
+     * a method to encapsule automation code to interact with the page object model
+     * e.g. to login using username and password
+     * missing await so the click executes before the setValue
+     */
+    public async loginWithoutPom (username: string, password: string) {
+        global.log(`Logging in with \`${username}\` and \`${password}\`without the Page Object Model`)
+        // await helpers.setValueAdv(`username`, username);
+        // await helpers.setValueAdv(`password`, password);
+        //
+        // //this.btnSubmit.click();
+        // await helpers.clickAdv(`submit`);
+    }
+    /**
      * overwrite specific options to adapt it to page object
      */
     public open(path: string = "login") {

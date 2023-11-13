@@ -29,6 +29,7 @@
         "ch6": "yarn wdio --spec ./test/specs/ch6.ts",
         "ch7": "yarn wdio --spec ./test/specs/ch7.ts",
         "ch8": "yarn wdio --spec ./test/specs/ch8.ts",
+        "ch11": "yarn wdio --spec ./test/specs/ch11.ts",
         "ch12": "yarn wdio --spec ./test/specs/ch12.ts",
         "ch13": "yarn wdio --spec ./test/specs/ch13.ts",
         "ch14": "cross-env Env=dev wdio wdio.dev.conf.ts --spec ./test/specs/ch14.ts",
