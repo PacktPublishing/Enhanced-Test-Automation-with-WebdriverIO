@@ -37,7 +37,7 @@
         "ch15": "cross-env Env=prod wdio wdio.lambdatest.conf.ts --spec ./test/specs/ch15.ts"
     },
     "dependencies": {
-        "@types/jasmine": "^4.3.5",
+        "@types/jasmine": "^5.1.2",
         "@wdio/allure-reporter": "^8.14.0",
         "@wdio/cli": "^8.14.4",
         "@wdio/globals": "^8.14.3",
