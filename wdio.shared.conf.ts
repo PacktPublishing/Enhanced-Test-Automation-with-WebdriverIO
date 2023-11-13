@@ -36,18 +36,31 @@ const ANSI_LOCATOR = `\x1b[38;2;200;150;255m`  // Light Purple
 const ANSI_STRING = `\x1b[38;2;173;216;230m`  // Light Blue TEXT entered into a field
 const ANSI_TEXT = `\x1b[97m`  // White TEXT
 const ANSI_RESET = `\x1b[0m` //Reset
-let LAST_MESSAGE = "";
-
+let LAST_MESSAGE:string = "";
+let LAST_MESSAGE_COUNT:number = 0;
+ASB.set("LAST_MESSAGE_COUNT", 0);
+ASB.set("LAST_MESSAGE", "");
 declare global {
     var log: (text: any) => void;
 }
 
 global.log = (message: any) => {
     //Skip repeated messages
+    LAST_MESSAGE = ASB.get("LAST_MESSAGE");
+    LAST_MESSAGE_COUNT = ASB.get("LAST_MESSAGE_COUNT");
+  
     if (LAST_MESSAGE === message) {
-        LAST_MESSAGE = message;
-        return;
+  
+      ASB.set("LAST_MESSAGE_COUNT", LAST_MESSAGE_COUNT++);
+      return;
     }
+  
+    if (LAST_MESSAGE_COUNT > 0) {
+      console.log(`   └ ─ >   This message repeated ${LAST_MESSAGE_COUNT} times`);
+      ASB.set("LAST_MESSAGE_COUNT", 0);
+    }
+  
+    ASB.set("LAST_MESSAGE", message);
 
     let messageString: string = message;
 
@@ -76,12 +89,10 @@ global.log = (message: any) => {
 
                 //Send colored content to Debug console
 
-                //Highlight CSS and XPath selectors in Purple
-                messageString = messageString.replace(/(#?[a-zA-Z/]+)\[([^\]]+)\]/g, `${ANSI_LOCATOR}$1[$2]${ANSI_RESET}`);
+                //Highlight CSS and XPath selectors in Purple case-insensitive to 'Selector' and 'selector'
+                messageString = messageString.replace(/Selector '(.*?)'/ig, `Selector '${ANSI_LOCATOR}$1${ANSI_RESET}'`);
 
-                //Highlight CSS # selectors in Purple
-                messageString = messageString.replace(/#\w+/g, `${ANSI_LOCATOR}$&${ANSI_RESET}`);
-
+               
 
                 // Highlight accent marks strings in White
                 messageString = messageString.replace(/`([^`]+)`/g, `${ANSI_STRING}$1${ANSI_RESET}`);
@@ -196,7 +207,7 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     // Define all options that are relevant for the WebdriverIO instance here
     //
     // Level of logging verbosity: trace | debug | info | warn | error | silent
-    logLevel: "info", // Changed this from "warn" to "info" to see verbose logging
+    logLevel: "warn",
     //
     // Set specific log levels per logger
     // loggers:
@@ -344,7 +355,7 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
             const selector = args[0];
             // Modify the selector or add additional functionality as needed
             // For example, you can add a prefix to the selector
-            global.log(`BEFORE $ COMMAND: Selector '${selector}' sent to ASB(elementSelector)`);
+            global.log(`BEFORE $ COMMAND: Selector '${selector}' sent to ASB("elementSelector")`);
             // Pass the locator to the switchboard
             ASB.set("elementSelector", selector);
         }
@@ -353,7 +364,7 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
             const selector = args[0];
             // Modify the selector or add additional functionality as needed
             // For example, you can add a prefix to the selector
-            global.log(`BEFORE $$ COMMAND: Selector '${selector}' sent to ASB(elementsSelector)`);
+            global.log(`BEFORE $$ COMMAND: Selector '${selector}' sent to ASB("elementsSelector")`);
             // Pass the locator to the switchboard
             ASB.set("elementsSelector", selector);
         }
@@ -487,72 +498,3 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
 
     },
 };
-
-
-
-
-
-
-/**
- * log wrapper
- * @param text to be output to the console window
- */
-
-
-// global.log =  (message: any) => {
-//     //Skip repeated messages
-//     if (LAST_MESSAGE === message) {
-//         return;
-//     }
-
-//     LAST_MESSAGE = message;
-
-//     let messageString: string = message;
-
-//     try {
-//         if (typeof message === "string" || typeof message === "number") {
-//             if (message) {
-
-//                 if (messageString.toString().includes(`[object Promise]`)) {
-//                     messageString = (`--->  WARN: ${message} \n      Promise object detected. async function call missing await keyword.`);
-//                     console.trace();
-//                 }
-
-//                 if (messageString.includes("WARN: ")) {
-//                     messageString = ANSI_WARNING + messageString + ANSI_RESET
-
-//                 } else if (messageString.includes("FAIL: ") || messageString.includes("ERROR: ") || messageString.includes("Promise")) {
-//                     messageString = ANSI_FAIL + messageString + ANSI_RESET
-
-//                 } else if (messageString.includes("PASS: ")) {
-//                     // PASS
-//                     messageString = ANSI_PASS + message + ANSI_RESET
-//                 } else {
-//                     messageString = ANSI_TEXT + message + ANSI_RESET
-//                 }
-
-
-//                 //Send colored content to Debug console
-
-//                 // Highlight "Selector ''" in Purple
-//                 const regex = /Selector '(.*?)'/;
-//                 messageString = messageString.replace(/Selector '(.*?)'/g, `Selector '${ANSI_LOCATOR}$1${ANSI_RESET}'`);
-
-//                 //Highlight CSS and XPath selectors in Purple
-//                 //messageString = messageString.replace(/(#?[a-zA-Z/]+)\[([^\]]+)\]/g, `${ANSI_LOCATOR}$1[$2]${ANSI_RESET}`);
-
-//                 //Highlight CSS # selectors in Purple
-//                 //messageString = messageString.replace(/#\w+/g, `${ANSI_LOCATOR}$&${ANSI_RESET}`);
-
-
-//                 // Highlight accent marks strings in White
-//                 messageString = messageString.replace(/`([^`]+)`/g, `${ANSI_STRING}$1${ANSI_RESET}`);
-
-//                 console.log(`--->   ${messageString}`);
-//             }
-//         }
-//     } catch (error: any) {
-//         console.log(`--->   helpers.console(): ${error.message}`);
-//     }
-
-// }

@@ -6,12 +6,12 @@ export async function clickAdv(element: WebdriverIO.Element) {
 
   element = await getValidElement(element, "button");
   if (ASB.get("ELEMENT_EXISTS") == false) {
-    await log(`  IfExist: Skipping clicking ${ASB.get("ELEMENT_SELETOR")}`);
+    await log(`  IfExist: Skipping clicking selector '${ASB.get("elementSelector")}'`);
     return true;
   }
 
   const SELECTOR = element.selector;
-  await log(`Clicking ${SELECTOR} selector`);
+  await log(`Clicking selector '${SELECTOR}'`);
   try {
     if (!(await isElementInViewport(element))) {
       await scrollIntoView(element);
@@ -22,9 +22,9 @@ export async function clickAdv(element: WebdriverIO.Element) {
     await element.click(); // ({ block: "center" });
     await pageSync();
     success = true;
-    await log(`  PASS:  ${SELECTOR} selector was clicked!`);
+    await log(`  PASS: Selector '${SELECTOR}' was clicked!`);
   } catch (error: any) {
-    await log(`  FAIL: ${SELECTOR} was not clicked.\n       ${error.message}`);
+    await log(`  FAIL: Selector '${SELECTOR}' was not clicked.\n       ${error.message}`);
     expect(SELECTOR).toEqual('to be clickable');
     // Throw the error to stop the test
     //@ts-ignore
@@ -35,17 +35,18 @@ export async function clickAdv(element: WebdriverIO.Element) {
 }
 
 export async function getValidElement(
-    element: WebdriverIO.Element,
-    elementType: string
+  element: WebdriverIO.Element,
+  elementType: string
 ): Promise<WebdriverIO.Element> {
-  let selector: any = await element.selector;
+  let selector: any = element.selector;
   // Get a collection of matching elements
   let found: boolean = true;
   let newSelector: string = "";
   let newElement: any = element;
   // let elements: WebdriverIO.Element[];
   let elements: any;
-  let elementText: string = "";
+  let normalizedElementType: string = "";
+  let elementName: string = "";
 
   try {
     elements = await $$(selector);
@@ -53,43 +54,43 @@ export async function getValidElement(
       // Extract the element type if not provided
       if (elementType === "") {
         let index: number = selector.indexOf("[");
-        elementType = selector.substring(0, index);
+        normalizedElementType = selector.substring(0, index);
       } else {
-        elementText = normalizeElementType(elementType);
+        normalizedElementType = normalizeElementType(elementType);
       }
 
-      switch (elementType) {
+      switch (normalizedElementType) {
         case "//a":
-          elementText = selector.match(/=".*"/)[0].slice(2, -1);
-          newSelector = `//button[contains(@type,'${elementText}')]`;
+          elementName = selector.match(/=".*"/)[0].slice(2, -1);
+          newSelector = `//button[contains(@type,"${elementName}")]`;
           break;
 
         case "//button":
-          elementText = selector.match(/=".*"/)[0].slice(2, -1);
-          newSelector = `//a[contains(text(),'${elementText}'])`;
+          elementName = selector.match(/=".*"/)[0].slice(2, -1);
+          newSelector = `//a[contains(text(),"${elementName}")]`;
           found = await isElementVisible(await $(newSelector));
           break;
 
         case "//input":
-          elementText = selector.match(/=".*"/)[0].slice(2, -1);
-          newSelector = `//input[contains(@id,'${elementText}'])`;
+          elementName = selector.match(/=".*"/)[0].slice(2, -1);
+          newSelector = `//input[contains(@id,"${elementName}")]`;
           found = await isElementVisible(await $(newSelector));
           if (!found) {
-            newSelector = `//input[contains(@name,'${elementText}'])`;
+            newSelector = `//input[contains(@name,"${elementName}")]`;
             await isElementVisible(await $(newSelector));
           }
           break;
 
         case "//select":
-          elementText = selector.match(/=".*"/)[0].slice(2, -1);
+          elementName = selector.match(/=".*"/)[0].slice(2, -1);
           // Find a div with the text above a combobox
-          newSelector = `//div[contains(text(),'${elementText}')]//following::input`;
+          newSelector = `//div[contains(text(),'${elementName}')]//following::input`;
           found = await isElementVisible(await $(newSelector));
           break;
 
         case "//*":
-          elementText = selector.match(/=".*"/)[0].slice(2, -1);
-          newSelector = `//*[contains(@id,'${elementText}'])`;
+          elementName = selector.match(/=".*"/)[0].slice(2, -1);
+          newSelector = `//*[contains(@id,'${elementName}')]`;
           found = await isElementVisible(await $(newSelector));
           break;
 
@@ -111,8 +112,10 @@ export async function getValidElement(
   }
 
   if (!found) {
-    await log(`  ERROR: Unable to find ${selector}`);
+    await log(`  ERROR: Unable to find Selector '${selector}' class switched as selector '${newSelector}'`);
   }
+  // set switchboard find success
+  ASB.set("ELEMENT_EXISTS", found)
   return newElement;
 }
 
@@ -218,8 +221,8 @@ export function getToday(offset: number = 0, format: string = "dd-mm-yyyy") {
 }
 
 export async function highlightOn(
-    element: WebdriverIO.Element,
-    color: string = "green"
+  element: WebdriverIO.Element,
+  color: string = "green"
 ): Promise<boolean> {
   let elementSelector: any;
   let visible: boolean = true;
@@ -249,7 +252,7 @@ export async function highlightOn(
 }
 
 export async function highlightOff(
-    element: WebdriverIO.Element
+  element: WebdriverIO.Element
 ): Promise<boolean> {
   let visible: boolean = true;
   try {
@@ -262,7 +265,7 @@ export async function highlightOff(
 }
 
 export async function isElementVisible(
-    element: WebdriverIO.Element
+  element: WebdriverIO.Element
 ): Promise<boolean> {
   try {
     const displayed = await element.isDisplayed();
@@ -279,7 +282,7 @@ function isEmpty(text: string | null): boolean {
 }
 
 export async function isElementInViewport(
-    element: WebdriverIO.Element
+  element: WebdriverIO.Element
 ): Promise<boolean> {
   let isInViewport = await element.isDisplayedInViewport();
   return isInViewport;
@@ -307,58 +310,70 @@ const ANSI_LOCATOR = `\x1b[38;2;200;150;255m`  // Light Purple
 const ANSI_STRING = `\x1b[38;2;173;216;230m`  // Light Blue TEXT entered into a field
 const ANSI_TEXT = `\x1b[97m`  // White TEXT
 const ANSI_RESET = `\x1b[0m` //Reset
-let LAST_MESSAGE = "";
+let LAST_MESSAGE: string = "";
+let LAST_MESSAGE_COUNT: number = 0;
+ASB.set("LAST_MESSAGE_COUNT", 0);
+ASB.set("LAST_MESSAGE", "");
 
 export async function log(message: any): Promise<void> {
   //Skip repeated messages
+
+  LAST_MESSAGE = ASB.get("LAST_MESSAGE");
+  LAST_MESSAGE_COUNT = ASB.get("LAST_MESSAGE_COUNT");
+
   if (LAST_MESSAGE === message) {
-  
-    LAST_MESSAGE = message;
 
-    let messageString: string = message;
-
-    try {
-      if (typeof message === "string" || typeof message === "number") {
-        if (message) {
-
-          if (messageString.toString().includes(`[object Promise]`)) {
-            messageString = (`--->  WARN: ${message} \n      Promise object detected. async function call missing await keyword.`);
-            console.trace();
-          }
-
-          if (messageString.includes("WARN: ")) {
-            messageString = ANSI_WARNING + messageString + ANSI_RESET
-
-          } else if (messageString.includes("FAIL: ") || messageString.includes("ERROR: ") || messageString.includes("Promise")) {
-            messageString = ANSI_FAIL + messageString + ANSI_RESET
-
-          } else if (messageString.includes("PASS: ")) {
-            // PASS
-            messageString = ANSI_PASS + message + ANSI_RESET
-          } else {
-            messageString = ANSI_TEXT + message + ANSI_RESET
-          }
-
- 
-          //Send colored content to Debug console
-
-          //Highlight CSS and XPath selectors in Purple
-          messageString = messageString.replace(/(#?[a-zA-Z/]+)\[([^\]]+)\]/g, `${ANSI_LOCATOR}$1[$2]${ANSI_RESET}`);
-
-          //Highlight CSS # selectors in Purple
-          messageString = messageString.replace(/#\w+/g, `${ANSI_LOCATOR}$&${ANSI_RESET}`);
-
-
-          // Highlight accent marks strings in White
-          messageString = messageString.replace(/`([^`]+)`/g, `${ANSI_STRING}$1${ANSI_RESET}`);
-
-          console.log(`--->   ${messageString}`);
-        }
-      }
-    } catch (error: any) {
-      console.log(`--->   helpers.console(): ${error.message}`);
-    }
+    ASB.set("LAST_MESSAGE_COUNT", LAST_MESSAGE_COUNT++);
+    return;
   }
+
+  if (LAST_MESSAGE_COUNT > 0) {
+    console.log(`   └ ─ >   This message repeated ${LAST_MESSAGE_COUNT} times`);
+    ASB.set("LAST_MESSAGE_COUNT", 0);
+  }
+
+  ASB.set("LAST_MESSAGE", message);
+
+  let messageString: string = message;
+
+  try {
+    if (typeof message === "string" || typeof message === "number") {
+      if (message) {
+
+        if (messageString.toString().includes(`[object Promise]`)) {
+          messageString = (`--->  WARN: ${message} \n      Promise object detected. async function call missing await keyword.`);
+          console.trace();
+        }
+
+        if (messageString.includes("WARN: ")) {
+          messageString = ANSI_WARNING + messageString + ANSI_RESET
+
+        } else if (messageString.includes("FAIL: ") || messageString.includes("ERROR: ") || messageString.includes("Promise")) {
+          messageString = ANSI_FAIL + messageString + ANSI_RESET
+
+        } else if (messageString.includes("PASS: ")) {
+          // PASS
+          messageString = ANSI_PASS + message + ANSI_RESET
+        } else {
+          messageString = ANSI_TEXT + message + ANSI_RESET
+        }
+
+
+        //Send colored content to Debug console
+
+        //Highlight CSS and XPath selectors in Purple case-insensitive to 'Selector' and 'selector'
+        messageString = messageString.replace(/Selector '(.*?)'/ig, `Selector '${ANSI_LOCATOR}$1${ANSI_RESET}'`);
+
+        // Highlight accent marks strings in White
+        messageString = messageString.replace(/`([^`]+)`/g, `${ANSI_STRING}$1${ANSI_RESET}`);
+
+        console.log(`--->   ${messageString}`);
+      }
+    }
+  } catch (error: any) {
+    console.log(`--->   helpers.console(): ${error.message}`);
+  }
+
 }
 
 
@@ -409,18 +424,18 @@ function normalizeElementType(elementType: string) {
   return elementText;
 }
 
-  /**
-   * pageSync - Dynamic wait for the page to stabilize.
-   * Use after click
-   * ms = default time wait between loops 125 = 1/8 sec
-   *      Minimum 25 for speed / stability balance
-   */
-  let LAST_URL: String = "";
-  let waitforTimeout = browser.options.waitforTimeout;
+/**
+ * pageSync - Dynamic wait for the page to stabilize.
+ * Use after click
+ * ms = default time wait between loops 125 = 1/8 sec
+ *      Minimum 25 for speed / stability balance
+ */
+let LAST_URL: String = "";
+let waitforTimeout = browser.options.waitforTimeout;
 
 export async function pageSync(
-    ms: number = 25,
-    waitOnSamePage: boolean = false
+  ms: number = 25,
+  waitOnSamePage: boolean = false
 ): Promise<boolean> {
   await waitForSpinner();
 
@@ -448,7 +463,7 @@ export async function pageSync(
     let lastCount: number = 0;
     let retries: number = 3;
     let retry: number = retries;
-    let timeout: number = 20; // 5 second timeout
+    let timeout: number = 5000; // 5 second timeout
     const startTime: number = Date.now();
 
     while (retry > 0) {
@@ -607,7 +622,7 @@ function replaceTags(text: string) {
         if (match) {
           const days = parseInt(match[0]);
         }
-        
+
         newText = newText.replace(tag, getToday(days, format));
         break;
 
@@ -637,8 +652,7 @@ export async function sleep(ms: number) {
 export async function select(
   listElement: WebdriverIO.Element,
   item: string
-): Promise<boolean>
-{
+): Promise<boolean> {
   //@ts-ignore
   return await listElement.selectByVisibleText(item);
 }
@@ -672,7 +686,7 @@ export async function waitForSpinner(): Promise<boolean> {
       // Spinner no longer exists
     }
     await log(
-        `  Spinner Elapsed time: ${Math.floor(performance.now() - startTime)} ms`
+      `  Spinner Elapsed time: ${Math.floor(performance.now() - startTime)} ms`
     );
   }
   return spinnerDetected;
@@ -681,15 +695,14 @@ export async function waitForSpinner(): Promise<boolean> {
 export async function selectAdv(
   listElement: WebdriverIO.Element,
   item: string
-): Promise<boolean>
-{
+): Promise<boolean> {
   let success: boolean = false;
   let itemValue: String = "No Item selected"
   let listItems: WebdriverIO.Element[]
   let listItem: WebdriverIO.Element
-  let textContent:string = " "
+  let textContent: string = " "
   // Empty item list - do nothing
-  if (item.length === 0){
+  if (item.length === 0) {
     await log(`  ERROR: ${listElement} had no list item passed.\n`)
     return true;
   }
@@ -715,40 +728,40 @@ export async function selectAdv(
       try {
         await (await $(`//span[normalize-space()='${item}']`)).click();
         itemValue = await listElement.getText();
-      // Report actual item selected
-         global.log (`  Item selected: "${itemValue}"`)
+        // Report actual item selected
+        global.log(`  Item selected: "${itemValue}"`)
         success = true;
       } catch (error: any) {
         await log(`  ERROR: ${listElement} could not select "${item}" was not selected\n
         ${error.message}`);
       }
     } else {
-        // Clear the field.
-        await listElement.click() // Select All Clear Mac and Windows
-        await browser.keys(['Home']);
-        await browser.keys(['Shift','End']);
-        await browser.keys(['Delete']);
-        await browser.keys(`${item}`)
-        await browser.pause(3000); // Demo
+      // Clear the field.
+      await listElement.click() // Select All Clear Mac and Windows
+      await browser.keys(['Home']);
+      await browser.keys(['Shift', 'End']);
+      await browser.keys(['Delete']);
+      await browser.keys(`${item}`)
+      await browser.pause(3000); // Demo
 
-        // Find the item in the list
-        try {
-          //listItem = await browser.$(`//li/*[contains(text(),'${item}')])`)
-          listItems = await browser.$$(`//li/*`)
+      // Find the item in the list
+      try {
+        //listItem = await browser.$(`//li/*[contains(text(),'${item}')])`)
+        listItems = await browser.$$(`//li/*`)
 
-          for (const listItem of listItems) {
-            if ((await listItem.getText()).includes(item)) // Found the element
+        for (const listItem of listItems) {
+          if ((await listItem.getText()).includes(item)) // Found the element
             break;
-          }
-          await clickAdv(listItem)
-        } catch (error) {
-          // no such item
-          listItems = await browser.$$(`//li/*`)
-          for (const listItem of listItems) {
-             textContent += await listItem.getText() + " | "; // Get the text content of the element
         }
-          await log(`  ERROR: "${item}" was not found in combobox: \n ${textContent}`)
+        await clickAdv(listItem)
+      } catch (error) {
+        // no such item
+        listItems = await browser.$$(`//li/*`)
+        for (const listItem of listItems) {
+          textContent += await listItem.getText() + " | "; // Get the text content of the element
         }
+        await log(`  ERROR: "${item}" was not found in combobox: \n ${textContent}`)
+      }
 
       // Click the item
       await (await $(`//span[normalize-space()='${item}']`)).click();
@@ -780,7 +793,7 @@ export async function selectAdv(
 
 //Resolves stale element
 export async function refreshElement(
-    element: WebdriverIO.Element
+  element: WebdriverIO.Element
 ): Promise<WebdriverIO.Element> {
   return await browser.$(element.selector);
 }
@@ -800,7 +813,7 @@ async function findElement(selector: string): Promise<WebdriverIO.Element> {
   }
 }
 
-export async function getListValues(selectElement:  WebdriverIO.Element
+export async function getListValues(selectElement: WebdriverIO.Element
 ): Promise<string> {
 
   const optionElements = await (await selectElement).getText();
@@ -815,10 +828,10 @@ export async function waitForElementToStopMoving(element: WebdriverIO.Element, t
     let intervalId: NodeJS.Timeout;
 
     const checkMovement = () => {
-       element.getLocation().then((currentLocation) => {
+      element.getLocation().then((currentLocation) => {
         if (
-            currentLocation.x === initialLocation.x &&
-            currentLocation.y === initialLocation.y
+          currentLocation.x === initialLocation.x &&
+          currentLocation.y === initialLocation.y
         ) {
           clearInterval(intervalId);
           resolve();
