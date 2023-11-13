@@ -1,4 +1,3 @@
-
 import * as helpers from "../../helpers/helpers";
 import Page from "./page";
 
@@ -33,8 +32,6 @@ class LandingPage extends Page {
     await helpers.clickAdv (await this.btnDynamicLoading);
    }
 
-
-      
   /**
    * overwrite specific options to adapt it to page object
    */

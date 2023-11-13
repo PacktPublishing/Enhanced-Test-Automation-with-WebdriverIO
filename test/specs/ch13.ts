@@ -9,7 +9,7 @@ describe("Ch13: Cross Browser and Cross Environment Testing", () => {
 
     await LoginPage.login(Data.userData.username, Data.userData.password);
     await helpers.expectAdv(SecurePage.flashAlert, 'exists', null);
-    await helpers.expectAdv(SecurePage.flashAlert, 'toHaveTextContaining', (["You logged into a secure area!"]));
+    await helpers.expectAdv(SecurePage.flashAlert, 'toHaveTextContaining', "You logged into a secure area!");
   });
 
   it('should open a website on Chrome', async () => {

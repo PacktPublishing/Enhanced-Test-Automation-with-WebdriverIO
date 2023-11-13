@@ -1,4 +1,3 @@
-
 function switchboardFactory(): { get: (k: string) => any; set: (k: string, v: any) => void; } {
     const switchboard = new Map;
     switchboard.set("alreadyFailed", false);
@@ -12,5 +11,4 @@ function switchboardFactory(): { get: (k: string) => any; set: (k: string, v: an
         }
     }
 }
-
 export const ASB: { get: (k: string) => any; set: (k: string, v: any) => void; } = switchboardFactory();
