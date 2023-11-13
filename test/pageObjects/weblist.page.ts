@@ -45,7 +45,6 @@ class WebListPage extends Page {
     // //span[normalize-space()='Belgium']
     await helpers.selectAdv(await this.lstCountriesByAxis, country)
   }
-
 }
 
 export default new WebListPage();

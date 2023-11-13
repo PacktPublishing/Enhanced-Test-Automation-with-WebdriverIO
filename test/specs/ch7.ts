@@ -48,8 +48,6 @@ describe("The select Wrapper: Selecting from List and Combobox", () => {
         await elem.doubleClick();
         await elem.setValue('Belg');
         await browser.keys('Enter');
-        // Not sure how this 'findRestaurantsIn' function works to be honest
-        // await WebListPage.findRestaurantsIn('Belgium');
         await browser.pause(10000);
     });
 });
