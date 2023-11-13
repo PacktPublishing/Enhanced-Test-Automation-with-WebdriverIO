@@ -3,9 +3,10 @@ import SecurePage from "../pageObjects/secure.page";
 import LandingPage from "../pageObjects/landing.page";
 import * as helpers from "../../helpers/helpers";
 import dynamicLoadingPage from "../pageObjects/dynamicLoading.page";
-describe("Chapter 5: Fail Last clickAdv with pageSync and autoscrolln", () => {
-  it("Chapter 5: Fail Last clickAdv with pageSync and autoscroll", async () => {
-    // await helpers.log(Promise) // Unit test log returns warning when anything but string is passsed
+
+describe("Chapter 5: Intentional Fail Last clickAdv with pageSync and autoscroll", () => {
+  it("Chapter 5: The last element in loginFailLast() is a bogus element", async () => {
+
     await LoginPage.open();
 
     await LoginPage.loginFailLast("tomsmith", "SuperSecretPassword!");
@@ -48,7 +49,7 @@ describe("Chapter 5: Fail Last clickAdv with pageSync and autoscrolln", () => {
     await helpers.highlightOff(await dynamicLoadingPage.txtHelloWorld);
   });
 
-  fit("Chapter 5: Self-healing Link", async () => {
+  it("Chapter 5: Self-healing Link", async () => {
     // await helpers.log(Promise) // Unit test log returns warning when anything but string is passsed
     await LoginPage.open();
 
