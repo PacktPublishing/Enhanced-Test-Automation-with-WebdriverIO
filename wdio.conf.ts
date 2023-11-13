@@ -11,7 +11,7 @@ export const config: WebdriverIO.Config = {
                 acceptInsecureCerts: true,
             },
             {
-                browserName: 'firefox'
+                 browserName: 'firefox'
             }
         ]
     }
