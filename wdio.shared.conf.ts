@@ -1,4 +1,6 @@
-import {ASB} from './helpers/globalObjects';
+
+import { ASB } from './helpers/globalObjects';
+
 require('dotenv').config();
 
 const DEBUG =
@@ -16,7 +18,7 @@ const addToElement = true
  *  if you specify on then its ignored
  *  loadPage('https://candymapper.com/')
  */
-let baseUrl: string
+export let baseUrl: string
 let env = process.env.Env
 let urls = {
     uat: 'https://the-internet.herokuapp.com', // 
@@ -24,6 +26,74 @@ let urls = {
     prod: 'https://candymapper.com' // mac machine specific run
 }
 baseUrl = urls[env]
+
+
+
+const ANSI_PASS = `\x1b[38;2;0;255;0m` // GREEN
+const ANSI_FAIL = `\x1b[38;2;255;0;0m`    // RED
+const ANSI_WARNING = `\x1b[38;2;255;255;0m`  // YELLOW
+const ANSI_LOCATOR = `\x1b[38;2;200;150;255m`  // Light Purple
+const ANSI_STRING = `\x1b[38;2;173;216;230m`  // Light Blue TEXT entered into a field
+const ANSI_TEXT = `\x1b[97m`  // White TEXT
+const ANSI_RESET = `\x1b[0m` //Reset
+let LAST_MESSAGE = "";
+
+declare global {
+    var log: (text: any) => void;
+}
+
+global.log = (message: any) => {
+    //Skip repeated messages
+    if (LAST_MESSAGE === message) {
+        LAST_MESSAGE = message;
+        return;
+    }
+
+    let messageString: string = message;
+
+    try {
+        if (typeof message === "string" || typeof message === "number") {
+            if (message) {
+
+                if (messageString.toString().includes(`[object Promise]`)) {
+                    messageString = (`--->  WARN: ${message} \n      Promise object detected. async function call missing await keyword.`);
+                    console.trace();
+                }
+
+                if (messageString.includes("WARN: ")) {
+                    messageString = ANSI_WARNING + messageString + ANSI_RESET
+
+                } else if (messageString.includes("FAIL: ") || messageString.includes("ERROR: ") || messageString.includes("Promise")) {
+                    messageString = ANSI_FAIL + messageString + ANSI_RESET
+
+                } else if (messageString.includes("PASS: ")) {
+                    // PASS
+                    messageString = ANSI_PASS + message + ANSI_RESET
+                } else {
+                    messageString = ANSI_TEXT + message + ANSI_RESET
+                }
+
+
+                //Send colored content to Debug console
+
+                //Highlight CSS and XPath selectors in Purple
+                messageString = messageString.replace(/(#?[a-zA-Z/]+)\[([^\]]+)\]/g, `${ANSI_LOCATOR}$1[$2]${ANSI_RESET}`);
+
+                //Highlight CSS # selectors in Purple
+                messageString = messageString.replace(/#\w+/g, `${ANSI_LOCATOR}$&${ANSI_RESET}`);
+
+
+                // Highlight accent marks strings in White
+                messageString = messageString.replace(/`([^`]+)`/g, `${ANSI_STRING}$1${ANSI_RESET}`);
+
+                console.log(`--->   ${messageString}`);
+            }
+        }
+    } catch (error: any) {
+        console.log(`--->   helpers.console(): ${error.message}`);
+    }
+
+};
 
 export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     //
@@ -126,7 +196,7 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     // Define all options that are relevant for the WebdriverIO instance here
     //
     // Level of logging verbosity: trace | debug | info | warn | error | silent
-    logLevel: "warn",
+    logLevel: "info", // Changed this from "warn" to "info" to see verbose logging
     //
     // Set specific log levels per logger
     // loggers:
@@ -167,8 +237,8 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
     services: [
-        "chromedriver",
-        "geckodriver",
+        "chromedriver" //,
+        // "geckodriver",
     ],
 
     // Framework you want to run your specs with.
@@ -213,7 +283,7 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
              */
             if (!passed) {
                 // await browser.takeScreenshot();
-                browser.saveScreenshot(`./reports/assertionError_${assertion.error}.png`)
+                await browser.saveScreenshot(`./reports/assertionError_${assertion.error}.png`)
             }
         }
     },
@@ -274,7 +344,7 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
             const selector = args[0];
             // Modify the selector or add additional functionality as needed
             // For example, you can add a prefix to the selector
-            global.log(`BEFORE $ COMMAND: Selector ${selector} sent to ABS(elementSelector)`);
+            global.log(`BEFORE $ COMMAND: Selector '${selector}' sent to ASB(elementSelector)`);
             // Pass the locator to the switchboard
             ASB.set("elementSelector", selector);
         }
@@ -283,7 +353,7 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
             const selector = args[0];
             // Modify the selector or add additional functionality as needed
             // For example, you can add a prefix to the selector
-            global.log(`BEFORE $$ COMMAND: Selector ${selector} sent to ABS(elementsSelector)`);
+            global.log(`BEFORE $$ COMMAND: Selector '${selector}' sent to ASB(elementsSelector)`);
             // Pass the locator to the switchboard
             ASB.set("elementsSelector", selector);
         }
@@ -331,7 +401,7 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
         //browser.maximizeWindow();
         // Option #2: Run browser 3/4 screen on single monitor
         // Allow VS Code Terminal visible on bottom of the screen
-        await global.log(`Changing window size`);
+        global.log(`Changing window size`);
         await browser.setWindowSize(1920, 770);
     },
     /**
@@ -360,7 +430,7 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     afterTest: async function (
         test,
         context,
-        {error, result, duration, passed, retries}
+        { error, result, duration, passed, retries }
     ) {
         if (!passed) {
             await browser.takeScreenshot();
@@ -418,18 +488,71 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     },
 };
 
+
+
+
+
+
 /**
  * log wrapper
  * @param text to be output to the console window
  */
-global.log = async (text: any) => {
-    if (text) {
-        //truthy value check
-        if (text === Promise) {
-            console.log(`--->     WARN: Log was passed a Promise object`);
-            console.trace();
-        } else {
-            console.log(`---> ${text}`);
-        }
-    }
-};
+
+
+// global.log =  (message: any) => {
+//     //Skip repeated messages
+//     if (LAST_MESSAGE === message) {
+//         return;
+//     }
+
+//     LAST_MESSAGE = message;
+
+//     let messageString: string = message;
+
+//     try {
+//         if (typeof message === "string" || typeof message === "number") {
+//             if (message) {
+
+//                 if (messageString.toString().includes(`[object Promise]`)) {
+//                     messageString = (`--->  WARN: ${message} \n      Promise object detected. async function call missing await keyword.`);
+//                     console.trace();
+//                 }
+
+//                 if (messageString.includes("WARN: ")) {
+//                     messageString = ANSI_WARNING + messageString + ANSI_RESET
+
+//                 } else if (messageString.includes("FAIL: ") || messageString.includes("ERROR: ") || messageString.includes("Promise")) {
+//                     messageString = ANSI_FAIL + messageString + ANSI_RESET
+
+//                 } else if (messageString.includes("PASS: ")) {
+//                     // PASS
+//                     messageString = ANSI_PASS + message + ANSI_RESET
+//                 } else {
+//                     messageString = ANSI_TEXT + message + ANSI_RESET
+//                 }
+
+
+//                 //Send colored content to Debug console
+
+//                 // Highlight "Selector ''" in Purple
+//                 const regex = /Selector '(.*?)'/;
+//                 messageString = messageString.replace(/Selector '(.*?)'/g, `Selector '${ANSI_LOCATOR}$1${ANSI_RESET}'`);
+
+//                 //Highlight CSS and XPath selectors in Purple
+//                 //messageString = messageString.replace(/(#?[a-zA-Z/]+)\[([^\]]+)\]/g, `${ANSI_LOCATOR}$1[$2]${ANSI_RESET}`);
+
+//                 //Highlight CSS # selectors in Purple
+//                 //messageString = messageString.replace(/#\w+/g, `${ANSI_LOCATOR}$&${ANSI_RESET}`);
+
+
+//                 // Highlight accent marks strings in White
+//                 messageString = messageString.replace(/`([^`]+)`/g, `${ANSI_STRING}$1${ANSI_RESET}`);
+
+//                 console.log(`--->   ${messageString}`);
+//             }
+//         }
+//     } catch (error: any) {
+//         console.log(`--->   helpers.console(): ${error.message}`);
+//     }
+
+// }
