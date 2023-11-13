@@ -26,8 +26,8 @@
         "types": [
             "node",
             "@wdio/globals/types",
-            "@wdio/jasmine-framework",
-            "expect-webdriverio"
+            "expect-webdriverio",
+            "@wdio/jasmine-framework"
         ],
         "target": "es2022"
     }

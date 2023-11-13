@@ -1,4 +1,3 @@
-import allureReporter from '@wdio/allure-reporter';
 import * as helpers from "../../helpers/helpers";
 import Page from "./page";
 
@@ -50,15 +49,16 @@ class LoginPage extends Page {
      * e.g. to login using username and password
      */
     public async loginFailLast(username: string, password: string) {
-        await helpers.log(`Logging in with \`${username}\` and \`${password}\``);
+        await helpers.log(`Logging in with '${username}' and '${password}'`);
         await this.inputUsername.setValue(username);
-        await helpers.log(`Entered \`${username}\``);
+        await helpers.log(`Entered '${username}'`);
         await this.inputPassword.setValue(password);
         await helpers.log(
             `Entered \`${password}\` and clicking Submit with ClickAdv`
         );
-
+        // Submit button does exist
         await helpers.clickAdv(await this.btnSubmit);
+        // Bogus button does not exist!
         await helpers.clickAdv(await this.btnBogus);
     }
 
@@ -122,7 +122,7 @@ class LoginPage extends Page {
      * overwrite specific options to adapt it to page object
      */
     public open(path: string = "login") {
-        allureReporter.addAttachment('Navigating to url', path, 'string');
+        
         return super.open(path);
     }
 }
