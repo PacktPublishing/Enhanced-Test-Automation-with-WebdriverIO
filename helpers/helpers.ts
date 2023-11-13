@@ -1,15 +1,18 @@
 import { ASB } from "./globalObjects";
 import allureReporter from "@wdio/allure-reporter";
 
+const IF_EXISTS = "IF_EXISTS";
+export async function clickAdvIfExists(element: WebdriverIO.Element) {
+  ASB.set(IF_EXISTS, true);
+  let result = await this.clickAdv(element);
+  ASB.set(IF_EXISTS, false);
+  return result;
+}
+
 export async function clickAdv(element: WebdriverIO.Element) {
   let success: boolean = false;
 
   element = await getValidElement(element, "button");
-  if (ASB.get("ELEMENT_EXISTS") == false) {
-    await log(`  IfExist: Skipping clicking selector '${ASB.get("elementSelector")}'`);
-    return true;
-  }
-
   const SELECTOR = element.selector;
   await log(`Clicking selector '${SELECTOR}'`);
   try {
@@ -24,11 +27,19 @@ export async function clickAdv(element: WebdriverIO.Element) {
     success = true;
     await log(`  PASS: Selector '${SELECTOR}' was clicked!`);
   } catch (error: any) {
-    await log(`  FAIL: Selector '${SELECTOR}' was not clicked.\n       ${error.message}`);
-    expect(SELECTOR).toEqual('to be clickable');
-    // Throw the error to stop the test
-    //@ts-ignore
-    await element.click() // ({ block: "center" });
+
+    if (ASB.get(IF_EXISTS) === true) {
+      await log(`  WARN: ClickIfExists - Skipped clicking selector '${SELECTOR}' without failing the test`);
+      ASB.set(IF_EXISTS, false)
+      return true;
+
+    } else {
+      await log(`  FAIL: Selector '${SELECTOR}' was not clicked.\n       ${error.message}`);
+      expect(SELECTOR).toEqual('to be clickable');
+      // Throw the error to stop the test
+      //@ts-ignore
+      await element.click() // ({ block: "center" });
+    }
   }
 
   return success;
@@ -527,6 +538,13 @@ export async function pageSync(
   return result;
 }
 
+export async function setValueAdvIfExists(element: WebdriverIO.Element) {
+  ASB.set(IF_EXISTS, true);
+  let result = await this.setValueAdv(element);
+  ASB.set(IF_EXISTS, false);
+  return result;
+}
+
 export async function setValueAdv(
   inputField: WebdriverIO.Element,
   text: string
@@ -546,7 +564,7 @@ export async function setValueAdv(
     scrubbedValue = maskValue(scrubbedValue)
   }
 
-  await log(`Entering '${scrubbedValue}' into ${SELECTOR}`);
+  await log(`Entering \`${scrubbedValue}\` into selector '${SELECTOR}'`);
 
   try {
     //await element.waitForDisplayed();
@@ -576,11 +594,20 @@ export async function setValueAdv(
 
     success = true;
   } catch (error: any) {
-    await log(
-      `  ERROR: ${SELECTOR} was not populated with ${scrubbedValue}.\n       ${error.message}`
-    );
-    // Throw the error to stop the test, still masking password
-    await inputField.setValue(scrubbedValue);
+
+    if (ASB.get(IF_EXISTS) === true) {
+      await log(`  WARN: setValueAdvIfExists - Skipped entering \`${scrubbedValue}\` in selector '${SELECTOR}' without failing the test`);
+      ASB.set(IF_EXISTS, false)
+      return true;
+
+    } else {
+
+      await log(
+        `  ERROR: ${SELECTOR} was not populated with \`${scrubbedValue}\`.\n       ${error.message}`
+      );
+      // Throw the error to stop the test, still masking password
+      await inputField.setValue(scrubbedValue);
+    }
   }
   return success;
 }
@@ -692,6 +719,13 @@ export async function waitForSpinner(): Promise<boolean> {
   return spinnerDetected;
 }
 
+export async function selectAdvIfExists(element: WebdriverIO.Element) {
+  ASB.set(IF_EXISTS, true);
+  let result = await this.selectAdv(element);
+  ASB.set(IF_EXISTS, false);
+  return result;
+}
+
 export async function selectAdv(
   listElement: WebdriverIO.Element,
   item: string
@@ -732,6 +766,13 @@ export async function selectAdv(
         global.log(`  Item selected: "${itemValue}"`)
         success = true;
       } catch (error: any) {
+
+        if (ASB.get(IF_EXISTS) === true) {
+          await log(`  WARN: SelectAdvIfExists - Skipped selecting \`${item}\` in combobox selector '${ASB.get("elementSelector")}' without failing the test`);
+          ASB.set(IF_EXISTS, false)
+          return true;
+        }
+
         await log(`  ERROR: ${listElement} could not select "${item}" was not selected\n
         ${error.message}`);
       }
@@ -742,7 +783,7 @@ export async function selectAdv(
       await browser.keys(['Shift', 'End']);
       await browser.keys(['Delete']);
       await browser.keys(`${item}`)
-      await browser.pause(3000); // Demo
+      // await browser.pause(3000); // Demo
 
       // Find the item in the list
       try {
@@ -756,6 +797,12 @@ export async function selectAdv(
         await clickAdv(listItem)
       } catch (error) {
         // no such item
+        if (ASB.get(IF_EXISTS) === true) {
+          await log(`  WARN: SelectAdvIfExists - Skipped selecting \`${item}\` in selector '${ASB.get("elementSelector")}' without failing the test`);
+          ASB.set(IF_EXISTS, false)
+          return true;
+        }
+
         listItems = await browser.$$(`//li/*`)
         for (const listItem of listItems) {
           textContent += await listItem.getText() + " | "; // Get the text content of the element
@@ -783,6 +830,11 @@ export async function selectAdv(
       global.log(`  Item selected: "${item}"`)
       success = true;
     } catch (error: any) {
+      if (ASB.get(IF_EXISTS) === true) {
+        await log(`  WARN: SelectAdvIfExists - Skipped selecting item number ${item} in selector '${ASB.get("elementSelector")}' without failing the test`);
+        ASB.set(IF_EXISTS, false)
+        return true;
+      }
       await log(`  ERROR: ${listElement} could not select "${item}"\n
       ${error.message}`);
     }
