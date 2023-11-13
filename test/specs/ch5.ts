@@ -5,27 +5,6 @@ import * as helpers from "../../helpers/helpers";
 import dynamicLoadingPage from "../pageObjects/dynamicLoading.page";
 
 describe("Chapter 5: Intentional Fail Last clickAdv with pageSync and autoscroll", () => {
-  it("Chapter 5: The last element in loginFailLast() is a bogus element", async () => {
-
-    await LoginPage.open();
-
-    await LoginPage.loginFailLast("tomsmith", "SuperSecretPassword!");
-    await expect(await SecurePage.flashAlert).toBeExisting();
-    await expect(await SecurePage.flashAlert).toHaveTextContaining(
-      "You logged into a secure area!"
-    );
-  });
-
-  it("Chapter 5: Fail First clickAdv with pageSync and autoscroll", async () => {
-    // await helpers.log(Promise) // Unit test log returns warning when anything but string is passsed
-    await LoginPage.open();
-
-    await LoginPage.loginFailFirst("tomsmith", "SuperSecretPassword!");
-    await expect(SecurePage.flashAlert).toBeExisting();
-    await expect(SecurePage.flashAlert).toHaveTextContaining(
-      "You logged into a secure area!"
-    );
-  });
 
   it("Chapter 5: navToTypes - autoscroll", async () => {
     // await helpers.log(Promise) // Unit test log returns warning when anything but string is passsed
@@ -49,36 +28,41 @@ describe("Chapter 5: Intentional Fail Last clickAdv with pageSync and autoscroll
     await helpers.highlightOff(await dynamicLoadingPage.txtHelloWorld);
   });
 
-  it("Chapter 5: Self-healing Link", async () => {
-    // await helpers.log(Promise) // Unit test log returns warning when anything but string is passsed
-    await LoginPage.open();
-
-    await LoginPage.loginOld("tomsmith", "SuperSecretPassword!");
-    await expect(SecurePage.flashAlert).toBeExisting();
-    await expect(SecurePage.flashAlert).toHaveTextContaining(
-      "You logged into a secure area!"
-    );
-  });
-
-
-  it("Chapter 5: Self-healing Link", async () => {
-    // await helpers.log(Promise) // Unit test log returns warning when anything but string is passsed
-    await LoginPage.open();
-
-    await LoginPage.loginOld("tomsmith", "SuperSecretPassword!");
-    await expect(SecurePage.flashAlert).toBeExisting();
-    await expect(SecurePage.flashAlert).toHaveTextContaining(
-      "You logged into a secure area!"
-    );
-  });
-
   it("should login with valid credentials", async () => {
     // await helpers.log(Promise) // Unit test log returns warning when anything but string is passsed
     await LoginPage.open();
     await LoginPage.login("tomsmith", "SuperSecretPassword!");
     await expect(SecurePage.flashAlert).toBeExisting();
     await expect(SecurePage.flashAlert).toHaveTextContaining(
+        "You logged into a secure area!"
+    );
+  });
+
+  it("Chapter 5: Self-healing Link", async () => {
+    await LoginPage.open();
+    await LoginPage.loginOld("tomsmith", "SuperSecretPassword!");
+    await expect(SecurePage.flashAlert).toBeExisting();
+    await expect(SecurePage.flashAlert).toHaveTextContaining(
       "You logged into a secure area!"
     );
   });
+
+  it("Chapter 5: The last element in loginFailLast() is a bogus element", async () => {
+    await LoginPage.open();
+    await LoginPage.loginFailLast("tomsmith", "SuperSecretPassword!");
+    await expect(await SecurePage.flashAlert).toBeExisting();
+    await expect(await SecurePage.flashAlert).toHaveTextContaining(
+        "You logged into a secure area!"
+    );
+  });
+
+  it("Chapter 5: Fail First clickAdv with pageSync and autoscroll", async () => {
+    await LoginPage.open();
+    await LoginPage.loginFailFirst("tomsmith", "SuperSecretPassword!");
+    await expect(SecurePage.flashAlert).toBeExisting();
+    await expect(SecurePage.flashAlert).toHaveTextContaining(
+        "You logged into a secure area!"
+    );
+  });
+
 });

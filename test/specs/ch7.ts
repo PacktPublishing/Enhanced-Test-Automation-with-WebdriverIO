@@ -44,12 +44,12 @@ describe("The select Wrapper: Selecting from List and Combobox", () => {
         const iframe = await browser.findElement('css selector', 'iframe');
         await browser.switchToFrame(iframe);
         elem = await browser.$('[class="k-input-inner"]');
-        // await elem.scrollIntoView();
-        // await elem.doubleClick();
-        // await elem.addValue('Belg');
-        // await browser.keys('Enter');
+        await elem.scrollIntoView();
+        await elem.doubleClick();
+        await elem.setValue('Belg');
+        await browser.keys('Enter');
         // Not sure how this 'findRestaurantsIn' function works to be honest
-        await WebListPage.findRestaurantsIn('Belgium');
-        await browser.pause(3000);
+        // await WebListPage.findRestaurantsIn('Belgium');
+        await browser.pause(10000);
     });
 });
