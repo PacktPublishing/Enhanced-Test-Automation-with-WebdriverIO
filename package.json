@@ -20,7 +20,7 @@
     },
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "report": "node_modules/.bin/allure generate ./reports/allure-results && allure open -p 5050",
+        "report": "node_modules/.bin/allure generate --clean ./reports/allure-results && allure open -p 5050",
         "wdio": "cross-env Env=uat wdio wdio.test.conf.ts",
         "ch2": "yarn wdio --spec ./test/specs/ch2.ts",
         "ch3": "yarn wdio --spec ./test/specs/ch3.ts",
@@ -33,7 +33,9 @@
         "ch11": "yarn wdio --spec ./test/specs/ch11.ts",
         "ch12": "yarn wdio --spec ./test/specs/ch12.ts",
         "ch13": "yarn wdio --spec ./test/specs/ch13.ts",
-        "ch14": "cross-env Env=dev wdio wdio.dev.conf.ts --spec ./test/specs/ch14.ts",
+        "ch14": "echo \"\r\nTo run against Candymapper Dev \r\n yarn ch14dev \r\n\r\n To run against Candymapper Production \r\n yarn ch14prod",
+        "ch14dev": "cross-env Env=dev wdio wdio.dev.conf.ts --spec ./test/specs/ch14.ts",
+        "ch14prod": "cross-env Env=prod wdio wdio.dev.conf.ts --spec ./test/specs/ch14.ts",
         "ltlocal": "cross-env Env=dev wdio wdio.lambdatest.conf.ts --spec ./test/specs/ch14.ts",
         "ch15": "cross-env Env=prod wdio wdio.lambdatest.conf.ts --spec ./test/specs/ch15.ts"
     },
