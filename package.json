@@ -20,7 +20,7 @@
     },
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "report": "node_modules/.bin/allure generate --clean ./reports/allure-results && allure open -p 5050",
+        "report": "node_modules/.bin/allure generate ./reports/allure-results && allure open -p 5050",
         "wdio": "cross-env Env=uat wdio wdio.test.conf.ts",
         "ch2": "yarn wdio --spec ./test/specs/ch2.ts",
         "ch3": "yarn wdio --spec ./test/specs/ch3.ts",
@@ -29,6 +29,7 @@
         "ch6": "yarn wdio --spec ./test/specs/ch6.ts",
         "ch7": "yarn wdio --spec ./test/specs/ch7.ts",
         "ch8": "yarn wdio --spec ./test/specs/ch8.ts",
+        "ch10": "yarn wdio --spec ./test/specs/ch10.ts",
         "ch11": "yarn wdio --spec ./test/specs/ch11.ts",
         "ch12": "yarn wdio --spec ./test/specs/ch12.ts",
         "ch13": "yarn wdio --spec ./test/specs/ch13.ts",
