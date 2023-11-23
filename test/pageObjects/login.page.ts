@@ -43,7 +43,7 @@ class LoginPage extends Page {
      */
     public async login(username: string, password: string) {
         await helpers.log(`Logging in with \`${username}\` and \`${password}\``);
-        await this.oldInputUsername.setValue(username);
+        await this.inputUsername.setValue(username);
         await helpers.log(`Entered '${username}'`);
         await this.inputPassword.setValue(password);
         await helpers.log(
