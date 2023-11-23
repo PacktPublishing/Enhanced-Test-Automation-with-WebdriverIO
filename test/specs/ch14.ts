@@ -1,10 +1,16 @@
 import LoginPage from "../pageObjects/login.page";
 import stateDrivenUtils from "../utilities/stateDriven.utils";
 
-// code that executes before every test
+
+// To run against Production - which has one intentional error - use the following command:
+// > yarn ch14prod
+
+// To run against Dev - which is working - use the following command:
+// > yarn ch14dev
 
 let env: string;
 
+// code that executes before every test
 beforeEach(async () => {  
   // Determines the environment to run the test in from the command line
   // Default to prod: candymapper.com
