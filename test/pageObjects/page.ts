@@ -30,6 +30,11 @@ import { baseUrl } from '../../wdio.shared.conf';
  * that is shared across all page objects
  */
 export default class Page {
+
+    public get btnHalloweenParty() {
+        return $(`//a[text()='Halloween Party']`);
+    }
+
     /**
      * Opens a sub page of the page or the url provided
      * @param path optional path of the sub page (e.g. /path/to/page.html)

@@ -13,9 +13,7 @@ class CandymapperPage extends Page {
         return $(`//*[name()="svg"][contains(@id,"close-icon")]`);
     }
 
-    public get btnHalloweenParty() {
-        return $(`//a[text()='Halloween Party']`);
-    }
+
 
 
     public async build() {
@@ -31,7 +29,8 @@ class CandymapperPage extends Page {
                 await helpers.clickAdv(await this.btnPopupClose);
 
             }
-            await helpers.clickAdv(await this.btnHalloweenParty);
+
+            await helpers.clickAdv(await super.btnHalloweenParty);
             success = true;
         }
         return success;
