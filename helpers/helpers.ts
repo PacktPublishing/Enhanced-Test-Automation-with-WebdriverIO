@@ -197,6 +197,7 @@ export async function getValidElement(
         break;
 
       case "list":
+        selector = `select[id='${eleText}']`
         break;
 
     }
@@ -908,7 +909,7 @@ export async function selectAdvIfExists(element: WebdriverIO.Element) {
 }
 
 export async function selectAdv(
-  listElement: WebdriverIO.Element,
+  listElement: WebdriverIO.Element |  String,
   item: string
 ): Promise<boolean> {
   let success: boolean = false;
@@ -918,18 +919,18 @@ export async function selectAdv(
   let textContent: string = " "
   // Empty item list - do nothing
   if (item.length === 0) {
-    await log(`  ERROR: ${listElement} had no list item passed.\n`)
+    await log(`  ERROR: ${listElement} had no list item passed.\n`);
     return true;
   }
 
   //Get a valid list element
-  listElement = await getValidElement(listElement, "list");
+  const validListElement = await getValidElement(listElement as WebdriverIO.Element, "list");
 
   // Get the name of the element
   // let listname = await getListName(listElement);
 
   // Comboboxes look like input fields
-  let isCombobox = listElement.selector.toString().includes("//input")
+  let isCombobox = validListElement.selector.toString().includes("//input");
 
   if (isCombobox) {
     //@ts-ignore
