@@ -165,15 +165,27 @@ export async function getValidElement(
 
     switch (elementType) {
       case "button":
+        // CSS for Button by type
+        // Example: <button type="submit" class="btn btn-primary">Submit</button>
         selector = `button[type='${eleText}']`
         elements = await browser.$$(selector);
         found = elements.length > 0;
 
+        // xPath for Button containing an element that contains text
+        // Example: <button class="radius" type="submit"><i class="fa fa-2x fa-sign-in">Login</i></button>
         if (!found) {
-          selector = `\\button[text()='${eleText}']`
+          selector = `//button/*[text()='${eleText}']`
+        }
+        elements = await browser.$$(selector);
+        found = elements.length > 0;
+
+        // xPath for Button containing an element that contains text with transient spaces
+        // <button class="radius" type="submit"><i class="fa fa-2x fa-sign-in"> Login</i></button>
+        if (!found) {
+          selector = `//button/*[contains(text(),'${eleText}')]`
         }
         break;
-        
+
       case "field":
         selector = `input[id='${eleText}']`
         elements = await browser.$$(selector);
@@ -188,12 +200,9 @@ export async function getValidElement(
         break;
 
     }
-    //selector = `//*[contains(normalize-space(),'${eleText}')]`;
 
-    console.log("*********************** 1st  " + selector)
 
     elements = await browser.$$(selector);
-
     found = elements.length > 0;
 
     if (found) {

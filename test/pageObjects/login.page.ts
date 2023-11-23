@@ -130,14 +130,22 @@ class LoginPage extends Page {
     /**
      * Ch:11 Echo location - find element by text alone
      */
+    public async loginWithoutPomSubmit (username: string, password: string) {
+        global.log(`Logging in with \`${username}\` and \`${password}\`without the Page Object Model`)
+        await helpers.setValueAdv(`username`, username);
+        await helpers.setValueAdv(`password`, password);
+        // Use the type of element to find the element
+        await helpers.clickAdv(`submit`);
+    }
+
     public async loginWithoutPom (username: string, password: string) {
         global.log(`Logging in with \`${username}\` and \`${password}\`without the Page Object Model`)
         await helpers.setValueAdv(`username`, username);
         await helpers.setValueAdv(`password`, password);
-        //
-        // this.btnSubmit.click();
-        await helpers.clickAdv(`submit`);
+        // Use the text of the element to find the element
+        await helpers.clickAdv(`Login`);
     }
+
     /**
      * overwrite specific options to adapt it to page object
      */

@@ -1,13 +1,32 @@
 import LoginPage from "../pageObjects/login.page";
 import SecurePage from "../pageObjects/secure.page";
 
-describe("Ch11: ", () => {
-  it('should give detailed report and resize browser', async () => {
-    await LoginPage.open();
-    // Chapter 11 POM-less automation example
 
+
+describe("Ch11: Echo Location - find element by text without Page Object Model", () => {
+ 
+  beforeEach(async () => {  
+    await LoginPage.open();
+  });
+
+  // Chapter 11 POM-less automation example
+
+  it(`should find 'username', 'password' fields and 'submit' button`, async () => {
+    await LoginPage.open();
+    // Uses test to find usename and password fields
+    // Uses 'submit' type of element to find the submit button
+    await LoginPage.loginWithoutPomSubmit("tomsmith", "SuperSecretPassword!");
+    await expect(SecurePage.flashAlert).toBeExisting();
+    await expect(SecurePage.flashAlert).toHaveTextContaining(
+       "You logged into a secure area!"
+    );
+
+  });
+
+  fit(`should find 'username', 'password' fields and 'login' button`, async () => {
     await LoginPage.open();
 
+    // Uses 'login' text to find the submit button
     await LoginPage.loginWithoutPom("tomsmith", "SuperSecretPassword!");
     await expect(SecurePage.flashAlert).toBeExisting();
     await expect(SecurePage.flashAlert).toHaveTextContaining(
