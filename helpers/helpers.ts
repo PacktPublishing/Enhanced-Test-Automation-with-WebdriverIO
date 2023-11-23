@@ -9,21 +9,21 @@ export async function clickAdvIfExists(element: WebdriverIO.Element) {
   return result;
 }
 
-export async function clickAdv(element: WebdriverIO.Element) {
+export async function clickAdv(element: WebdriverIO.Element | string) {
   let success: boolean = false;
 
   element = await getValidElement(element, "button");
   const SELECTOR = element.selector;
   await log(`Clicking selector '${SELECTOR}'`);
   try {
-    if (!(await isElementInViewport(element))) {
-      await scrollIntoView(element);
-      await waitForElementToStopMoving(element, 1000);
+    if (!(await this.isElementInViewport(element))) {
+      await this.scrollIntoView(element);
+      await this.waitForElementToStopMoving(element, 1000);
     }
-    await highlightOn(element);
+    await this.highlightOn(element);
     //@ts-ignore
     await element.click(); // ({ block: "center" });
-    await pageSync();
+    await this.pageSync();
     success = true;
     await log(`  PASS: Selector '${SELECTOR}' was clicked!`);
   } catch (error: any) {
@@ -45,89 +45,265 @@ export async function clickAdv(element: WebdriverIO.Element) {
   return success;
 }
 
-export async function getValidElement(
-  element: WebdriverIO.Element,
-  elementType: string
-): Promise<WebdriverIO.Element> {
-  let selector: any = element.selector;
-  // Get a collection of matching elements
-  let found: boolean = true;
-  let newSelector: string = "";
-  let newElement: any = element;
-  // let elements: WebdriverIO.Element[];
-  let elements: any;
-  let normalizedElementType: string = "";
-  let elementName: string = "";
 
-  try {
-    elements = await $$(selector);
-    if (elements.length === 0) {
-      // Extract the element type if not provided
-      if (elementType === "") {
-        let index: number = selector.indexOf("[");
-        normalizedElementType = selector.substring(0, index);
-      } else {
-        normalizedElementType = normalizeElementType(elementType);
-      }
+export async function findVisibleElement(locators: string[], elementName: string): Promise<WebdriverIO.Element | null> {
+  let visibleElement: WebdriverIO.Element | null = null;
+  let found = false;
 
-      switch (normalizedElementType) {
-        case "//a":
-          elementName = selector.match(/=".*"/)[0].slice(2, -1);
-          newSelector = `//button[contains(@type,"${elementName}")]`;
-          break;
-
-        case "//button":
-          elementName = selector.match(/=".*"/)[0].slice(2, -1);
-          newSelector = `//a[contains(text(),"${elementName}")]`;
-          found = await isElementVisible(await $(newSelector));
-          break;
-
-        case "//input":
-          elementName = selector.match(/=".*"/)[0].slice(2, -1);
-          newSelector = `//input[contains(@id,"${elementName}")]`;
-          found = await isElementVisible(await $(newSelector));
-          if (!found) {
-            newSelector = `//input[contains(@name,"${elementName}")]`;
-            await isElementVisible(await $(newSelector));
+  for (let locator of locators) {
+    try {
+      const elements = await $$(locator);
+      for (let element of elements) {
+        if (await element.isDisplayed()) {
+          if (elements.length === 1) {
+            await log(`PASS: Found '${elementName}' element with selector '${locator}'`);
+          } else {
+            await log(`PASS: Found ${elements.length} '${elementName}' elements with selector '${locator}'`);
           }
+          visibleElement = element;
+          found = true;
           break;
-
-        case "//select":
-          elementName = selector.match(/=".*"/)[0].slice(2, -1);
-          // Find a div with the text above a combobox
-          newSelector = `//div[contains(text(),'${elementName}')]//following::input`;
-          found = await isElementVisible(await $(newSelector));
-          break;
-
-        case "//*":
-          elementName = selector.match(/=".*"/)[0].slice(2, -1);
-          newSelector = `//*[contains(@id,'${elementName}')]`;
-          found = await isElementVisible(await $(newSelector));
-          break;
-
-        default:
-          found = false;
-          break;
+        }
       }
-      newElement = await $(newSelector);
-      found = await isElementVisible(newElement);
-      // Successful class switch
-      if (found) {
-        await log(
-          `  WARNING: Replaced ${selector}\n                    with ${newSelector}`
-        );
+      if (visibleElement) {
+        break;
       }
+    } catch (error) {
+      // Log or handle errors if needed
     }
-  } catch (error) {
-    found = false;
   }
 
   if (!found) {
-    await log(`  ERROR: Unable to find Selector '${selector}' class switched as selector '${newSelector}'`);
+    await log(`ERROR: Could not find '${elementName}' element.`);
   }
-  // set switchboard find success
-  ASB.set("ELEMENT_EXISTS", found)
+
+  return visibleElement;
+}
+
+export async function findFieldElement(nameOrId: string): Promise<WebdriverIO.Element | null> {
+  const locators = [
+    `input[name="${nameOrId}"]`,
+    `input[id="${nameOrId}"]`,
+    `input[id*="${nameOrId}"]`,
+    `input[type="${nameOrId}"]`,
+    `textarea[placeholder="${nameOrId}"]`
+  ];
+
+  return findVisibleElement(locators, nameOrId);
+}
+
+export async function findButtonElement(TypeOrText: string): Promise<WebdriverIO.Element | null> {
+  const locators = [
+    `a[href*="${TypeOrText}"]`,
+    `a:contains('${TypeOrText}')`,
+    `button[name="${TypeOrText}"]`,
+    `button[id="${TypeOrText}"]`,
+    `button[id*="${TypeOrText}"]`,
+    `button:contains('${TypeOrText}')`
+  ];
+
+  return findVisibleElement(locators, TypeOrText);
+}
+
+export async function findListElement(elementName: string): Promise<WebdriverIO.Element | null> {
+  const locators = [
+    `//select[contains(text(),'${elementName}')]`, //Standard select list
+    `//div[contains(text(),'${elementName}')]//following::input`  // Find a div with the text above a combobox
+  ];
+
+  return findVisibleElement(locators, elementName);
+}
+
+
+export async function findElementByText(elementName, elementType) {
+  ASB.set("ELEMENT_FOUND_BY_TEXT", false);
+  let newElement: WebdriverIO.Element = null;
+  switch (elementType) {
+    case "button":
+      newElement = await findButtonElement(elementName);
+      break
+    case "input":
+      newElement = await findFieldElement(elementName);
+      break;
+    case "list":
+      newElement = await findListElement(elementName);
+      ASB.set("ELEMENT_FOUND_BY_TEXT", newElement !== null);
+
+  }
+
   return newElement;
+
+}
+
+export async function getValidElement(
+  elementOrString: WebdriverIO.Element | string,
+  elementType: string
+): Promise<WebdriverIO.Element> {
+  let found: boolean = true;
+  let element: WebdriverIO.Element;
+
+  let newSelector: string = "";
+  let newElement: any = element;
+
+  let elements: WebdriverIO.Element[];
+  let normalizedElementType: string = "";
+  let elementName: string = "";
+  //Find as string 
+  let selector: string
+
+  // Find elements based on string alone
+  if (typeof elementOrString == "string") {
+
+
+    let initialElementType: string; // Declare initialElementType variable
+    initialElementType = elementType;
+    let eleText = elementOrString;
+    found = false;
+
+    // Any close matches for this text string? 
+    // CSS for Input
+
+    switch (elementType) {
+      case "button":
+        selector = `button[type='${eleText}']`
+        elements = await browser.$$(selector);
+        found = elements.length > 0;
+
+        if (!found) {
+          selector = `\\button[text()='${eleText}']`
+        }
+        break;
+        
+      case "field":
+        selector = `input[id='${eleText}']`
+        elements = await browser.$$(selector);
+        found = elements.length > 0;
+
+        if (!found) {
+          selector = `input[name='${eleText}']`
+        }
+        break;
+
+      case "list":
+        break;
+
+    }
+    //selector = `//*[contains(normalize-space(),'${eleText}')]`;
+
+    console.log("*********************** 1st  " + selector)
+
+    elements = await browser.$$(selector);
+
+    found = elements.length > 0;
+
+    if (found) {
+      element = elements[0];
+      //await log(`  PASS: Found ${elements.length} '${eleText}' element(s) with selector '${selector}'`);
+    } else {
+      // Any close matches for this text string?
+      selector = `//*[contains(@id, '${eleText}') 
+      or contains(@name, '${eleText}') 
+      or contains(@type, '${eleText}') 
+      or contains(@href, '${eleText}') 
+      or contains(@placeholder, '${eleText}')]`;
+      elements = await browser.$$(selector);
+
+      found = elements.length > 0;
+      if (found) {
+        element = elements[0];
+
+        //await log(`  PASS: Found ${elements.length} '${eleText}' element(s) with selector '${selector}'`);
+
+      }
+
+      if (!found) {
+        await log(`  FAIL: Did not find ${elements.length} '${eleText}' element with selector '${selector}'`);
+        return null;
+      }
+
+    }
+
+
+
+    // Find as Element
+
+
+    // Get a collection of matching elements
+    newElement = element;
+    selector = element.selector.toString();
+
+
+    try {
+
+      elements = await $$(selector);
+      if (elements.length === 0) {
+        // Extract the element type if not provided
+        if (elementType === "") {
+          let index: number = selector.indexOf("[");
+          normalizedElementType = selector.substring(0, index);
+        } else {
+          normalizedElementType = normalizeElementType(elementType);
+        }
+
+        switch (normalizedElementType) {
+          case "//a":
+            elementName = selector.match(/=".*"/)[0].slice(2, -1);
+            newSelector = `//button[contains(@type,"${elementName}")]`;
+            break;
+
+          case "//button":
+            elementName = selector.match(/=".*"/)[0].slice(2, -1);
+            newSelector = `//a[contains(text(),"${elementName}")]`;
+            found = await isElementVisible(await $(newSelector));
+            break;
+
+          case "//input":
+            elementName = selector.match(/=".*"/)[0].slice(2, -1);
+            newSelector = `//input[contains(@id,"${elementName}")]`;
+            found = await isElementVisible(await $(newSelector));
+            if (!found) {
+              newSelector = `//input[contains(@name,"${elementName}")]`;
+              await isElementVisible(await $(newSelector));
+            }
+            break;
+
+          case "//select":
+            elementName = selector.match(/=".*"/)[0].slice(2, -1);
+            // Find a div with the text above a combobox
+            newSelector = `//div[contains(text(),'${elementName}')]//following::input`;
+            found = await isElementVisible(await $(newSelector));
+            break;
+
+          case "//*":
+            elementName = selector.match(/=".*"/)[0].slice(2, -1);
+            newSelector = `//*[contains(@id,'${elementName}')]`;
+            found = await isElementVisible(await $(newSelector));
+            break;
+
+          default:
+            found = false;
+            break;
+        }
+        newElement = await $(newSelector);
+        found = await isElementVisible(newElement);
+        // Successful class switch
+        if (found) {
+          await log(
+            `  WARNING: Replaced ${selector}\n                    with ${newSelector}`
+          );
+        }
+      }
+    } catch (error) {
+      found = false;
+    }
+
+    if (!found) {
+      await log(`  ERROR: Unable to find Selector '${selector}' class switched as selector '${newSelector}'`);
+    }
+    // set switchboard find success
+    ASB.set("ELEMENT_EXISTS", found)
+    return newElement;
+  }
 }
 
 async function getElementType(element: WebdriverIO.Element) {
@@ -208,7 +384,7 @@ async function getListName(element: WebdriverIO.Element) {
  "yyyy" or "yy" - to represent the 4 or 2 digit year, respectively.
  "MM" or "M" - to represent the month with leading zero or without leading zero respectively
  "dd" or "d" - to represent the date with leading zero or without leading zero respectively
-
+ 
  // helpers.log(getToday());  // returns current date in MM-dd-yyyy format
  // helpers.log(getToday("+5", "d/M/yyyy"));  // returns current date plus 5 days in d/M/yyyy format
  // helpers.log(getToday("-3", "yyyy/MM/dd"));  // returns current date minus 3 days in yyyy/MM/dd format
@@ -540,14 +716,16 @@ export async function setValueAdvIfExists(element: WebdriverIO.Element) {
 }
 
 export async function setValueAdv(
-  inputField: WebdriverIO.Element,
+  inputField: WebdriverIO.Element | string,
   text: string
 ) {
   let success: boolean = false;
 
+  // Take an string or element and return a valid element - set EXISTS in the switchboard
   inputField = await getValidElement(inputField, "field");
 
-  const SELECTOR = await inputField.selector;
+
+  const SELECTOR = inputField.selector.toString();
 
   let newValue: string = replaceTags(text);
   let scrubbedValue: string = newValue
@@ -927,7 +1105,7 @@ export async function expectAdv(actual: any, assertionType: any, expected: any) 
     allureReporter.addAttachment('Assertion Passes: ', `Valid Assertion Type = ${assertionType}`, 'text/plain');
     console.info('assertion type passed : =======>>>>>>>>>>> ', assertionType)
   }
-    allureReporter.endStep();
+  allureReporter.endStep();
   // For the full list of options please got to
   // https://github.com/webdriverio/expect-webdriverio/blob/main/docs/API.md
 }
@@ -972,4 +1150,25 @@ export function parseToASB(testData: string) {
 
     console.log(`ASB("${key.toLowerCase()}") set to "${ASB.get(key.toLowerCase())}"`);
   }
+}
+
+
+function getElementTypeFromSelector(selector: string) {
+  let locatorType: 'xpath' | 'css';
+  let elementType: string;
+
+  // XPath selectors start with // or .//
+  if (selector.startsWith(`//`) || selector.startsWith(`.//`) || selector.startsWith(`\(`)) {
+    locatorType = 'xpath';
+    // Extract the element type from the XPath
+    elementType = selector.split('[')[0];
+  } else {
+    locatorType = 'css';
+    // Return Generic xPath selector for CSS
+    elementType = `\\*`;
+  }
+
+  ASB.set('locatorType', locatorType);
+
+  return elementType;
 }
