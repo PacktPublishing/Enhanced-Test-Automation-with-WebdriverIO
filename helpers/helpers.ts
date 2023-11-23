@@ -152,7 +152,7 @@ export async function getValidElement(
   let selector: string
 
   // Find elements based on string alone
-  if (typeof elementOrString == "string") {
+  if (typeof elementOrString === "string") {
 
 
     let initialElementType: string; // Declare initialElementType variable
@@ -233,88 +233,90 @@ export async function getValidElement(
 
     }
 
-
-
-    // Find as Element
-
-
-    // Get a collection of matching elements
-    newElement = element;
-    selector = element.selector.toString();
-
-
-    try {
-
-      elements = await $$(selector);
-      if (elements.length === 0) {
-        // Extract the element type if not provided
-        if (elementType === "") {
-          let index: number = selector.indexOf("[");
-          normalizedElementType = selector.substring(0, index);
-        } else {
-          normalizedElementType = normalizeElementType(elementType);
-        }
-
-        switch (normalizedElementType) {
-          case "//a":
-            elementName = selector.match(/=".*"/)[0].slice(2, -1);
-            newSelector = `//button[contains(@type,"${elementName}")]`;
-            break;
-
-          case "//button":
-            elementName = selector.match(/=".*"/)[0].slice(2, -1);
-            newSelector = `//a[contains(text(),"${elementName}")]`;
-            found = await isElementVisible(await $(newSelector));
-            break;
-
-          case "//input":
-            elementName = selector.match(/=".*"/)[0].slice(2, -1);
-            newSelector = `//input[contains(@id,"${elementName}")]`;
-            found = await isElementVisible(await $(newSelector));
-            if (!found) {
-              newSelector = `//input[contains(@name,"${elementName}")]`;
-              await isElementVisible(await $(newSelector));
-            }
-            break;
-
-          case "//select":
-            elementName = selector.match(/=".*"/)[0].slice(2, -1);
-            // Find a div with the text above a combobox
-            newSelector = `//div[contains(text(),'${elementName}')]//following::input`;
-            found = await isElementVisible(await $(newSelector));
-            break;
-
-          case "//*":
-            elementName = selector.match(/=".*"/)[0].slice(2, -1);
-            newSelector = `//*[contains(@id,'${elementName}')]`;
-            found = await isElementVisible(await $(newSelector));
-            break;
-
-          default:
-            found = false;
-            break;
-        }
-        newElement = await $(newSelector);
-        found = await isElementVisible(newElement);
-        // Successful class switch
-        if (found) {
-          await log(
-            `  WARNING: Replaced ${selector}\n                    with ${newSelector}`
-          );
-        }
-      }
-    } catch (error) {
-      found = false;
-    }
-
-    if (!found) {
-      await log(`  ERROR: Unable to find Selector '${selector}' class switched as selector '${newSelector}'`);
-    }
-    // set switchboard find success
-    ASB.set("ELEMENT_EXISTS", found)
-    return newElement;
+  }else{
+    element = elementOrString;
   }
+
+  // Find as Element
+
+
+  // Get a collection of matching elements
+  newElement = element;
+  selector = newElement.selector
+
+
+  try {
+
+    elements = await $$(selector);
+    if (elements.length === 0) {
+      // Extract the element type if not provided
+      if (elementType === "") {
+        let index: number = selector.indexOf("[");
+        normalizedElementType = selector.substring(0, index);
+      } else {
+        normalizedElementType = normalizeElementType(elementType);
+      }
+
+      switch (normalizedElementType) {
+        case "//a":
+          elementName = selector.match(/=".*"/)[0].slice(2, -1);
+          newSelector = `//button[contains(@type,"${elementName}")]`;
+          break;
+
+        case "//button":
+          elementName = selector.match(/=".*"/)[0].slice(2, -1);
+          newSelector = `//a[contains(text(),"${elementName}")]`;
+          found = await isElementVisible(await $(newSelector));
+          break;
+
+        case "//input":
+          elementName = selector.match(/=".*"/)[0].slice(2, -1);
+          newSelector = `//input[contains(@id,"${elementName}")]`;
+          found = await isElementVisible(await $(newSelector));
+          if (!found) {
+            newSelector = `//input[contains(@name,"${elementName}")]`;
+            await isElementVisible(await $(newSelector));
+          }
+          break;
+
+        case "//select":
+          elementName = selector.match(/=".*"/)[0].slice(2, -1);
+          // Find a div with the text above a combobox
+          newSelector = `//div[contains(text(),'${elementName}')]//following::input`;
+          found = await isElementVisible(await $(newSelector));
+          break;
+
+        case "//*":
+          elementName = selector.match(/=".*"/)[0].slice(2, -1);
+          newSelector = `//*[contains(@id,'${elementName}')]`;
+          found = await isElementVisible(await $(newSelector));
+          break;
+
+        default:
+          found = false;
+          break;
+      }
+      newElement = await $(newSelector);
+      found = await isElementVisible(newElement);
+      // Successful class switch
+      if (found) {
+        await log(
+          `  WARNING: Replaced ${selector}\n                    with ${newSelector}`
+        );
+      }
+    }
+  } catch (error) {
+    found = false;
+  }
+
+  if (!found) {
+    await log(`  ERROR: Unable to find Selector '${selector}' class switched as selector '${newSelector}'`);
+  }
+  // set switchboard find success
+  ASB.set("ELEMENT_EXISTS", found)
+  return newElement;
 }
+
 
 async function getElementType(element: WebdriverIO.Element) {
   // get from existing element
@@ -909,7 +911,7 @@ export async function selectAdvIfExists(element: WebdriverIO.Element) {
 }
 
 export async function selectAdv(
-  listElement: WebdriverIO.Element |  String,
+  listElement: WebdriverIO.Element | String,
   item: string
 ): Promise<boolean> {
   let success: boolean = false;
