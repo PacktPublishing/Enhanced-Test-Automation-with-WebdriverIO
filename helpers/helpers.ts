@@ -996,6 +996,10 @@ export async function waitForSpinner(): Promise<boolean> {
   const start = Date.now();
   if (found) {
     const startTime = performance.now();
+    // display this message in yellow
+    await log(
+      `  ${ANSI_WARNING}Spinner detected...`)
+
     spinnerDetected = true;
     try {
       while (found) {
@@ -1006,17 +1010,22 @@ export async function waitForSpinner(): Promise<boolean> {
         if (!found) break;
         await pause(100);
         if (Date.now() - start > timeout * 1000) {
-          await log(`ERROR: Spinner did not close after ${timeout} seconds`);
+          // custom log automatically displays this in red in console
+          await log(`  ERROR: Spinner did not close after ${timeout} seconds`);
           break;
         }
       }
     } catch (error) {
-      // Spinner no longer exists
+      // Spinner no longer exists, eat the error.
     }
+
+    // Optional: Display a spinner completion message in Green in the console.
     await log(
-      `  Spinner Elapsed time: ${Math.floor(performance.now() - startTime)} ms`
+      `  ${ANSI_PASS}Spinner Elapsed time: ${Math.floor(performance.now() - startTime)} ms (${Math.round((performance.now() - startTime) / 1000)} sec)`
     );
+
   }
+
   return spinnerDetected;
 }
 
