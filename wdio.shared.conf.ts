@@ -1,3 +1,5 @@
+// Updated for 2024!
+
 import { ASB } from './helpers/globalObjects';
 require('dotenv').config();
 
@@ -393,11 +395,13 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
      */
     beforeTest: async function (test, context) {
         //Option #1: Run browser full screen on dual monitors
-        //browser.maximizeWindow();
+        await browser.maximizeWindow();
+        
         // Option #2: Run browser 3/4 screen on single monitor
         // Allow VS Code Terminal visible on bottom of the screen
-        global.log(`Changing window size`);
-        await browser.setWindowSize(1920, 970);
+        global.log(`Adjusting window size`);
+        let windowSize = await browser.getWindowSize();
+        await browser.setWindowRect(-7, 0, windowSize.width, windowSize.height * 0.85);
     },
     /**
      * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
