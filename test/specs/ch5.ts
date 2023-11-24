@@ -71,7 +71,7 @@ describe("Chapter 5: Intentional Fail Last clickAdv with pageSync and autoscroll
 
 });
 
-fdescribe("Chapter 5: Intentional Fail Last clickAdv with pageSync and autoscroll", () => {
+describe("Chapter 5: Intentional Fail Last clickAdv with pageSync and autoscroll", () => {
 
   it("Chapter 5: Self-healing Link", async () => {
     await LoginPage.open();
