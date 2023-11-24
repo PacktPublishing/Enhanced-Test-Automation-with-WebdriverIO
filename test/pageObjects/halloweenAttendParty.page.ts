@@ -32,7 +32,6 @@ class HalloweenAttendPartyPage extends Page {
            
             let location = ASB.get("location")
 
-            console.log("********************* inside AttendnPartyPage attend-a-party: " + await ASB.get("page") + " location: '" + location +"'" )
             
             const path = {
                 ghostville: async () =>  await helpers.clickAdv(await this.btnGhostville),

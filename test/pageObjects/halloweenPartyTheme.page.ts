@@ -30,7 +30,7 @@ class HalloweenThemePartyPage extends Page {
            
             let theme = ASB.get("theme")
 
-            console.log("**************** theme '" + theme + "'")
+           
             
             const path = {
                 zombies: async () => await helpers.clickAdv(await this.btnZombies),

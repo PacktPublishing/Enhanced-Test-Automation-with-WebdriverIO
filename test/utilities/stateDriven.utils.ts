@@ -56,45 +56,7 @@ class StateDrivenUtils {
 
 
 
-      // switch (testData !== '' ) {
-      // switch (true) {
-      //   case testData.includes(" host"): {
-      //     ASB.set("hostOrAttend", "host");
-      //   }
-      //   // break;
-      //   case testData.includes(" attend"): {
-      //     ASB.set("hostOrAttend", "attend");
-      //   }
-      //   //break;
-      //   case testData.includes(" scared"): {
-      //     console.log("************ scared **************")
-      //     ASB.set("location", "scared");
-      //   }
-      //   case testData.includes(" zombie"): {
-      //     console.log("********** zombie **************")
-      //     ASB.set("location", "zombieton");
-      //   }
-      //   // break;
-      //   case testData.includes(" ghost"): {
-      //     console.log("********** ghost **************")
-      //     ASB.set("location", "ghostville");
-      //   }
-      //   // break;
-
-
-      //   case testData.includes(" theme"): {
-      //     ASB.set("theme", "zombies");
-      //   }
-      //   // break;
-      //   //default:
-      //   //  ASB.set("hostOrAttend", "host");
-
-      // }
-
-      //  Set the environment - default to prod: candymapper.com
-      //  stage: candymapperR2.com
-      //
-      // ASB.set("env", testData.includes(" stage") ? "stage" : "prod");
+  
     }
 
   }
@@ -145,7 +107,7 @@ class StateDrivenUtils {
       // // Exit Point #2: Unknown page encountered
       if (knownPage === false) {
         //One of the build methods returned true
-        console.log(`*************  Known Page detected = ${knownPage} **********************`)
+     
         AllureReporter.addAttachment(`Unknown Page detected: ${pageName}`, "", "text/plain");
         
         console.log(`Unknown Page detected: ${pageName} - Exiting Journey`);
@@ -176,7 +138,7 @@ class StateDrivenUtils {
 
 
       // Exit Point #4: We were scared and went back -Halloween Party Home page reached - error 404 in prod / works in stage
-      console.log(`*****************  Page Name: ${ASB.get("page")}`)
+   
       if (ASB.get("page") === "halloween-party") {
         console.log("Halloween Party Home page reached")
 
