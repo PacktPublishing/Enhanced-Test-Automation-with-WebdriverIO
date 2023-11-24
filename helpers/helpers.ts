@@ -1,8 +1,9 @@
+import { getLineAndCharacterOfPosition } from "typescript";
 import { ASB } from "./globalObjects";
 import allureReporter from "@wdio/allure-reporter";
 
 const IF_EXISTS = "IF_EXISTS";
-export async function clickAdvIfExists(element: WebdriverIO.Element) {
+export async function clickAdvIfExists(element: WebdriverIO.Element | string) {
   ASB.set(IF_EXISTS, true);
   let result = await this.clickAdv(element);
   ASB.set(IF_EXISTS, false);
@@ -12,13 +13,16 @@ export async function clickAdvIfExists(element: WebdriverIO.Element) {
 export async function clickAdv(element: WebdriverIO.Element | string) {
   let success: boolean = false;
 
+
+
   element = await getValidElement(element, "button");
+
   const SELECTOR = element.selector;
   await log(`Clicking selector '${SELECTOR}'`);
   try {
     if (!(await this.isElementInViewport(element))) {
       await this.scrollIntoView(element);
-      await this.waitForElementToStopMoving(element, 1000);
+      await this.waitForElementToStopMoving(element, 3000);
     }
     await this.highlightOn(element);
     //@ts-ignore
@@ -27,7 +31,7 @@ export async function clickAdv(element: WebdriverIO.Element | string) {
     success = true;
     await log(`  PASS: Selector '${SELECTOR}' was clicked!`);
   } catch (error: any) {
-
+    
     if (ASB.get(IF_EXISTS) === true) {
       await log(`  WARN: ClickIfExists - Skipped clicking selector '${SELECTOR}' without failing the test`);
       ASB.set(IF_EXISTS, false)
@@ -107,8 +111,8 @@ export async function findButtonElement(TypeOrText: string): Promise<WebdriverIO
 
 export async function findListElement(elementName: string): Promise<WebdriverIO.Element | null> {
   const locators = [
-    `//select[contains(text(),'${elementName}')]`, //Standard select list
-    `//div[contains(text(),'${elementName}')]//following::input`  // Find a div with the text above a combobox
+    `//select[contains(text(),"${elementName}")]`, //Standard select list
+    `//div[contains(text(),"${elementName}")]//following::input`  // Find a div with the text above a combobox
   ];
 
   return findVisibleElement(locators, elementName);
@@ -133,6 +137,31 @@ export async function findElementByText(elementName, elementType) {
 
   return newElement;
 
+}
+
+export async function getValidTelerikElement(
+  elementOrString: WebdriverIO.Element | string,
+  elementType: string
+): Promise<WebdriverIO.Element> {
+  let found: Boolean = false;
+  let element: WebdriverIO.Element
+
+  // Scroll down until found
+  do {
+    element = await getValidElement(elementOrString, elementType);
+
+    if (ASB.get("END_OF_PAGE") === true) {
+      await log(`  FAIL: Reached bottom of page without finding element '${elementOrString}'`);
+      return null;
+    }
+
+    found = ASB.get("ELEMENT_EXISTS");
+    if (!found) {
+      await scrollDown();
+    }
+  } while (!found);
+
+  return element;
 }
 
 export async function getValidElement(
@@ -233,7 +262,7 @@ export async function getValidElement(
 
     }
 
-  }else{
+  } else {
     element = elementOrString;
   }
 
@@ -282,7 +311,7 @@ export async function getValidElement(
         case "//select":
           elementName = selector.match(/=".*"/)[0].slice(2, -1);
           // Find a div with the text above a combobox
-          newSelector = `//div[contains(text(),'${elementName}')]//following::input`;
+          newSelector = `//div[contains(text(),"${elementName}")]//following::input`;
           found = await isElementVisible(await $(newSelector));
           break;
 
@@ -311,9 +340,12 @@ export async function getValidElement(
 
   if (!found) {
     await log(`  ERROR: Unable to find Selector '${selector}' class switched as selector '${newSelector}'`);
+  } else {
+    highlightOn(newElement) // Highlight the element
   }
   // set switchboard find success
   ASB.set("ELEMENT_EXISTS", found)
+
   return newElement;
 }
 
@@ -483,7 +515,21 @@ function isEmpty(text: string | null): boolean {
 export async function isElementInViewport(
   element: WebdriverIO.Element
 ): Promise<boolean> {
-  let isInViewport = await element.isDisplayedInViewport();
+
+  // This statement returns true if the element off the top of the the viewport
+  //let isInViewport = await element.isDisplayedInViewport();
+
+  let isInViewport = true
+  let viewportHeight = (await browser.getWindowSize()).height
+  let y = await element.getLocation("y");
+  let x = await element.getLocation("x");
+  //if the element y is between 0 and the viewport height, it is in the viewport
+  if ((y < 0) || (y > viewportHeight)) {
+    isInViewport = false;
+  } else {
+    isInViewport = await isElementVisible(element);
+  }
+
   return isInViewport;
 }
 
@@ -851,8 +897,79 @@ function replaceTags(text: string) {
 }
 
 export async function scrollIntoView(element: WebdriverIO.Element) {
+  await highlightOn(element);
   await element.scrollIntoView({ block: "center", inline: "center" });
+
+  let viewportHeight = (await browser.getWindowSize()).height
+  let lastY = 0;
+
+  while (await isElementInViewport(element) === false) {
+    // Check if object scrolled off the top of the page
+    await waitForElementToStopMoving(element, 2000);
+
+    let elementY = await getElementY(element);
+
+
+
+    if (elementY < 0) {
+      // scolls down and sets END_OF_PAGE if the element is at the bottom of the page
+      scrollDown();
+      // exit if the element is in the top 1/3 of the viewport
+      if (elementY < (viewportHeight / 3)) {
+        break;
+      }
+    } else {
+      // Scrolls up and sets END_OF_PAGE if the element is at the top of the page
+      scrollUp();
+      // exit if the element is in the top 1/3 of the viewport
+      if (elementY > (viewportHeight / 3)) {
+        break;
+      }
+    }
+
+    // exit if the element never moved
+    if (ASB.get("END_OF_PAGE") || (lastY === elementY)) {
+      break;
+    }
+
+    lastY = elementY;
+  }
+  await highlightOff(element);
 }
+
+// Get the Y coordinate of the element to determin if the scroll command worked
+export async function getElementY(element: WebdriverIO.Element)
+  : Promise<number> {
+
+  let rect = await browser.execute(function (el) {
+    return (el as unknown as HTMLElement).getBoundingClientRect();
+  }, element);
+
+  return rect.y;
+}
+
+export async function scrollDown(scrollValue = 100) {
+  await browser.execute(`window.scrollBy(0, ${scrollValue})`);
+  await isEndOfPage();
+}
+
+export async function scrollUp(scrollValue = 100) {
+  await browser.execute(`window.scrollBy(0, -${scrollValue})`);
+  await isEndOfPage();
+}
+
+export async function isEndOfPage() {
+  ASB.set("END_OF_PAGE", false);
+
+  let y = await $('//*').getLocation("y");
+  if (ASB.get("LAST_Y") === y) {
+    ASB.set("END_OF_PAGE", true);
+  } else {
+    ASB.set("LAST_Y", y)
+  }
+}
+
+
 
 export async function sleep(ms: number) {
   await log(`Waiting ${ms} ms...`);
@@ -911,7 +1028,7 @@ export async function selectAdvIfExists(element: WebdriverIO.Element) {
 }
 
 export async function selectAdv(
-  listElement: WebdriverIO.Element | String,
+  listElement: WebdriverIO.Element | string,
   item: string
 ): Promise<boolean> {
   let success: boolean = false;
@@ -919,6 +1036,7 @@ export async function selectAdv(
   let listItems: WebdriverIO.Element[]
   let listItem: WebdriverIO.Element
   let textContent: string = " "
+
   // Empty item list - do nothing
   if (item.length === 0) {
     await log(`  ERROR: ${listElement} had no list item passed.\n`);
@@ -926,17 +1044,44 @@ export async function selectAdv(
   }
 
   //Get a valid list element
-  const validListElement = await getValidElement(listElement as WebdriverIO.Element, "list");
-
+  //const validListElement = await getValidElement(listElement as WebdriverIO.Element, "list");
+  const validListElement = await getValidElement(listElement, "list");
+  await scrollIntoView(validListElement);
   // Get the name of the element
   // let listname = await getListName(listElement);
 
+  let selector = validListElement.selector.toString()
+  let isXPath = selector.includes("//");
+  
+
+  if (!isXPath) {
+    let cssSelector = selector
+    let xpath = await browser.execute(function (cssSelector) {
+      let element = document.querySelector(cssSelector);
+      let xpath = '';
+      //@ts-ignore - TS does not like the element variable, but this works
+      for (; element && element.nodeType == 1; element = element.parentNode) {
+        let id = Array.prototype.indexOf.call(element.parentNode.childNodes, element) + 1;
+        id > 1 ? (id = '[' + id + ']') : (id = '');
+        xpath = '/' + element.tagName + id + xpath;
+      }
+      return xpath;
+    }, cssSelector);
+    selector = xpath;
+  }
   // Comboboxes look like input fields
-  let isCombobox = validListElement.selector.toString().includes("//input");
+  let isCombobox = selector.toLowerCase().includes("/input");
+
+  //Scroll into view if not inside the virtual viewport
+  if (!(await isElementInViewport(validListElement))) {
+    await scrollIntoView(validListElement);
+    await waitForElementToStopMoving(validListElement, 3000);
+  }
 
   if (isCombobox) {
     //@ts-ignore
     await listElement.doubleClick() //Selects all the text in the combobox
+
 
     // Allow user to pass a number like 3 for March
     if (typeof (item) === 'number') {
@@ -945,7 +1090,8 @@ export async function selectAdv(
       const index: number = item;
       try {
         await (await $(`//span[normalize-space()='${item}']`)).click();
-        itemValue = await listElement.getText();
+        await browser.pause(125) // Wait for box to open
+        itemValue = await validListElement.getText();
         // Report actual item selected
         global.log(`  Item selected: "${itemValue}"`)
         success = true;
@@ -962,23 +1108,34 @@ export async function selectAdv(
       }
     } else {
       // Clear the field.
-      await listElement.click() // Select All Clear Mac and Windows
+      await validListElement.click() // Select All Clear Mac and Windows
       await browser.keys(['Home']);
       await browser.keys(['Shift', 'End']);
       await browser.keys(['Delete']);
       await browser.keys(`${item}`)
-      // await browser.pause(3000); // Demo
+
+      await browser.pause(300); // Wait for the list to expand
 
       // Find the item in the list
+      let items: string[] = []; // List of strings in the combobox
+      let found = false;
       try {
         //listItem = await browser.$(`//li/*[contains(text(),'${item}')])`)
+        
         listItems = await browser.$$(`//li/*`)
 
         for (const listItem of listItems) {
-          if ((await listItem.getText()).includes(item)) // Found the element
+          highlightOn(listItem) // Highlight the element
+          items.push(await listItem.getText())
+
+          if ((await listItem.getText()).includes(item)) {  // Found the element
+            found = true
             break;
+          }
+          highlightOff(listItem) // Highlight the element
         }
-        await clickAdv(listItem)
+        
+
       } catch (error) {
         // no such item
         if (ASB.get(IF_EXISTS) === true) {
@@ -995,21 +1152,26 @@ export async function selectAdv(
       }
 
       // Click the item
-      await (await $(`//span[normalize-space()='${item}']`)).click();
+      //await (await $(`//span[normalize-space()='${item}']`)).click();
+      //await listItem.click();
+      //await clickAdv(listItem)
+      await browser.keys('Enter');
+
+
     }
 
   } else {
 
     try {
       // Get the list of options in the select element
-      const optionsList: string = await getListValues(listElement);
+      const optionsList: string = await getListValues(validListElement);
       console.log(optionsList); // This will print the list of options text in the select element
 
       if (typeof (item) === 'number') {
         const index: number = item;
-        await (await listElement).selectByIndex(index);
+        await (await validListElement).selectByIndex(index);
       } else {
-        await (await listElement).selectByVisibleText(item)
+        await (await validListElement).selectByVisibleText(item)
       }
       global.log(`  Item selected: "${item}"`)
       success = true;
