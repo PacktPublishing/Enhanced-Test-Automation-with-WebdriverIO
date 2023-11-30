@@ -1,11 +1,11 @@
-# Enhanced Test Automation with WebdriverIO
+# <p align="center">Enhanced Test Automation with WebdriverIO</p>
 
-**Unlocking the Superpowers of Hybrid Testing Frameworks**
+**<p align="center">Unlocking the Superpowers of Hybrid Testing Frameworks</p>**
 
 This is the code repository for [Enhanced Test Automation with WebdriverIO](https://www.packtpub.com/product/enhanced-test-automation-with-webdriverio/9781837630189), published by Packt.
 
 ## What is this book about?
-This book serves as a comprehensive guide to mastering advanced WebdriverIO concepts for end-to-end testing of web applications. It includes custom command wrappers and implementing AI powered self-healing object strategies. The book is designed to augment the skillset of  Software Developer Engineers in Test (SDETs) covering aspects including dynamic data handling, detailed reporting, and integrating automated tests into CI/CD pipelines. It's particularly beneficial for those seeking to streamline test maintenance and automate complex test scenarios.
+<p>This book serves as a comprehensive guide to mastering advanced WebdriverIO concepts for end-to-end testing of web applications. It includes custom command wrappers and implementing AI powered self-healing object strategies. The book is designed to augment the skillset of  Software Developer Engineers in Test (SDETs) covering aspects including dynamic data handling, detailed reporting, and integrating automated tests into CI/CD pipelines. It's particularly beneficial for those seeking to streamline test maintenance and automate complex test scenarios.</p>
 
 This book covers the following exciting features:
 * Setting up the installation of WDIO
