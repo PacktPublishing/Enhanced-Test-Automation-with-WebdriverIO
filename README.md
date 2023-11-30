@@ -19,6 +19,35 @@ This book covers the following exciting features:
 
 
 ## Instructions and navigations
+All of the code is organized into folders in the repository and looks like this: 
+
+```bash
+.
+└── helpers
+    └── globalObjects.ts
+    └── helpers.ts
+└── shared-data
+    └── userData.json
+└── tests
+    └── pageObjects
+    └── specs
+    └── utilities
+wdio.dev.conf.ts
+wdio.lambdatest.conf.ts
+wdio.shared.conf.ts
+```
+The code itself will look like the following:
+```ts
+class SecurePage extends Page {
+    /**
+    * define selectors using getter methods
+    */
+    public get flashAlert () {
+        global.log(`Getting flashalert`)
+        return $('#flash');
+    }
+}
+```
 
 
 ## Software and Hardware List
