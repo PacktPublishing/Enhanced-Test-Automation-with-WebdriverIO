@@ -65,7 +65,7 @@
         "wdio-lambdatest-service": "^2.0.3"
     },
     "devDependencies": {
-        "chromedriver": "^116.0.0",
+        "chromedriver": "^119.0.1",
         "geckodriver": "^4.0.5"
     }
 }
