@@ -1,0 +1,30 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true
+        
+    },
+    "extends": [
+        "eslint:recommended"
+
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "plugins": [
+        "@typescript-eslint",
+        "@typescript-eslint/recommended"
+    ],
+    "rules": {
+        "require-await": "error",
+        "@typescript-eslint/no-floating-promises": "error",
+        "no-floating-promises": true,
+        "singleQuote": true,
+        "print-width": 120,
+        "tab-width": 4,
+        "endOfLine": "auto"
+    }
+}
+

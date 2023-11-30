@@ -6,12 +6,11 @@ import dynamicLoadingPage from "../pageObjects/dynamicLoading.page";
 
 //advanced self-healing
 
-describe("Chapter 10: Intentional Fail Last clickAdv with pageSync and autoscroll", () => {
+describe("Chapter 10: Self-healing stale elements: input locators and anchor link", () => {
 
-  it("Chapter 10: Self-healing Link", async () => {
+  fit("will handle stale element fields and an <a> anchor that changed from last release", async () => {
     await LoginPage.open();
-    // simulate an outdated selector that changed in latest release  
-    await LoginPage.loginOld("tomsmith", "SuperSecretPassword!");
+    await LoginPage.stalelogin("tomsmith", "SuperSecretPassword!");
     await expect(SecurePage.flashAlert).toBeExisting();
     await expect(SecurePage.flashAlert).toHaveTextContaining(
       "You logged into a secure area!"
@@ -19,3 +18,4 @@ describe("Chapter 10: Intentional Fail Last clickAdv with pageSync and autoscrol
   });
 
 });
+

@@ -19,7 +19,7 @@ describe("Chapter 5: Buring wait time of Dynamically Loaded elements with spinne
   it(`Clicks Start with clickadv which waits for spinner before hidden "Hello World" is displayed`, async () => {
     await LandingPage.open();
     await LandingPage.navToDynamicLoading();
-    
+
     // Click Hidden Element Start which displays a spinner with hidden "Hello World"
     // Flashes the spinner while waiting to disappear without additional wait commands
     await dynamicLoadingPage.clickStartWithHiddenElementAndSpinner();
@@ -39,7 +39,7 @@ describe("Chapter 5: Buring wait time of Dynamically Loaded elements with spinne
   it(`Clicks Start with clickadv which waits for spinner before "Hello World" is rendered`, async () => {
     await LandingPage.open();
     await LandingPage.navToDynamicLoading();
-    
+
     // Click Hidden Element Start which displays a spinner before rendereing "Hello World"
     // Flashes the spinner while waiting to disappear without additional wait commands
     await dynamicLoadingPage.clickStartWithRenderedElementAndSpinner();
@@ -60,22 +60,8 @@ describe("Chapter 5: Buring wait time of Dynamically Loaded elements with spinne
 describe("Chapter 5: Intentional Fail Last clickAdv with pageSync and autoscroll", () => {
 
   it("should login with valid credentials", async () => {
-    // await helpers.log(Promise) // Unit test log returns warning when anything but string is passsed
     await LoginPage.open();
     await LoginPage.login("tomsmith", "SuperSecretPassword!");
-    await expect(SecurePage.flashAlert).toBeExisting();
-    await expect(SecurePage.flashAlert).toHaveTextContaining(
-        "You logged into a secure area!"
-    );
-  });
-
-});
-
-describe("Chapter 5: Intentional Fail Last clickAdv with pageSync and autoscroll", () => {
-
-  it("Chapter 5: Self-healing Link", async () => {
-    await LoginPage.open();
-    await LoginPage.loginOld("tomsmith", "SuperSecretPassword!");
     await expect(SecurePage.flashAlert).toBeExisting();
     await expect(SecurePage.flashAlert).toHaveTextContaining(
       "You logged into a secure area!"
@@ -84,26 +70,32 @@ describe("Chapter 5: Intentional Fail Last clickAdv with pageSync and autoscroll
 
 });
 
-describe("Chapter 5: Intentional Fail Last clickAdv with pageSync and autoscroll", () => {
 
-  it("Chapter 5: The last element in loginFailLast() is a bogus element", async () => {
+
+describe("Chapter 5: Intentional Fail Last clickAdv", () => {
+
+  it("will fail as the last element in loginFailLast() is a 'bogus' element", async () => {
     await LoginPage.open();
+
+    // This line fails because the last element clicked in loginFailLast() is a non-existant 'bogus' element
     await LoginPage.loginFailLast("tomsmith", "SuperSecretPassword!");
+    
+    // These lines do not execute because the previous line fails
     await expect(await SecurePage.flashAlert).toBeExisting();
     await expect(await SecurePage.flashAlert).toHaveTextContaining(
-        "You logged into a secure area!"
+      "You logged into a secure area!"
     );
   });
 });
 
-describe("Chapter 5: Intentional Fail Last clickAdv with pageSync and autoscroll", () => {
+describe("Chapter 5: Pass with clickAdvIfExists", () => {
 
-  it("Chapter 5: Fail First clickAdv with pageSync and autoscroll", async () => {
-    await LoginPage.open();
-    await LoginPage.loginFailFirst("tomsmith", "SuperSecretPassword!");
+  it("will pass as the element before Submit in loginFailFirstIfExists() is soft assert 'bogus' element", async () => {
+    LoginPage.open();
+    await LoginPage.loginFailFirstIfExists("tomsmith", "SuperSecretPassword!");
     await expect(SecurePage.flashAlert).toBeExisting();
     await expect(SecurePage.flashAlert).toHaveTextContaining(
-        "You logged into a secure area!"
+      "You logged into a secure area!"
     );
   });
 

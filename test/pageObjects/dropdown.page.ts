@@ -17,7 +17,7 @@ class DropdownPage extends Page {
      * e.g. to login using username and password
      */
     public async selectOption(option: string) {
-        await helpers.log(`Selecting option \`${option}\``);
+        await helpers.log(`Selecting option "${option}"`);
         await helpers.selectAdv(await this.listOptions, option);
     }
 
@@ -25,7 +25,7 @@ class DropdownPage extends Page {
     * e.g. to login using username and password
     */
    public async selectOptionWithoutPom(option: string) {
-       await helpers.log(`Selecting option \`${option}\``);
+       await helpers.log(`Selecting option "${option}"`);
        await helpers.selectAdv(`dropdown`, option);
    }
 

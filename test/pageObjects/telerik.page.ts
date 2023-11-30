@@ -18,7 +18,7 @@ class TelerikPage extends Page {
     }
 
     public get lstCountriesByCloseMatch() {
-        return $(`//div[contains(text(),"restaurant")]//following::input`);
+        return $(`//div[contains(text(),'restaurant')]//following::input`);
     }
 
     public get lstCountriesCaseInsensitive() {
@@ -38,15 +38,15 @@ class TelerikPage extends Page {
     }
 
     public get buttonAcceptCookies() {
-        return $(`[id="onetrust-accept-btn-handler"]`);
+        return $(`[id='onetrust-accept-btn-handler']`);
     }
 
     public get comboboxSports() {
-        return $(`//input[@id="sport"]`);
+        return $(`//input[@id='sport']`);
     }
 
     public get comboboxCountries() {
-        return $(`[class="k-input-inner"]`);
+        return $(`[class='k-input-inner']`);
     }
 
 
@@ -78,7 +78,7 @@ class TelerikPage extends Page {
     }
 
     public async findRestaurantsIn
-        (country: string = "Hungary") {
+        (country: string = 'Hungary') {
         // //span[normalize-space()='Belgium']
         await helpers.selectAdv(await this.lstCountriesByAxis, country)
     }

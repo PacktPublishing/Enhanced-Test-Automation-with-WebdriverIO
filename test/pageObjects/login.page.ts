@@ -12,49 +12,52 @@ class LoginPage extends Page {
         return $("#username");
     }
 
-    public get oldInputUsername() {
-        return $("#user-name");
+    public get staleInputUsername() {
+        return $("#user");
     }
 
     public get inputPassword() {
         return $("#password");
     }
     
-    public get oldInputPassword() {
+    public get staleInputPassword() {
         return $("#passw");
     }
-
-    public get btnSubmit() {
-        return $('button[type="submit"]');
-    }
-
 
     public get btnBogus() {
         return $('//button[type="bogus"]');
     }
 
-    public get lnkSubmit() {
+
+    public get btnSubmit() {
+        return $('button[type="submit"]');
+    }
+
+    // Self-healing object: Simulate a submit button that changed class from link anchor to button in last release
+    public get staleSubmitLink() {
         return $('//a[text()="submit"]');
     }
+
 
     /**
      * a method to encapsule automation code to interact with the page
      * e.g. to login using username and password
      */
     public async login(username: string, password: string) {
-        await helpers.log(`Logging in with \`${username}\` and \`${password}\``);
+        await helpers.log(`Logging in with "${username}" and password"`);
         await this.inputUsername.setValue(username);
         await helpers.log(`Entered '${username}'`);
         await this.inputPassword.setValue(password);
         await helpers.log(
-            `Entered \`${password}\` and clicking Submit with ClickAdv`
+            `Entered password and clicking Submit with ClickAdv`
         );
-        // @ts-ignore
-        await this.btnSubmit.click();
+
+        await helpers.clickAdv(await this.btnSubmit);
+
     }
 
     /**
-     * a method to unit test the failure of an button that does not exist
+     * a method to unit test the failure of an 'bogus' button that does not exist
      * e.g. to login using username and password
      */
     public async loginFailLast(username: string, password: string) {
@@ -63,7 +66,7 @@ class LoginPage extends Page {
         await helpers.log(`Entered '${username}'`);
         await this.inputPassword.setValue(password);
         await helpers.log(
-            `Entered \`${password}\` and clicking Submit with ClickAdv`
+            `Entered password and clicking Submit button with ClickAdv`
         );
         // Submit button does exist
         await helpers.clickAdv(await this.btnSubmit);
@@ -75,16 +78,16 @@ class LoginPage extends Page {
      * a method to unit test the failure of an button that does not exist
      * e.g. to login using username and password
      */
-    public async loginOld(username: string, password: string) {
-        await helpers.log(`Logging in with \`${username}\` and \`${password}\``);
-        await helpers.setValueAdv(await this.oldInputUsername, username);
-        await helpers.log(`Entered \`${username}\``);
-        await helpers.setValueAdv(await this.oldInputPassword, password);
+    public async stalelogin(username: string, password: string) {
+        await helpers.log(`Logging in with "${username}" and password"`);
+        await helpers.setValueAdv(await this.staleInputUsername, username);
+        await helpers.log(`Entered "${username}"`);
+        await helpers.setValueAdv(await this.staleInputPassword, password);
         await helpers.log(
-            `Entered \`${password}\` and clicking Submit with ClickAdv`
+            `Entered password and clicking Submit with ClickAdv`
         );
-        // Class switching
-        await helpers.clickAdv(await this.lnkSubmit);
+        // Submit button that changed class from link anchor to button in last release
+        await helpers.clickAdv(await this.staleSubmitLink);
     }
 
     /**
@@ -92,12 +95,12 @@ class LoginPage extends Page {
      * e.g. to login using username and password
      */
     public async loginFailFirst(username: string, password: string) {
-        await helpers.log(`Logging in with \`${username}\` and \`${password}\``);
+        await helpers.log(`Logging in with "${username}" and password"`);
         await this.inputUsername.setValue(username);
-        await helpers.log(`Entered \`${username}\``);
+        await helpers.log(`Entered "${username}"`);
         await this.inputPassword.setValue(password);
         await helpers.log(
-            `Entered \`${password}\` and clicking Submit with ClickAdv`
+            `Entered password and clicking Submit with ClickAdv`
         );
         await helpers.clickAdv(await this.btnBogus);
         await helpers.clickAdv(await this.btnSubmit);
@@ -107,8 +110,26 @@ class LoginPage extends Page {
      * a method to unit test the failure of an button that does not exist
      * e.g. to login using username and password
      */
+    public async loginFailFirstIfExists(username: string, password: string) {
+        await helpers.log(`Logging in with "${username}" and password"`);
+        await this.inputUsername.setValue(username);
+        await helpers.log(`Entered "${username}"`);
+        await this.inputPassword.setValue(password);
+        await helpers.log(
+            `Entered password and clicking Submit with ClickAdv`
+        );
+
+        await helpers.clickAdvIfExists(await this.btnBogus);
+        
+        await helpers.clickAdv(await this.btnSubmit);
+    }
+
+    /**
+     * a method to unit test the failure of an button that does not exist
+     * e.g. to login using username and password
+     */
     public async loginSetValue(username: string, password: string) {
-        await helpers.log(`Logging in with user role \`${username}\``);
+        await helpers.log(`Logging in with user role "${username}"`);
         await helpers.setValueAdv(await this.inputUsername, username);
         // Automatcally Mask the Password
         await helpers.setValueAdv(await this.inputPassword, password);
@@ -121,7 +142,7 @@ class LoginPage extends Page {
      * missing await so the click executes before the setValue
      */
     public async login_sync (username: string, password: string) {
-        global.log(`Logging in with \`${username}\` and \`${password}\``)
+        global.log(`Logging in with "${username}" and password"`)
         this.inputUsername.setValue(username);
         this.inputPassword.setValue(password);
         this.btnSubmit.click();
@@ -131,7 +152,7 @@ class LoginPage extends Page {
      * Ch:11 Echo location - find element by text alone
      */
     public async loginWithoutPomSubmit (username: string, password: string) {
-        global.log(`Logging in with \`${username}\` and \`${password}\`without the Page Object Model`)
+        global.log(`Logging in with "${username}" and password"without the Page Object Model`)
         await helpers.setValueAdv(`username`, username);
         await helpers.setValueAdv(`password`, password);
         // Use the type of element to find the element
@@ -139,7 +160,7 @@ class LoginPage extends Page {
     }
 
     public async loginWithoutPom (username: string, password: string) {
-        global.log(`Logging in with \`${username}\` and \`${password}\`without the Page Object Model`)
+        global.log(`Logging in with "${username}" and password"without the Page Object Model`)
         await helpers.setValueAdv(`username`, username);
         await helpers.setValueAdv(`password`, password);
         // Use the text of the element to find the element

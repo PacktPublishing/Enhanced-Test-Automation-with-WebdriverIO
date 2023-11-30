@@ -1,6 +1,7 @@
 // Updated for 2024!
 
 import { ASB } from './helpers/globalObjects';
+import * as helpers from './helpers/helpers';
 require('dotenv').config();
 
 const DEBUG =
@@ -34,8 +35,8 @@ const ANSI_LOCATOR = `\x1b[38;2;200;150;255m`  // Light Purple
 const ANSI_STRING = `\x1b[38;2;173;216;230m`  // Light Blue TEXT entered into a field
 const ANSI_TEXT = `\x1b[97m`  // White TEXT
 const ANSI_RESET = `\x1b[0m` //Reset
-let LAST_MESSAGE:string = "";
-let LAST_MESSAGE_COUNT:number = 0;
+let LAST_MESSAGE: string = "";
+let LAST_MESSAGE_COUNT: number = 0;
 ASB.set("LAST_MESSAGE_COUNT", 0);
 ASB.set("LAST_MESSAGE", "");
 declare global {
@@ -48,16 +49,16 @@ global.log = (message: any) => {
     LAST_MESSAGE_COUNT = ASB.get("LAST_MESSAGE_COUNT");
 
     if (LAST_MESSAGE === message) {
-      ASB.set("LAST_MESSAGE_COUNT", LAST_MESSAGE_COUNT++);
-      return;
+        ASB.set("LAST_MESSAGE_COUNT", LAST_MESSAGE_COUNT++);
+        return;
     }
 
     if (LAST_MESSAGE_COUNT > 0) {
-      console.log(`   └ ─ >   This message repeated ${LAST_MESSAGE_COUNT} times`);
-      ASB.set("LAST_MESSAGE_COUNT", 0);
+        console.log(`   └ ─ >   This message repeated ${LAST_MESSAGE_COUNT} times`);
+        ASB.set("LAST_MESSAGE_COUNT", 0);
     }
     ASB.set("LAST_MESSAGE", message);
-    let messageString: string = message;
+    let messageString: string = message + " " ;
 
     try {
         if (typeof message === "string" || typeof message === "number") {
@@ -69,20 +70,24 @@ global.log = (message: any) => {
                 }
 
                 if (messageString.includes("WARN: ")) {
-                    messageString = ANSI_WARNING + messageString + ANSI_RESET
+                    messageString = ANSI_WARNING + messageString + " " + ANSI_RESET
                 } else if (messageString.includes("FAIL: ") || messageString.includes("ERROR: ") || messageString.includes("Promise")) {
-                    messageString = ANSI_FAIL + messageString + ANSI_RESET
+                    messageString = ANSI_FAIL + messageString + " " + ANSI_RESET
                 } else if (messageString.includes("PASS: ")) {
                     // PASS
-                    messageString = ANSI_PASS + message + ANSI_RESET
+                    messageString = ANSI_PASS + message + " " + ANSI_RESET
                 } else {
-                    messageString = ANSI_TEXT + message + ANSI_RESET
+                    messageString = ANSI_TEXT + message + " " + ANSI_RESET
                 }
+
                 //Send colored content to Debug console
                 //Highlight CSS and XPath selectors in Purple case-insensitive to 'Selector' and 'selector'
-                messageString = messageString.replace(/Selector '(.*?)'/ig, `Selector '${ANSI_LOCATOR}$1${ANSI_RESET}'`);
-                // Highlight accent marks strings in White
-                messageString = messageString.replace(/`([^`]+)`/g, `${ANSI_STRING}$1${ANSI_RESET}`);
+                //let regex = /Selector '(.*?)' /ig;
+                //messageString = messageString.replace(regex, ` Selector '${ANSI_LOCATOR}$1${ANSI_RESET}' `);
+                
+                let regex = /Selector "(.*?)" /ig;
+                messageString = messageString.replace(regex, ` Selector "${ANSI_LOCATOR}$1${ANSI_RESET}" `);
+                
                 console.log(`--->   ${messageString}`);
             }
         }
@@ -279,8 +284,7 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
              * only take screenshot if assertion failed
              */
             if (!passed) {
-                // await browser.takeScreenshot();
-                await browser.saveScreenshot(`./reports/assertionError_${assertion.error}.png`)
+                await browser.saveScreenshot(`./reports/assertionError.png`)
             }
         }
     },
@@ -341,7 +345,7 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
             const selector = args[0];
             // Modify the selector or add additional functionality as needed
             // For example, you can add a prefix to the selector
-            log(`BEFORE $ COMMAND: Selector '${selector}' sent to ASB("elementSelector")`);
+            global.log(`BEFORE $ COMMAND: Selector "${selector}" sent to ASB("elementSelector")`);
             // Pass the locator to the switchboard
             ASB.set("elementSelector", selector);
         }
@@ -349,8 +353,8 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
         if (commandName === '$$') {
             const selector = args[0];
             // Modify the selector or add additional functionality as needed
-            // For example, you can add a prefix to the selector
-            global.log(`BEFORE $$ COMMAND: Selector '${selector}' sent to ASB("elementsSelector")`);
+            // For example, you can add a prefix to the selector for custom color logging
+            global.log(`BEFORE $$ COMMAND: Selector "${selector}" sent to ASB("elementsSelector")`);
             // Pass the locator to the switchboard
             ASB.set("elementsSelector", selector);
         }
@@ -396,7 +400,7 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     beforeTest: async function (test, context) {
         //Option #1: Run browser full screen on dual monitors
         await browser.maximizeWindow();
-        
+
         // Option #2: Run browser 3/4 screen on single monitor
         // Allow VS Code Terminal visible on bottom of the screen
         global.log(`Adjusting window size`);
@@ -429,7 +433,7 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     afterTest: async function (
         test,
         context,
-        {error, result, duration, passed, retries}
+        { error, result, duration, passed, retries }
     ) {
         if (!passed) {
             await browser.takeScreenshot();
