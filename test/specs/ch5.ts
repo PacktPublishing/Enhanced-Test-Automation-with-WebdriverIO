@@ -4,9 +4,9 @@ import LandingPage from "../pageObjects/landing.page";
 import * as helpers from "../../helpers/helpers";
 import dynamicLoadingPage from "../pageObjects/dynamicLoading.page";
 
-describe("Chapter 5: Buring wait time of Dynamically Loaded elements with spinner check embedded in clickAdv()", () => {
+describe("Chapter 5: Alter Egos: The Click Wrapper - Buring wait time of Dynamically Loaded elements with spinner check embedded in clickAdv()", () => {
   // Example 1: Element on page that is hidden
-  it(`Clicks Start with clickadv which waits for spinner before hidden "Hello World" is displayed`, async () => {
+  it(`Clicks Start with clickAdv() which waits for spinner before hidden "Hello World" is displayed`, async () => {
     await LandingPage.open();
     await LandingPage.navToDynamicLoading();
 
