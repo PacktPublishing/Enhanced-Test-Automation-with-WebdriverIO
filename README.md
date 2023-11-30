@@ -1,7 +1,21 @@
 ## Enhanced Test Automation with WebdriverIO
 This is the code repository for Enhanced Test Automation with WebdriverIO, published by Packt.
 
-## what is this book about?
+## What is this book about?
+WebdriverIO is a JavaScript-based testing automation framework that allows for end-to-end testing of web applications. It is built on Node.js and uses the WebDriver protocol to interact with various web browsers. Notably, WebdriverIO is compatible with modern web and mobile frameworks, making it a versatile choice for developers seeking to automate testing in diverse environments.
+
+This book covers the following exciting features:
+* Setting up the installation of WDIO
+* Configuration of VS Code and custom settings to make life easier
+* Write wrappers for Click, Select and SetValue
+* Enhance data entry with self-updating data tags for date and format 
+* Implement examples of class switching for self-healing objects to reduce maintenence
+* Enhance reporting detail in color in the console 
+* Report to Allure including screen captures
+* How to skip the page object model finding objects by text alone 
+* How to automate stateless end-to-end user journey where user choices change the order pages appear
+* Setting up a CI/CD job for manual testers to automate complex data setup events via LambdaTest  
+
 
 
 ## Instructions and navigations
