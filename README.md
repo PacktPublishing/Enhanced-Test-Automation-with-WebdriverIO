@@ -1,5 +1,8 @@
-## Enhanced Test Automation with WebdriverIO
-This is the code repository for [Enhanced Test Automation with WebdriverIO](https://www.packtpub.com/product/enhanced-test-automation-with-webdriverio/9781837630189), published by Packt.
+# Enhanced Test Automation with WebdriverIO
+
+**Unlocking the Superpowers of Hybrid Testing Frameworks**
+
+This is the code repository for Enhanced Test Automation with WebdriverIO, published by Packt.
 
 ## What is this book about?
 This book serves as a comprehensive guide to mastering advanced WebdriverIO concepts for end-to-end testing of web applications. It includes custom command wrappers and implementing AI powered self-healing object strategies. The book is designed to augment the skillset of  Software Developer Engineers in Test (SDETs) covering aspects including dynamic data handling, detailed reporting, and integrating automated tests into CI/CD pipelines. It's particularly beneficial for those seeking to streamline test maintenance and automate complex test scenarios.
@@ -49,6 +52,8 @@ class SecurePage extends Page {
 }
 ```
 
+**Following is what you need for this book:**
+This book is for WebdriverIO developers who want to extend the functionalities of WDIO. Those who seek mystic code to customize their scripts, locators, data manipulations and more. Basic familiarity with Node and Yarn will help you get the most out of this book.
 
 ## Software and Hardware List
 |Software covered in the book | Operating system requirements      |
