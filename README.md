@@ -1,3 +1,18 @@
+### Enhanced Test Automation with WebdriverIO
+
+
+## what is this book about?
+
+
+## Instructions and navigations
+
+
+## Software and Hardware List
+
+
+### Get to Know the Author
+
+
 ## Pre-Requisite
 Please ensure you have these packages installed globally using their most stable version:
 ```
