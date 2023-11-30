@@ -3,7 +3,7 @@ import SecurePage from "../pageObjects/secure.page";
 import * as helpers from "../../helpers/helpers";
 import * as Data from "../../shared-data/userData.json";
 
-describe("Ch13: Cross Browser and Cross Environment Testing", () => {
+describe("Chapter 13: The Multiverses Cross Browser and Cross Environment Testing", () => {
 
   beforeEach(async () => {
     await LoginPage.open();
