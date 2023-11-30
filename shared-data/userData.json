@@ -1,0 +1,19 @@
+{
+  "userData": {
+    "_comment": "User credentials",
+    "username": "tomsmith",
+    "password": "SuperSecretPassword!"
+  }
+  ,
+  "journeyData": {
+    "_hostorattend_comment": "'host' (default Happy Path), 'attend' or 'skip' ",
+    "hostorattend": "host",
+    "_location_comment": "'zombieton' (default Happy Path) or 'ghostville' ",
+    "location": "zombieton",
+    "_environment_comment": "'prod' (default Happy Path) or 'stage' ",
+    "theme": "zombies",
+    "_theme_comment": "'zombies' (default Happy Path) or 'ghosts' ",
+    
+    "ENV": "PROD"
+  }
+}

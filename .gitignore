@@ -1,13 +1,13 @@
 node_modules
+allure-report
 .DS_Store
 logs
 all-logs
-driver-logs
 *.png
+.idea
+screenshots
 *.log
 .vscode
-.idea
-.env
 reports
+.env
 yarn-error.log
-allure-report

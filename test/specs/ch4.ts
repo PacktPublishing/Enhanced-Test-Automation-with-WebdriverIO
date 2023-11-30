@@ -1,5 +1,5 @@
-import LoginPage from '../pageobjects/login.page';
-import SecurePage from '../pageobjects/secure.page';
+import LoginPage from '../pageObjects/login.page';
+import SecurePage from '../pageObjects/secure.page';
 
 describe("Ch4: Super Speed : Time Travel Paradoxes and Broken Promises", () => {
     it('should report text in order 1,2,3 even though the code is in 2, 3, 1 order', () => {
@@ -26,11 +26,11 @@ describe("Ch4: Super Speed : Login with Await", () => {
 describe("Ch4: Super Speed : Login fails without await", () => {
     it('Should FAIL to login because await statements are missing in login_sync and executes out of order', async () => {
         global.log(`1. Open browser without await`);
-        await LoginPage.open();
+        LoginPage.open();
         // Removed await keywords - Demonstrates potential "Time Travel" issue when .click executes before .setValue in login_sync
-        await LoginPage.login_sync('tomsmith1', 'SuperSecretPassword!');
-        await expect(SecurePage.flashAlert).toBeExisting();
-        await expect(SecurePage.flashAlert).toHaveTextContaining(
+        LoginPage.login_sync('tomsmith1', 'SuperSecretPassword!');
+        expect(SecurePage.flashAlert).toBeExisting();
+        expect(SecurePage.flashAlert).toHaveTextContaining(
             'You logged into a secure area!');
     })
 })
