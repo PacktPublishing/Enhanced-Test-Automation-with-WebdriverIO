@@ -4,16 +4,6 @@ import LandingPage from "../pageObjects/landing.page";
 import * as helpers from "../../helpers/helpers";
 import dynamicLoadingPage from "../pageObjects/dynamicLoading.page";
 
-// describe("Chapter 5: Intentional Fail Last clickAdv with pageSync and autoscroll", () => {
-
-//   it("Chapter 5: navToTypos - autoscroll", async () => {
-//     // await helpers.log(Promise) // Unit test log returns warning when anything but string is passsed
-//     await LandingPage.open();
-//     await LandingPage.navToTypos();
-//     // await expect(typosPage.typoText).toHaveTextContaining(   'You logged into a secure area!');
-//   });
-// });
-
 describe("Chapter 5: Buring wait time of Dynamically Loaded elements with spinner check embedded in clickAdv()", () => {
   // Example 1: Element on page that is hidden
   it(`Clicks Start with clickadv which waits for spinner before hidden "Hello World" is displayed`, async () => {
@@ -54,7 +44,6 @@ describe("Chapter 5: Buring wait time of Dynamically Loaded elements with spinne
     await helpers.pause(5000);
     await helpers.highlightOff(await dynamicLoadingPage.txtHelloWorld);
   });
-
 });
 
 describe("Chapter 5: Intentional Fail Last clickAdv with pageSync and autoscroll", () => {
@@ -67,10 +56,7 @@ describe("Chapter 5: Intentional Fail Last clickAdv with pageSync and autoscroll
       "You logged into a secure area!"
     );
   });
-
 });
-
-
 
 describe("Chapter 5: Intentional Fail Last clickAdv", () => {
 
@@ -98,5 +84,4 @@ describe("Chapter 5: Pass with clickAdvIfExists", () => {
       "You logged into a secure area!"
     );
   });
-
 });

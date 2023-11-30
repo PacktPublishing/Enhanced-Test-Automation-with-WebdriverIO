@@ -38,7 +38,6 @@ verifyHelloWorld();
     // clickAdv waits for the dynamically waits for spinner to disappear
     // It highlights the spinner while it is waiting.
     await helpers.clickAdv(await this.btnStart);
-  
   }
 
   /**
@@ -52,7 +51,6 @@ verifyHelloWorld();
     // clickAdv waits for the to disappear before rendering "Hello World" on the page.
     // It highlights the spinner while it is waiting.
     await helpers.clickAdv(await this.btnStart);
-  
   }
 
   /**

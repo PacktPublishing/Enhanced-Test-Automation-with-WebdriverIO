@@ -28,6 +28,5 @@ class DropdownPage extends Page {
        await helpers.log(`Selecting option "${option}"`);
        await helpers.selectAdv(`dropdown`, option);
    }
-
 }
 export default new DropdownPage();

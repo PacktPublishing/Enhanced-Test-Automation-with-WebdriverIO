@@ -2,7 +2,6 @@
  expect(el).toHaveTextContainingContaining() is being depreciated. 
  Replace with expect(el).toHaveText(expect.stringContaining('...')))
 */
-
 import { ASB } from "./globalObjects";
 import allureReporter from "@wdio/allure-reporter";
 
@@ -202,7 +201,6 @@ export async function getValidElement(
 
 
     let initialElementType: string; // Declare initialElementType variable
-    initialElementType = elementType;
     let eleText = elementOrString;
     found = false;
 
@@ -266,7 +264,6 @@ export async function getValidElement(
 
     if (found) {
       element = elements[0];
-      //await log(`  PASS: Found ${elements.length} "${eleText}" element(s) with selector "${SELECTOR}""`);
     } else {
       // Any close matches for this text string?
       selector = `//*[contains(@id, '${eleText}') 
@@ -279,32 +276,26 @@ export async function getValidElement(
       found = elements.length > 0;
       if (found) {
         element = elements[0];
-
-        //await log(`  PASS: Found ${elements.length} "${eleText}" element(s) with selector \`${selector}"\``);
-
       }
 
       if (!found) {
         await log(`  FAIL: Did not find ${elements.length} "${eleText}" element with selector "${selector}"`);
         return null;
       }
-
     }
-
   } else {
     element = elementOrString;
   }
 
-  // Find as Element
-
-
-  // Get a collection of matching elements
+  /**
+   * Find as Element
+   * Get a collection of matching elements
+   */
   newElement = element;
   selector = newElement.selector
   ASB.set("SELECTOR", selector);
 
   try {
-
     elements = await $$(selector);
     if (elements.length === 0) {
       // Extract the element type if not provided
@@ -323,34 +314,9 @@ export async function getValidElement(
       // Get the element name from the xpath or CSS selector
       if (selector.startsWith("//") || selector.startsWith("(//")) {
 
-        /*
-        //div[@id='header']
-        //p[@class='intro']
-        //ul[@id='menu']/li[1]
-        //button[@class='submit']
-        //h1[@class='title']
-        //div[@class='container']
-        //input[@type='text']
-        //div[@id='footer']/a
-        //div[contains(@class, 'main-content')]
-        */
-
         elementName = selector.match(/=".*"/)[0].slice(2, -1);
 
       } else {
-
-        /* Samples of CSS selectors 
-        .main-content
-        div.container
-        p.intro
-        button.submit
-        h1.title
-        #header
-        ul#menu li:first-child
-        div#footer a
-        form#login input[name='username']
-        input[type='text']
-        */
 
         // Extract text from CSS selector
         if (selector.includes("'") || selector.includes(`"`)) {
@@ -613,8 +579,6 @@ export async function isElementInViewport(
 ): Promise<boolean> {
 
   // This statement returns true if the element off the top of the the viewport
-  //let isInViewport = await element.isDisplayedInViewport();
-
   let isInViewport = true
   let viewportHeight = (await browser.getWindowSize()).height
   let y = await element.getLocation("y");
@@ -1018,8 +982,6 @@ export async function scrollIntoView(element: WebdriverIO.Element) {
 
     let elementY = await getElementY(element);
 
-
-
     if (elementY < 0) {
       // scolls down and sets END_OF_PAGE if the element is at the bottom of the page
       scrollDown();
@@ -1125,7 +1087,7 @@ export async function waitForSpinner(): Promise<boolean> {
         }
       }
     } catch (error) {
-      // Spinner no longer exists, eat the error.
+      // Spinner no longer exists
     }
 
     // Optional: Display a spinner completion message in Green in the console.
@@ -1152,7 +1114,6 @@ export async function selectAdv(
   let success: boolean = false;
   let itemValue: String = "No Item selected"
   let listItems: WebdriverIO.Element[]
-  let listItem: WebdriverIO.Element
   let textContent: string = " "
 
   // Empty item list - do nothing
@@ -1166,7 +1127,6 @@ export async function selectAdv(
   const validListElement = await getValidElement(listElement, "list");
   await scrollIntoView(validListElement);
   // Get the name of the element
-  // let listname = await getListName(listElement);
 
   let selector = validListElement.selector.toString()
   let isXPath = selector.includes("//");
@@ -1238,8 +1198,6 @@ export async function selectAdv(
       let items: string[] = []; // List of strings in the combobox
       let found = false;
       try {
-        //listItem = await browser.$(`//li/*[contains(text(),'${item}')])`)
-
         listItems = await browser.$$(`//li/*`)
 
         for (const listItem of listItems) {
@@ -1268,14 +1226,7 @@ export async function selectAdv(
         }
         await log(`  ERROR: "${item}" was not found in combobox: \n ${textContent}`)
       }
-
-      // Click the item
-      //await (await $(`//span[normalize-space()='${item}']`)).click();
-      //await listItem.click();
-      //await clickAdv(listItem)
       await browser.keys('Enter');
-
-
     }
 
   } else {

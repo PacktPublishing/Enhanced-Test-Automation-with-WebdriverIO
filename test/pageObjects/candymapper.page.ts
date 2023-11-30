@@ -1,4 +1,3 @@
-
 import * as helpers from '../../helpers/helpers';
 import { ASB } from '../../helpers/globalObjects';
 import Page from "./page";
@@ -7,14 +6,9 @@ import Page from "./page";
  * sub page containing specific selectors and methods for a specific page
  */
 class CandymapperPage extends Page {
-
-    // public btnPopupClose() {
     public get btnPopupClose() {
         return $(`//*[name()="svg"][contains(@id,"close-icon")]`);
     }
-
-
-
 
     public async build() {
         // Is this the page to process?  
@@ -25,17 +19,13 @@ class CandymapperPage extends Page {
             console.log(" inside candymapper Main: " + await ASB.get("page") )
 
             if (await (await this.btnPopupClose).isDisplayed()) {
-
                 await helpers.clickAdv(await this.btnPopupClose);
-
             }
-
             await helpers.clickAdv(await super.btnHalloweenParty);
             success = true;
         }
         return success;
     }
-
 }
 
 export default new CandymapperPage();

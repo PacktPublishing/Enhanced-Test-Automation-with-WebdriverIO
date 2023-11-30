@@ -1,15 +1,12 @@
 import { ASB } from "../../helpers/globalObjects";
 import candymapperPage from "../pageObjects/candymapper.page";
 import halloweenAttendPartyPage from "../pageObjects/halloweenAttendParty.page";
-import halloweenHostPartyPage from "../pageObjects/halloweenHostParty.page";
 import halloweenPartyPage from "../pageObjects/halloweenParty.page";
 import halloweenPartyLocationPage from "../pageObjects/halloweenPartyLocation.page";
 import halloweenPartyThemePage from "../pageObjects/halloweenPartyTheme.page";
 import halloweenPartyTimerPage from "../pageObjects/halloweenPartyTimer.page";
 import * as helpers from "../../helpers/helpers";
-import * as defaultJourney from "../../shared-data/userData.json";
 import AllureReporter from "@wdio/allure-reporter";
-import { exit } from "process";
 
 class StateDrivenUtils {
 
@@ -19,8 +16,6 @@ class StateDrivenUtils {
       testData = process.env.JOURNEY;
     }
 
-
-
     if (testData != "") {
       testData = " " + testData.toLowerCase(); // Add space to make sure we match whole words and convert to lowercase once
 
@@ -28,14 +23,6 @@ class StateDrivenUtils {
       ASB.set("hostOrAttend", "host");
       ASB.set("location", "zombieton");
       ASB.set("theme", "zombies");
-
-
-
-      // defaultJourneyData.forEach((journey) => {
-      //   ASB.set(journey.key, journey.value);
-      // });
-
-
 
       // Overriding default values
       if (testData.includes(" host")) {
@@ -53,12 +40,7 @@ class StateDrivenUtils {
       if (testData.includes(" scared")) {
         ASB.set("location", "scared");
       }
-
-
-
-  
     }
-
   }
 
   public async partyPath(testData) {
@@ -66,7 +48,6 @@ class StateDrivenUtils {
     let complete: Boolean = false;
     let lastPage: string = ""
     let retry = 2
-   
 
     this.parseTestData(testData);  // Parse the test data to set the ASB
     helpers.parseToASB(testData);   // Parse the test data to set the ASB
@@ -84,7 +65,6 @@ class StateDrivenUtils {
       pageName = await browser.getUrl();
       pageName = extractPathFromUrl(pageName)
       ASB.set("page", pageName);
-
 
       knownPage =   
       await halloweenPartyPage.build() || // Move us from party page to host or attend page
@@ -109,15 +89,10 @@ class StateDrivenUtils {
         //One of the build methods returned true
      
         AllureReporter.addAttachment(`Unknown Page detected: ${pageName}`, "", "text/plain");
-        
         console.log(`Unknown Page detected: ${pageName} - Exiting Journey`);
         complete = true;
-        
         expect("Known Page").toBe(true); // This test will still run and pass
-
     }
-
-
 
       // Exit Point #3: Page did not change
       if (lastPage === pageName) {
@@ -135,28 +110,16 @@ class StateDrivenUtils {
         retry = 2;
       }
 
-
-
       // Exit Point #4: We were scared and went back -Halloween Party Home page reached - error 404 in prod / works in stage
    
       if (ASB.get("page") === "halloween-party") {
         console.log("Halloween Party Home page reached")
-
         complete = true;
       }
 
-
-
-
-
       lastPage = ASB.get("page"); // Save the last page name
     }
-
-
   }
-
-
-
 }
 function extractPathFromUrl(url: string) {
   const urlParts = url.split('/');

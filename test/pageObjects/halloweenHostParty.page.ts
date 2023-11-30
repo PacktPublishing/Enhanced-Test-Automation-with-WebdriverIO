@@ -21,7 +21,6 @@ class HalloweenHostPartyPage extends Page {
     public async build() {
         console.log("HostPartyPage: " + await ASB.get("page") )
 
-        // Is this the page to process?
         if (await ASB.get("page") === "party-location") {
             console.log("inside HostPartyPage party-location: " + await ASB.get("page"))
 
@@ -34,7 +33,6 @@ class HalloweenHostPartyPage extends Page {
 
         return (path[location]||path["default"])();
     }
-
         return false; //This is not the page to process
     }
 }

@@ -17,5 +17,4 @@ describe("Chapter 8: The expect / assert / Should wrapper", () => {
     let bnText = await elem.getText();
     await helpers.expectAdv(bnText, 'equa', 'Login');
   });
-
 });

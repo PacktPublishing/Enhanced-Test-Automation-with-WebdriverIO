@@ -1,8 +1,14 @@
 {
-    "name": "wdio",
+    "name": "enhanced-test-automation-with-webdriverio",
     "version": "1.0.0",
-    "description": "",
-    "keywords": [],
+    "description": "Unlocking the superpowers of hybrid testing frameworks",
+    "keywords": [
+        "webdriverio",
+        "typescript",
+        "test automation",
+        "candymapper",
+        "klassi-js"
+    ],
     "authors": [
         {
             "name": "Paul Grossman",
@@ -59,7 +65,7 @@
         "wdio-lambdatest-service": "^2.0.3"
     },
     "devDependencies": {
-        "chromedriver": "^119.0.0",
+        "chromedriver": "^116.0.0",
         "geckodriver": "^4.0.5"
     }
 }

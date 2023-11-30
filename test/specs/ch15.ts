@@ -1,15 +1,9 @@
 import LoginPage from "../pageObjects/login.page";
-
-// Host or Attend a party in Ghostville or Zombieton
 import stateDrivenUtils from "../utilities/stateDriven.utils";
 
-
+// Host or Attend a party in Ghostville or Zombieton
 
 beforeEach(async () => {
-    // Determines the environment to run the test in from the command line
-    // Default to prod: candymapper.com
-    // dev: candymapperR2.com
-    // env = process.env.ENV || "prod";
     await LoginPage.open(``); // Nav to Candymapper.com Prod or Dev
   });
 

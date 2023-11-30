@@ -28,11 +28,8 @@ class HalloweenAttendPartyPage extends Page {
         console.log("AttendPartyPage: " + await ASB.get("page") )
         
         if (await ASB.get("page").includes("attend-a-party")) {
-            //let location = ASB.get("location").toLowerCase()
-           
             let location = ASB.get("location")
 
-            
             const path = {
                 ghostville: async () =>  await helpers.clickAdv(await this.btnGhostville),
                 scared: async () =>  await helpers.clickAdv(await this.btnScared),
@@ -43,9 +40,7 @@ class HalloweenAttendPartyPage extends Page {
             // If the location is not in the path object, use the default.
             return (path[location]||path["default"])();
         }
-
         return false; //This is not the page to process
-
     }
 }
 

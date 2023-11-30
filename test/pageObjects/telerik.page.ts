@@ -4,8 +4,6 @@ import * as helpers from '../../helpers/helpers';
  * sub page containing specific selectors and methods for a specific page
  */
 class TelerikPage extends Page {
-
-
     /**
      * define selectors using getter methods
      */
@@ -49,7 +47,6 @@ class TelerikPage extends Page {
         return $(`[class='k-input-inner']`);
     }
 
-
     public async open(path: string) {
         return await super.open(`${path}`);
     }
@@ -69,17 +66,15 @@ class TelerikPage extends Page {
 
     public async selectCountry(country: string) {
         await helpers.clickAdvIfExists(await this.buttonAcceptCookies);
-
         // This gets you into the iFrame
         const iframe = await browser.findElement('css selector', 'iframe');
         await browser.switchToFrame(iframe);
         await helpers.selectAdv(await this.comboboxCountries, country);
-
     }
 
     public async findRestaurantsIn
         (country: string = 'Hungary') {
-        // //span[normalize-space()='Belgium']
+        //span[normalize-space()='Belgium']
         await helpers.selectAdv(await this.lstCountriesByAxis, country)
     }
 }

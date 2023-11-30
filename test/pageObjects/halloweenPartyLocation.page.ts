@@ -27,7 +27,6 @@ class HalloweenPartyLocationPage extends Page {
             console.log("Inside HalloweenPartyLocationPage: " + await ASB.get("page") )
            success = await helpers.clickAdv(await this.btnFindOutMore);
         }
-
         return success;
     }
 }

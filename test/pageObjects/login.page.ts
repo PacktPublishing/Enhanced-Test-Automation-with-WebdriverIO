@@ -28,7 +28,6 @@ class LoginPage extends Page {
         return $('//button[type="bogus"]');
     }
 
-
     public get btnSubmit() {
         return $('button[type="submit"]');
     }
@@ -37,7 +36,6 @@ class LoginPage extends Page {
     public get staleSubmitLink() {
         return $('//a[text()="submit"]');
     }
-
 
     /**
      * a method to encapsule automation code to interact with the page
@@ -51,9 +49,7 @@ class LoginPage extends Page {
         await helpers.log(
             `Entered password and clicking Submit with ClickAdv`
         );
-
         await helpers.clickAdv(await this.btnSubmit);
-
     }
 
     /**
@@ -118,9 +114,7 @@ class LoginPage extends Page {
         await helpers.log(
             `Entered password and clicking Submit with ClickAdv`
         );
-
         await helpers.clickAdvIfExists(await this.btnBogus);
-        
         await helpers.clickAdv(await this.btnSubmit);
     }
 
@@ -171,7 +165,6 @@ class LoginPage extends Page {
      * overwrite specific options to adapt it to page object
      */
     public open(path: string = "login") {
-
         return super.open(path);
     }
 }

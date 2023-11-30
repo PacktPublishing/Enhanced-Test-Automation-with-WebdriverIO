@@ -1,7 +1,8 @@
-// Updated for 2024!
-
+/* Updates for 2024!
+ expect(el).toHaveTextContainingContaining() is being depreciated.
+ Replace with expect(el).toHaveText(expect.stringContaining('...')))
+*/
 import { ASB } from './helpers/globalObjects';
-import * as helpers from './helpers/helpers';
 require('dotenv').config();
 
 const DEBUG =
@@ -10,8 +11,6 @@ console.log(`DEBUG: ${DEBUG}`);
 
 let timeout = DEBUG === true ? 1_000_000 : 10_000;
 console.log(`timeout = ${Math.ceil(timeout / 60_000)} min.`);
-
-const addToElement = true
 
 /**
  *  The baseUrl will only be used if you don't specify a url in your script
@@ -32,7 +31,6 @@ const ANSI_PASS = `\x1b[38;2;0;255;0m` // GREEN
 const ANSI_FAIL = `\x1b[38;2;255;0;0m`    // RED
 const ANSI_WARNING = `\x1b[38;2;255;255;0m`  // YELLOW
 const ANSI_LOCATOR = `\x1b[38;2;200;150;255m`  // Light Purple
-const ANSI_STRING = `\x1b[38;2;173;216;230m`  // Light Blue TEXT entered into a field
 const ANSI_TEXT = `\x1b[97m`  // White TEXT
 const ANSI_RESET = `\x1b[0m` //Reset
 let LAST_MESSAGE: string = "";
@@ -68,7 +66,6 @@ global.log = (message: any) => {
                     messageString = (`--->  WARN: ${message} \n      Promise object detected. async function call missing await keyword.`);
                     console.trace();
                 }
-
                 if (messageString.includes("WARN: ")) {
                     messageString = ANSI_WARNING + messageString + " " + ANSI_RESET
                 } else if (messageString.includes("FAIL: ") || messageString.includes("ERROR: ") || messageString.includes("Promise")) {
@@ -84,7 +81,6 @@ global.log = (message: any) => {
                 //Highlight CSS and XPath selectors in Purple case-insensitive to 'Selector' and 'selector'
                 //let regex = /Selector '(.*?)' /ig;
                 //messageString = messageString.replace(regex, ` Selector '${ANSI_LOCATOR}$1${ANSI_RESET}' `);
-                
                 let regex = /Selector "(.*?)" /ig;
                 messageString = messageString.replace(regex, ` Selector "${ANSI_LOCATOR}$1${ANSI_RESET}" `);
                 
@@ -97,23 +93,10 @@ global.log = (message: any) => {
 };
 
 export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
-    //
     // ====================
     // Runner Configuration
     // ====================
     runner: 'local',
-    //
-    // =====================
-    // ts-node Configurations
-    // =====================
-    //
-    // You can write tests using TypeScript to get autocompletion and type safety.
-    // You will need typescript and ts-node installed as devDependencies.
-    // WebdriverIO will automatically detect if these dependencies are installed
-    // and will compile your config and tests for you.
-    // If you need to configure how ts-node runs please use the
-    // environment variables for ts-node or use wdio config's autoCompileOpts section.
-    //
     autoCompileOpts: {
         autoCompile: true,
         // see https://github.com/TypeStrong/ts-node#cli-and-programmatic-options
@@ -121,13 +104,7 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
         tsNodeOpts: {
             transpileOnly: true,
         },
-        // tsconfig-paths is only used if "tsConfigPathsOpts" are provided, if you
-        // do please make sure "tsconfig-paths" is installed as dependency
-        // tsConfigPathsOpts: {
-        //     baseUrl: './'
-        // }
     },
-    //
     // ==================
     // Specify Test Files
     // ==================
@@ -148,7 +125,6 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     exclude: [
         // 'path/to/excluded/files'
     ],
-    //
     // ============
     // Capabilities
     // ============
@@ -171,34 +147,12 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     // https://saucelabs.com/platform/platform-configurator
     //
     injectGlobals: true,
-    // Inserts WebdriverIO's globals (e.g. `browser`, `$` and `$$`) into the global environment.
-    // If you set to `false`, you should import from `@wdio/globals`. Note: WebdriverIO doesn't
-    // handle injection of test framework specific globals.
-    // capabilities: [
-    //     {
-    //     // maxInstances can get overwritten per capability. So if you have an in-house Selenium
-    //     // grid with only 5 firefox instances available you can make sure that not more than
-    //     // 5 instances get started at a time.
-    //         browserName: 'chrome',
-    //         // or "firefox", "microsoftedge", "safari"
-    //         'goog:chromeOptions': {
-    //             args: ['--disable-gpu', '--enable-automation', '--disable-infobars', '--disable-notifications']
-    //         }
-    //     },
-    //     {
-    //         browserName: 'firefox'
-    //     }
-    //     // acceptInsecureCerts: true,
-    // ],
-    //
     // ===================
     // Test Configurations
     // ===================
     // Define all options that are relevant for the WebdriverIO instance here
-    //
     // Level of logging verbosity: trace | debug | info | warn | error | silent
     logLevel: "warn",
-    //
     // Set specific log levels per logger
     // loggers:
     // - webdriver, webdriverio
@@ -212,28 +166,22 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     //     webdriver: 'info',
     //     '@wdio/appium-service': 'info'
     // },
-    //
     // If you only want to run your tests until a specific amount of tests have failed use
     // bail (default is 0 - don't bail, run all tests).
     bail: 0,
-    //
     // Set a base URL in order to shorten url command calls. If your `url` parameter starts
     // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
     // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
     // gets prepended directly.
     // baseUrl: environments[process.env.BASE_ENV].baseUrl,
     baseUrl: baseUrl,
-    //
     // Default timeout for all waitFor* commands.
     waitforTimeout: 10000,
-    //
     // Default timeout in milliseconds for request
     // if browser driver or grid doesn't send response
     connectionRetryTimeout: 120000,
-    //
     // Default request retries count
     connectionRetryCount: 3,
-    //
     // Test runner services
     // Services take over a specific job you don't want to take care of. They enhance
     // your test setup with almost no effort. Unlike plugins, they don't add new
@@ -242,7 +190,6 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
         "chromedriver",
         "geckodriver"
     ],
-
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
     // see also: https://webdriver.io/docs/frameworks
@@ -269,13 +216,10 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
             disableWebdriverStepsReporting: true,
             disableWebdriverScreenshotsReporting: true,
         }]],
-
-    //
     // Options to be passed to Jasmine.
     jasmineOpts: {
         // Jasmine default timeout
         defaultTimeoutInterval: timeout,
-        //
         // The Jasmine framework allows interception of each assertion in order to log the state of the application
         // or website depending on the result. For example, it is pretty handy to take a screenshot every time
         // an assertion fails.
@@ -288,8 +232,6 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
             }
         }
     },
-
-    //
     // =====
     // Hooks
     // =====
@@ -304,36 +246,6 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
      */
     onPrepare: function (config, capabilities) {
     },
-    /**
-     * Gets executed before a worker process is spawned and can be used to initialise specific service
-     * for that worker as well as modify runtime environments in an async fashion.
-     * @param  {String} cid      capability id (e.g 0-0)
-     * @param  {[type]} caps     object containing capabilities for session that will be spawn in the worker
-     * @param  {[type]} specs    specs to be run in the worker process
-     * @param  {[type]} args     object that will be merged with the main configuration once worker is initialized
-     * @param  {[type]} execArgv list of string arguments passed to the worker process
-     */
-    // onWorkerStart: function (cid, caps, specs, args, execArgv) {
-    // },
-    /**
-     * Gets executed just after a worker process has exited.
-     * @param  {String} cid      capability id (e.g 0-0)
-     * @param  {Number} exitCode 0 - success, 1 - fail
-     * @param  {[type]} specs    specs to be run in the worker process
-     * @param  {Number} retries  number of retries used
-     */
-    // onWorkerEnd: function (cid, exitCode, specs, retries) {
-    // },
-    /**
-     * Gets executed just before initialising the webdriver session and test framework. It allows you
-     * to manipulate configurations depending on the capability or spec.
-     * @param {Object} config wdio configuration object
-     * @param {Array.<Object>} capabilities list of capabilities details
-     * @param {Array.<String>} specs List of spec file paths that are to be run
-     * @param {String} cid worker id (e.g. 0-0)
-     */
-    // beforeSession: function (config, capabilities, specs, cid) {
-    // },
     /**
      * Gets executed just before initialising the webdriver session and test framework. It allows you
      * to manipulate configurations depending on the capability or spec.
@@ -358,7 +270,6 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
             // Pass the locator to the switchboard
             ASB.set("elementsSelector", selector);
         }
-
     },
 
     /**
@@ -369,8 +280,6 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
      * @param {Object}         browser      instance of created browser/device session
      */
     before: function (capabilities, specs) {
-        //Set
-        //helpers.log(`process.env.DEBUG: ${process.env.DEBUG}`) // ---> process.env.DEBUG: -LH:*
         ASB.set("DEBUG", (process.env.DEBUG === undefined) ? false : (process.env.DEBUG === `true`));
         ASB.set("spinnerTimeoutInSeconds", 30);
 
@@ -381,19 +290,6 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
 
         global.log(`timeout = ${Math.ceil(timeout / 60000)} min.`);
     },
-    /**
-     * Runs before a WebdriverIO command gets executed.
-     * @param {String} commandName hook command name
-     * @param {Array} args arguments that command would receive
-     */
-    // beforeCommand: function (commandName, args) {
-    // },
-    /**
-     * Hook that gets executed before the suite starts
-     * @param {Object} suite suite details
-     */
-    // beforeSuite: function (suite) {
-    // },
     /**
      * Function to be executed before a test (in Mocha/Jasmine) starts.
      */
@@ -487,6 +383,5 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
         if (ASB.get("alreadyFailed")) {
             throw new Error('Test failed');
         }
-
     },
 };

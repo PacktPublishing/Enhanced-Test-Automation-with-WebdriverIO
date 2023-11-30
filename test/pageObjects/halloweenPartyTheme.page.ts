@@ -18,30 +18,21 @@ class HalloweenThemePartyPage extends Page {
         return $(`//a[contains(normalize-space(),'Ghosts')]`);
     }
 
-
-
     public async build() {
-       // let success: boolean = false; // Return false if this is not the current page.
-
         // Is this the page to process?
         console.log("PartyTheme: " + await ASB.get("page") )
         if (await ASB.get("page").includes("host-a-party")) {
             console.log("inside PartyTheme host-a-party: " + await ASB.get("page"))
            
             let theme = ASB.get("theme")
-
-           
-            
             const path = {
                 zombies: async () => await helpers.clickAdv(await this.btnZombies),
                 ghosts: async () =>  await helpers.clickAdv(await this.btnGhosts),
                 default: () => allureReporter.addAttachment(`Invalid theme type: ${theme}`, "", "text/plain"),
             };
-
             // If the location is not in the path object, use the default.
            return (path[theme]||path["default"])();
         }
-
         return false; //This is not the page to process
     }
 }
