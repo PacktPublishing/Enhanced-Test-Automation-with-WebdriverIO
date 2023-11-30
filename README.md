@@ -1,5 +1,5 @@
-### Enhanced Test Automation with WebdriverIO
-
+## Enhanced Test Automation with WebdriverIO
+This is the code repository for Enhanced Test Automation with WebdriverIO, published by Packt.
 
 ## what is this book about?
 
