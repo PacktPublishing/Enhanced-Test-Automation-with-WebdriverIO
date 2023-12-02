@@ -1,4 +1,4 @@
-function switchboardFactory(): { get: (k: string) => any; set: (k: string, v: any) => void; } {
+function switchboardFactory(): { get: (k: string) => any; set: (k: string, v: any) => void; print: () => void; } {
     const switchboard = new Map;
     switchboard.set("alreadyFailed", false);
     
@@ -8,7 +8,12 @@ function switchboardFactory(): { get: (k: string) => any; set: (k: string, v: an
         },
         set(k: string, v: any) {
             switchboard.set(k, v);
+        },
+        print() {
+            for (const [key, value] of switchboard.entries()) {
+                console.log(`Key: ${key}, Value: ${value}`);
+            }
         }
     }
 }
-export const ASB: { get: (k: string) => any; set: (k: string, v: any) => void; } = switchboardFactory();
+export const ASB: { get: (k: string) => any; set: (k: string, v: any) => void; print: () => void; } = switchboardFactory();
