@@ -56,7 +56,7 @@ global.log = (message: any) => {
         ASB.set("LAST_MESSAGE_COUNT", 0);
     }
     ASB.set("LAST_MESSAGE", message);
-    let messageString: string = message + " " ;
+    let messageString: string = message + " ";
 
     try {
         if (typeof message === "string" || typeof message === "number") {
@@ -83,7 +83,7 @@ global.log = (message: any) => {
                 //messageString = messageString.replace(regex, ` Selector '${ANSI_LOCATOR}$1${ANSI_RESET}' `);
                 let regex = /Selector "(.*?)" /ig;
                 messageString = messageString.replace(regex, ` Selector "${ANSI_LOCATOR}$1${ANSI_RESET}" `);
-                
+
                 console.log(`--->   ${messageString}`);
             }
         }
@@ -253,22 +253,27 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
      * @param {args} arguments passed to the command
      */
     beforeCommand: function (commandName, args) {
-        if (commandName === '$') {
-            const selector = args[0];
-            // Modify the selector or add additional functionality as needed
-            // For example, you can add a prefix to the selector
-            global.log(`BEFORE $ COMMAND: Selector "${selector}" sent to ASB("elementSelector")`);
-            // Pass the locator to the switchboard
-            ASB.set("elementSelector", selector);
-        }
+        if (!ASB.get("TEST_ENDED")) {
+            if (commandName === '$') {
+                const selector = args[0];
+                // Modify the selector or add additional functionality as needed
+                // For example, you can add a prefix to the selector
+                global.log(`BEFORE $ COMMAND: Selector "${selector}" sent to ASB("ELEMENT_SELECTOR")`);
+                // Pass the locator to the switchboard
+                ASB.set("ELEMENT_SELECTOR", selector);
+                // Print all entries (key-value pairs)
 
-        if (commandName === '$$') {
-            const selector = args[0];
-            // Modify the selector or add additional functionality as needed
-            // For example, you can add a prefix to the selector for custom color logging
-            global.log(`BEFORE $$ COMMAND: Selector "${selector}" sent to ASB("elementsSelector")`);
-            // Pass the locator to the switchboard
-            ASB.set("elementsSelector", selector);
+            }
+
+            if (commandName === '$$') {
+
+                const selector = args[0];
+                // Modify the selector or add additional functionality as needed
+                // For example, you can add a prefix to the selector for custom color logging
+                global.log(`BEFORE $$ COMMAND: Selector "${selector}" sent to ASB("ELEMENT_SELECTOR")`);
+                // Pass the locator to the switchboard
+                ASB.set("ELEMENT_SELECTOR", selector);
+            }
         }
     },
 
@@ -331,6 +336,13 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
         context,
         { error, result, duration, passed, retries }
     ) {
+        // if the framework detected a failure changed the state.
+        if (ASB.get("ALREADY_FAILED")) {
+            passed = false;
+            ASB.set("TEST_ENDED", true)
+            // throw new Error(`Multiple errors occurred`);
+        }
+
         if (!passed) {
             await browser.takeScreenshot();
         }
