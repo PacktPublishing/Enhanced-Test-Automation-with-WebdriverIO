@@ -13,7 +13,7 @@ describe("Ch3: Cybernetic Enhancements", () => {
 
     await LoginPage.open();
 
-    await LoginPage.login("tomsmith", "SuperSecretPassword!");
+    await LoginPage.loginAdv("tomsmith", "SuperSecretPassword!");
     await expect(SecurePage.flashAlert).toBeExisting();
     await expect(SecurePage.flashAlert).toHaveTextContaining(
         "You logged into a secure area!"
