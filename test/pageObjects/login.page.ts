@@ -19,7 +19,7 @@ class LoginPage extends Page {
     public get inputPassword() {
         return $("#password");
     }
-    
+
     public get staleInputPassword() {
         return $("#passw");
     }
@@ -31,6 +31,11 @@ class LoginPage extends Page {
     public get btnSubmit() {
         return $('button[type="submit"]');
     }
+
+    public get btnLogOn() {
+        return $('#login > button > i');
+    }
+
 
     // Self-healing object: Simulate a submit button that changed class from link anchor to button in last release
     public get staleSubmitLink() {
@@ -50,10 +55,30 @@ class LoginPage extends Page {
 
 
     public async expectBogusToexistAndBeEnabled() {
-        await helpers.expectAdv (await this.btnBogus, 'does exist');
-        await helpers.expectAdv (await this.btnBogus, 'is enabled');
+        await helpers.expectAdv(await this.btnBogus, 'does exist');
+        // Soft Assertion continues after failure
+        await helpers.expectAdv(await this.btnBogus, 'is enabled');
     }
 
+    // Intentional failure - the button text is 'Login'
+    public async expectLogOnButtonText() {
+        let actualText = await this.btnLogOn.getText();
+        await helpers.expectAdv(actualText, 'equals', 'Log On');
+    }
+
+    // Expect the button text is 'Login'
+    public async expectLogInButtonText() {
+        let actualText = await this.btnLogOn.getText();
+        await helpers.expectAdv(actualText, 'equals', 'Login');
+    }
+
+
+    // Intentiona Error Expect the button text is 'Login'
+    public async expectLogInButtonTextWithEquaTypo() {
+        let actualText = await this.btnLogOn.getText();
+        // Intentional Error - the assertion type is 'equa' instead of 'equals'
+        await helpers.expectAdv(actualText, 'equa', 'Login');
+    }
 
     /**
      * a method to encapsule advanced automation code to interact with the page
@@ -153,7 +178,7 @@ class LoginPage extends Page {
      * e.g. to login using username and password
      * missing await so the click executes before the setValue
      */
-    public async login_sync (username: string, password: string) {
+    public async login_sync(username: string, password: string) {
         global.log(`Logging in with "${username}" and password"`)
         this.inputUsername.setValue(username);
         this.inputPassword.setValue(password);
@@ -163,7 +188,7 @@ class LoginPage extends Page {
     /**
      * Ch:11 Echo location - find element by text alone
      */
-    public async loginWithoutPomSubmit (username: string, password: string) {
+    public async loginWithoutPomSubmit(username: string, password: string) {
         global.log(`Logging in with "${username}" and password"without the Page Object Model`)
         await helpers.setValueAdv(`username`, username);
         await helpers.setValueAdv(`password`, password);
@@ -171,7 +196,7 @@ class LoginPage extends Page {
         await helpers.clickAdv(`submit`);
     }
 
-    public async loginWithoutPom (username: string, password: string) {
+    public async loginWithoutPom(username: string, password: string) {
         global.log(`Logging in with "${username}" and password"without the Page Object Model`)
         await helpers.setValueAdv(`username`, username);
         await helpers.setValueAdv(`password`, password);

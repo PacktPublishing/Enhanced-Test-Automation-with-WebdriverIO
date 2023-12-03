@@ -10,22 +10,22 @@ describe("Chapter 8: The expectAdv wrapper", () => {
     await helpers.expectAdv(elem, 'to Have Text Containing', (["You logged into a secure area!"]));
     await helpers.expectAdv(elem, 'exists', null);
   });
-});
 
-/*
-"equals", 
-"contains", 
-"exists", 
-"is enabled", 
-"is disabled", 
-"does not exist", 
-"does not contain", 
-"to have text containing", 
-"contains text"
-"invalid assertion type"
-*/
 
-describe("Chapter 8: The expectAdv wrapper", () => {
+  /*
+  "equals", 
+  "contains", 
+  "exists", 
+  "is enabled", 
+  "is disabled", 
+  "does not exist", 
+  "does not contain", 
+  "to have text containing", 
+  "contains text"
+  "invalid assertion type"
+  */
+
+
   it("Chapter 8: using expectAdv to validate the button exsists and enabled", async () => {
     await LoginPage.open();
     let elem = await browser.$('#login > button');
@@ -34,34 +34,34 @@ describe("Chapter 8: The expectAdv wrapper", () => {
     await helpers.expectAdv(elem, 'is enabled');
   });
 
-});
 
-describe("Chapter 8: The expectAdv wrapper - Bogus button", () => {
+
+
   it("Chapter 8: using expectAdv to validate the bogus button does not exist", async () => {
     await LoginPage.open();
     let bogusElem = await browser.$(`//button[type='bogus']`);
     await helpers.expectAdv(bogusElem, 'does not exist');
   });
 
-
-  fit("Chapter 8: Intentional Failure using expectAdv to validate the bogus button exists and enabled", async () => {
+  it("Chapter 8: Intentional Failure using expectAdv to validate the bogus button exists and enabled", async () => {
     await LoginPage.open();
     await LoginPage.expectBogusToexistAndBeEnabled();
   });
 
-  it("Chapter 8: using expectAdv to validate the assertion failure", async () => {
+  it("Chapter 8: Intentional Failure using expectAdv to validate the Login button is 'Log On'", async () => {
     await LoginPage.open();
-    let elem = await browser.$(`#login > button > i`);
-    let actualText = await elem.getText();
-    await helpers.expectAdv(actualText, 'equals', 'Log on');
+    await LoginPage.expectLogOnButtonText();
   });
 
-  it("Chapter 8: Intentional failure using expectAdv with invalid assertion typeo 'equa'", async () => {
+  it("Chapter 8: Expect the Login button is 'Login'", async () => {
     await LoginPage.open();
-    let elem = await browser.$(`#login > button > i`);
-    let actualText = await elem.getText();
-    await helpers.expectAdv(actualText, 'equa', 'Login');
+    await LoginPage.expectLogInButtonText();
   });
 
+  it("Chapter 8: Intentional failure using expectAdv with invalid assertion typo 'equa'", async () => {
+    await LoginPage.open();
+    await LoginPage.expectLogInButtonTextWithEquaTypo();
+  });
 
 });
+
