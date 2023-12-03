@@ -2,7 +2,6 @@
  expect(el).toHaveTextContainingContaining() is being depreciated. 
  Replace with expect(el).toHaveText(expect.stringContaining('...')))
 */
-import ts, { isStringLiteralOrJsxExpression } from "typescript";
 import { ASB } from "./globalObjects";
 import allureReporter from "@wdio/allure-reporter";
 
@@ -1368,63 +1367,6 @@ export async function waitForElementToStopMoving(element: WebdriverIO.Element, t
 }
 
 /**
- * This is the function for doign asserts and passing the results to the allure report
- * @param actual
- * @param assertionType
- * @param expected
- */
-// export async function expectAdv(actual:  WebdriverIO.Element | string, assertionType: any, expected: any) {
-//   const softAssert = expect;
-
-//   // Convert "does not exist" to "doesNotExist"
-//   let originalAssertionType = assertionType;
-//   assertionType = assertionType.replace(/\s+/g, "").toLowerCase();
-
-//   const getAssertionType = {
-//     equals: () => (softAssert(actual).toEqual(expected)),
-//     contains: () => (softAssert(actual).toContain(expected)),
-
-//     exists: () => ( softAssert(actual).toBeExisting()),
-
-//     isenabled: () => (softAssert(actual).toBeEnabled()),
-//     isdisabled: () => (softAssert(actual).toBeDisabled()),
-//     doesnotexist: () => (softAssert(actual).not.toBeExisting()),
-//     doesnotcontain: () => (softAssert(actual).not.toContain(expected)),
-//     tohavetextcontaining: () => (softAssert(actual).toHaveTextContaining(expected)),
-//     containstext: () => (softAssert(actual).toHaveTextContaining(expected)),
-
-//     default: () => {
-//       log(`WARN: Invalid assertion type: "${assertionType}" \r\n  Valid assertion types are: "equals", "contains", "exists", "is enabled", "is disabled", "does not exist", "does not contain", "to have text containing", "contains text"`);
-//       // Throws an error if the assertion type is not valid
-//       throw new Error(`Invalid assertion type: "${originalAssertionType}" \r\n  Valid assertion types are: "equals", "contains", "exists", "is enabled", "is disabled", "does not exist", "does not contain", "to have text containing", "contains text"`);
-//     },
-//   };
-
-//   try {
-//     (await getAssertionType[assertionType] || await getAssertionType['default'])();
-//     allureReporter.addAttachment(`Assertion Pass: `, `"${actual}" ${originalAssertionType} "${expected}"`, 'text/plain');
-
-//   if (typeof actual === 'string') {
-//     this.log(`PASS: =======>>>>>>>>>>> "${actual}" ${originalAssertionType} "${expected}"`);
-//   } else {
-//     this.log(`PASS: =======>>>>>>>>>>> ${await actual.locator} element ${originalAssertionType} ${expected}`);
-//   }
-
-//   } catch (error) {
-//     this.log(`FAIL: assertion type failure : =======>>>>>>>>>>>  ${actual} ${originalAssertionType} ${expected} : ${error}`);
-//     allureReporter.addAttachment('Assertion Failure: ', `Invalid Assertion Type = ${originalAssertionType}`, 'text/plain');
-//     allureReporter.addAttachment('Assertion Error: ', error.toString(), 'text/plain');
-//   } finally {
-//   //  allureReporter.addAttachment('Assertion Passes: ', `Valid Assertion Type = ${assertionType}`, 'text/plain');
-//   //  this.log('Assertion  PASS: =======>>>>>>>>>>> ', assertionType);
-//     allureReporter.endStep();
-//   }
-
-//   // For the full list of options please got to
-//   // https://github.com/webdriverio/expect-webdriverio/blob/main/docs/API.md
-// }
-
-/**
  * This is the function for performing asserts and passing the results to the allure report
  * @param actual
  * @param assertionType
@@ -1433,13 +1375,16 @@ export async function waitForElementToStopMoving(element: WebdriverIO.Element, t
 export async function expectAdv(actual: WebdriverIO.Element | string, assertionType: any, expected: any = null) {
 
   // Stub out assertions if the test has already ended
-  if (!ASB.get("TEST_ENDED")) {
-
+  if (ASB.get("TEST_ENDED")) {
+    await log(`WARN: Assertion ${assertionType} skipped because the test has already ended`);
+  } else {
+    let invalidAssertion: boolean = false;
     let failed: boolean = false;
     let errorMessage: string = "";
 
     //Jest expect function
     const softAssert = expect;
+    // const assert = expectWDIO
 
     // Convert assertions like "Does not exist" to "doesnotexist"
     let originalAssertionType = assertionType;
@@ -1449,23 +1394,33 @@ export async function expectAdv(actual: WebdriverIO.Element | string, assertionT
       // perform the assertion 
       equals: async () => (await softAssert(actual).toEqual(expected)),
       contains: async () => (await softAssert(actual).toContain(expected)),
-      exists: async () => (await softAssert(actual).toBeExisting()),
-      doesexist: async () => (await softAssert(actual).toBeExisting()),
-      doesnotexist: async () => (await softAssert(actual).not.toBeExisting()),
 
-      isenabled: async () => (await softAssert(actual).toBeEnabled()),
-      isnotdisabled: async () => (await softAssert(actual).toBeEnabled()),
+      exists: async () => (await softAssert(await actual).toBeExisting()),
+      doesexist: async () => (await softAssert(await actual).toBeExisting()),
+      doesnotexist: async () => (await softAssert(await actual).not.toBeExisting()),
 
-      isnotenabled: async () => (await softAssert(actual).not.toBeEnabled()),
-      isdisabled: async () => (await softAssert(actual).toBeDisabled()),
+      isenabled: async () => (await softAssert(await actual).toBeEnabled()),
+      isnotdisabled: async () => (await softAssert(await actual).toBeEnabled()),
+
+      isnotenabled: async () => (await softAssert(await actual).not.toBeEnabled()),
+      isdisabled: async () => (await softAssert(await actual).toBeDisabled()),
 
       doesnotcontain: async () => (await softAssert(actual).not.toContain(expected)),
       tohavetextcontaining: async () => (await softAssert(actual).toHaveTextContaining(expected)),
       containstext: async () => (await softAssert(actual).toHaveTextContaining(expected)),
+
       default: async () => {
+        await softAssert(`"${originalAssertionType}"`).toEqual(" A valid assertion string ")
         allureReporter.addAttachment('Assertion Failure: ', `Invalid Assertion Type = ${originalAssertionType}`, 'text/plain');
-        await log(`WARN: Invalid assertion type: "${assertionType}" \r\n  Valid assertion types are: "equals" "contains" "exists" "is enabled" "is disabled" "does not exist" "does not contain" "to have text containing" "contains text"`);
-        throw new Error(`Invalid assertion type: "${originalAssertionType}"`);
+        failed = true;
+        invalidAssertion = true;
+        await log(`WARN: Invalid assertion type: "${originalAssertionType}" \r\n  Valid assertion types are: "equals" "contains" "exists" "is enabled" "is disabled" "does not exist" "does not contain" "to have text containing" "contains text" `);
+
+        // This blocks actual expected values from being reported 
+        //throw new Error(`Invalid assertion type: "${originalAssertionType}"`);
+
+
+
       },
     };
 
@@ -1487,9 +1442,9 @@ export async function expectAdv(actual: WebdriverIO.Element | string, assertionT
           // If the assertion type is "does not" then the element should not exist
           if (!assertionType.includes(`not`)) {
             //await this.log(`FAIL:  Assert selector "${ASB.get("ELEMENT_SELECTOR")}" ${originalAssertionType} `);
-            ASB.set("ALREADY_FAILED", true);
             failed = true
             errorMessage = actual.error.message
+            ASB.set("alreadyFailed", true);
           }
         }
       }
@@ -1497,37 +1452,43 @@ export async function expectAdv(actual: WebdriverIO.Element | string, assertionT
       // perform the assertion or report an unknown assertion type
       (await getAssertionType[assertionType] || await getAssertionType['default'])();
 
-      if (failed) {
-        allureReporter.addAttachment(`Assertion Fail: `, `"${actual}" ${originalAssertionType} "${expected}"`, 'text/plain');
-        throw new Error(`${errorMessage}`);  // Re-throw the error to ensure test failure
-      } else {
+      if (invalidAssertion) { // If the assertion type is invalid
+        // Skip the validation reporting
+      } else { //  If the assertion failed
 
-        allureReporter.addAttachment(`Assertion Pass: `, `"${actual}" ${originalAssertionType} "${expected}"`, 'text/plain');
-        // Additional logging for passed assertions
-      }
+        if (failed) { // and if the assertion failed
+          allureReporter.addAttachment(`Assertion Fail: `, `"${actual}" ${originalAssertionType} "${expected}"`, 'text/plain');
+          if (typeof actual === 'string') {
+            await this.log(`FAIL:  "${actual}" ${originalAssertionType} "${expected}"`);
+            await expect(actual).toEqual(`${originalAssertionType} "${expected}"`);
+          } else {
+            await this.log(`FAIL:  Selector "${ASB.get("ELEMENT_SELECTOR")}" ${originalAssertionType} failed`);
+            await expect(ASB.get("ELEMENT_SELECTOR")).toEqual(`${originalAssertionType} `);
+          }
+          //throw new Error(`${errorMessage}`);  // Re-throw the error to ensure test failure
+        } else {
+          allureReporter.addAttachment(`Assertion Pass: `, `"${actual}" ${originalAssertionType} "${expected}"`, 'text/plain');
+          // Additional logging for passed assertions
 
-      if (typeof actual === 'string') {
-        await this.log(`PASS:  "${actual}" ${originalAssertionType} "${expected}"`);
-      } else {
-        //@ts-ignore - TS does not like the element.locator, but this works
-
-        await this.log(`PASS:  Verified selector "${ASB.get("ELEMENT_SELECTOR")}" ${originalAssertionType} `);
-
-        await this.log(`********* Error: ${await actual.error.message}`);
-
+          if (typeof actual === 'string') {
+            await this.log(`PASS:  "${actual}" ${originalAssertionType} "${expected}"`);
+          } else {
+            await this.log(`PASS: Selector "${ASB.get("ELEMENT_SELECTOR")}" ${originalAssertionType} failed`);
+          }
+        }
       }
 
     } catch (error) {
 
       if (await expected === null) {
         // This is an element state check
-
+        ASB.set("alreadyFailed", true);
         await this.log(`FAIL: Object assertion - Expected: selector "${ASB.get("ELEMENT_SELECTOR")}" ${originalAssertionType}\r\n       Actual - ${error}`);
         allureReporter.addAttachment('Object assertion Error: "${ASB.get("ELEMENT_SELECTOR")}" ${originalAssertionType} ', error.toString(), 'text/plain');
 
       } else {
         // This was a string comparison
-
+        ASB.set("alreadyFailed", true);
         //@ts-ignore - TS does not like the element.locator, but this works
         await this.log(`FAIL: String assertion error : "${actual}" ${originalAssertionType} "${expected}"\r\n       ${error}`);
         allureReporter.addAttachment(`String assertion Error: ${actual}}" ${originalAssertionType} `, error.toString(), 'text/plain');
@@ -1535,8 +1496,10 @@ export async function expectAdv(actual: WebdriverIO.Element | string, assertionT
       }
 
       // softassert will not throw an error until the end of the test
-      // throw error; // Re-throw the error to stop test failure
-
+      if (ASB.get("SOFT_ASSERT") === false) {
+        throw error; // Re-throw the error to stop test failure
+        // throw error; // Re-throw the error to stop test failure
+      }
     } finally {
       allureReporter.endStep();
     }
