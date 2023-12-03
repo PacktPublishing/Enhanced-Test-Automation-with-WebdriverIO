@@ -197,6 +197,12 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     // Make sure you have the wdio adapter package for the specific framework installed
     // before running any tests.
     framework: "jasmine",
+
+    jasmineOpts: {
+        // If printErrorDetails is set to true, it will print the stack trace for failed tests.
+        printErrorDetails: false,
+    },
+
     //
     // The number of times to retry the entire specfile when it fails as a whole
     // specFileRetries: 1,
@@ -299,6 +305,9 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
      * Function to be executed before a test (in Mocha/Jasmine) starts.
      */
     beforeTest: async function (test, context) {
+
+        ASB.reset();
+
         //Option #1: Run browser full screen on dual monitors
         await browser.maximizeWindow();
 
@@ -331,20 +340,24 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
      * @param {Boolean} result.passed    true if test has passed, otherwise false
      * @param {Object}  result.retries   informations to spec related retries, e.g. `{ attempts: 0, limit: 0 }`
      */
+
     afterTest: async function (
         test,
         context,
         { error, result, duration, passed, retries }
     ) {
-        // if the framework detected a failure changed the state.
-        if (ASB.get("ALREADY_FAILED")) {
+        // Debugging: If the framework detected a failure changed the state.
+       //ASB.print();
+
+        if (ASB.get("alreadyFailed")) {
             passed = false;
-            ASB.set("TEST_ENDED", true)
-            // throw new Error(`Multiple errors occurred`);
         }
+
+        ASB.set("TEST_ENDED", true)
 
         if (!passed) {
             await browser.takeScreenshot();
+            //throw new Error(`Multiple errors occurred`);
         }
     },
     /**
@@ -361,8 +374,8 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
      * @param {Number} result 0 - command success, 1 - command error
      * @param {Object} error error object if any
      */
-    // afterCommand: function (commandName, args, result, error) {
-    // },
+    //afterCommand: function (commandName, args, result, error) {
+    //},
     /**
      * Gets executed after all tests are done. You still have access to all global variables from
      * the test.
@@ -391,9 +404,7 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
      * @param {<Object>} results object containing test results
      */
     onComplete: function (exitCode, config, capabilities, results) {
+
         global.log("ON COMPLETE");
-        if (ASB.get("alreadyFailed")) {
-            throw new Error('Test failed');
-        }
     },
 };
