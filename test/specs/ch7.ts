@@ -1,7 +1,7 @@
 
 import TelerikPage from "../pageObjects/telerik.page";
 
-describe("The select Wrapper: Selecting from List and Combobox", () => {
+describe("The select Wrapper: Choosing Values in Lists and Comboboxes", () => {
 
     it("Chapter 7: Select from a Combo Box", async () => {
         let elem;

@@ -1,7 +1,7 @@
 import LoginPage from '../pageObjects/login.page';
 import SecurePage from '../pageObjects/secure.page';
 
-describe("Ch4: Super Speed : Time Travel Paradoxes and Broken Promises", () => {
+describe("Chapter 4: Super Speed : Time Travel Paradoxes and Broken Promises", () => {
     it('should report text in order 1,2,3 even though the code is in 2, 3, 1 order', () => {
         // Microtasks, Macrotasks and Main thread execute out of order
         Promise.resolve().then(_ => console.log(`2: Promise Microtask - First line of code executes second!`)); //Microtask
@@ -11,11 +11,11 @@ describe("Ch4: Super Speed : Time Travel Paradoxes and Broken Promises", () => {
     });
 })
 
-describe("Ch4: Super Speed : Login with Await", () => {
+describe("Chapter 4: Super Speed : Login with Await", () => {
     it('Should PASS to login because await statements exist to ensure code executes in sequence', async () => {
         await LoginPage.open();
 
-        await LoginPage.login("tomsmith", "SuperSecretPassword!");
+        await LoginPage.loginAdv("tomsmith", "SuperSecretPassword!");
         await expect(SecurePage.flashAlert).toBeExisting();
         await expect(SecurePage.flashAlert).toHaveTextContaining(
             "You logged into a secure area!"
