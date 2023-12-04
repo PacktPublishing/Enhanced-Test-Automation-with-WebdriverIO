@@ -2,7 +2,7 @@ import LoginPage from "../pageObjects/login.page";
 import SecurePage from "../pageObjects/secure.page";
 import DropdownPage from "../pageObjects/dropdown.page";
 
-describe("Ch11: Echo Location - find element by text without Page Object Model", () => {
+describe("Chapter 11: Echo Location - Find elements by text without a Page Object Model", () => {
   beforeEach(async () => {  
     await LoginPage.open();
   });

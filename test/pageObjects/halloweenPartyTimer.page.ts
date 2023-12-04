@@ -25,4 +25,4 @@ class HalloweenPartyTimerPage extends Page {
         return success;
     }
 }
-export default new HalloweenPartyTimerPage(); 
+export default new HalloweenPartyTimerPage();

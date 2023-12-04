@@ -3,14 +3,14 @@ import SecurePage from "../pageObjects/secure.page";
 import * as helpers from "../../helpers/helpers";
 import * as Data from "../../shared-data/userData.json";
 
-describe("Ch13: Cross Browser and Cross Environment Testing", () => {
+describe("Chapter 13: The Multiverses Cross Browser and Cross Environment Testing", () => {
 
   beforeEach(async () => {
     await LoginPage.open();
   });
 
   it("should login with valid credentials", async () => {
-    await LoginPage.login(Data.userData.username, Data.userData.password);
+    await LoginPage.loginAdv(Data.userData.username, Data.userData.password);
     await helpers.expectAdv(SecurePage.flashAlert, 'exists', null);
     await helpers.expectAdv(SecurePage.flashAlert, 'toHaveTextContaining', "You logged into a secure area!");
   });
