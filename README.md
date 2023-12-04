@@ -1,6 +1,7 @@
 # <p align="center">Enhanced Test Automation with WebdriverIO</p>
 
 **<p align="center">Unlocking the Superpowers of Hybrid Testing Frameworks</p>**
+<a href="https://www.packtpub.com/product/enhanced-test-automation-with-webdriverio/9781837630189"><img src="https://m.media-amazon.com/images/I/71Oibo8C-PL._SL1360_.jpg" alt="Enhanced Test Automation with WebdriverIO" height="256px" align="right"></a>
 
 This is the code repository for [Enhanced Test Automation with WebdriverIO](https://www.packtpub.com/product/enhanced-test-automation-with-webdriverio/9781837630189), published by Packt.
 
@@ -19,7 +20,7 @@ This book covers the following exciting features:
 * How to automate stateless end-to-end user journey where user choices change the order pages appear
 * Setting up a CI/CD job for manual testers to automate complex data setup events via LambdaTest  
 
-
+If you feel this book is for you, get your [copy](https://www.amazon.com/dp/1837630186) today!
 
 ## Instructions and navigations
 All of the code is organized into folders in the repository and looks like this: 
@@ -70,8 +71,12 @@ This book is for WebdriverIO developers who want to extend the functionalities o
 |VS Code|
 |Belarc Advisor Profiler (optional)free, single,personal-use license| Windows only |
 
+### Related products
+* Test Automation Engineering Handbook [[Packt]](https://www.packtpub.com/product/test-automation-engineering-handbook/9781804615492) [[Amazon]](https://www.amazon.com/Test-Automation-Engineering-Handbook-techniques/dp/1804615498)
 
-## Get to Know the Author
+* Svelte with Test-Driven Development [[Packt]](https://www.packtpub.com/product/svelte-with-test-driven-development/9781837638338) [[Amazon]](https://www.amazon.com/Svelte-Test-Driven-Development-Playwright-Cucumber-js/dp/1837638330)
+
+## Get to Know the Authors
 Paul M. Grossman, aka @DarkArtsWizard on X and Threads, is a test automation framework architect,
 project manager, and conference speaker with a love of stage magic. Since 2001, he has worked with
 numerous toolsets, including WebdriverIO in TypeScript, Selenium in Java, OpenText UFT in VBScript, and
