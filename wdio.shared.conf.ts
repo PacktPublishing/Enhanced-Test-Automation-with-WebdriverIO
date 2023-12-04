@@ -56,7 +56,7 @@ global.log = (message: any) => {
         ASB.set("LAST_MESSAGE_COUNT", 0);
     }
     ASB.set("LAST_MESSAGE", message);
-    let messageString: string = message + " " ;
+    let messageString: string = message + " ";
 
     try {
         if (typeof message === "string" || typeof message === "number") {
@@ -83,7 +83,7 @@ global.log = (message: any) => {
                 //messageString = messageString.replace(regex, ` Selector '${ANSI_LOCATOR}$1${ANSI_RESET}' `);
                 let regex = /Selector "(.*?)" /ig;
                 messageString = messageString.replace(regex, ` Selector "${ANSI_LOCATOR}$1${ANSI_RESET}" `);
-                
+
                 console.log(`--->   ${messageString}`);
             }
         }
@@ -197,6 +197,12 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     // Make sure you have the wdio adapter package for the specific framework installed
     // before running any tests.
     framework: "jasmine",
+
+    jasmineOpts: {
+        // If printErrorDetails is set to true, it will print the stack trace for failed tests.
+        printErrorDetails: false,
+    },
+
     //
     // The number of times to retry the entire specfile when it fails as a whole
     // specFileRetries: 1,
@@ -253,22 +259,27 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
      * @param {args} arguments passed to the command
      */
     beforeCommand: function (commandName, args) {
-        if (commandName === '$') {
-            const selector = args[0];
-            // Modify the selector or add additional functionality as needed
-            // For example, you can add a prefix to the selector
-            global.log(`BEFORE $ COMMAND: Selector "${selector}" sent to ASB("elementSelector")`);
-            // Pass the locator to the switchboard
-            ASB.set("elementSelector", selector);
-        }
+        if (!ASB.get("TEST_ENDED")) {
+            if (commandName === '$') {
+                const selector = args[0];
+                // Modify the selector or add additional functionality as needed
+                // For example, you can add a prefix to the selector
+                global.log(`BEFORE $ COMMAND: Selector "${selector}" sent to ASB("ELEMENT_SELECTOR")`);
+                // Pass the locator to the switchboard
+                ASB.set("ELEMENT_SELECTOR", selector);
+                // Print all entries (key-value pairs)
 
-        if (commandName === '$$') {
-            const selector = args[0];
-            // Modify the selector or add additional functionality as needed
-            // For example, you can add a prefix to the selector for custom color logging
-            global.log(`BEFORE $$ COMMAND: Selector "${selector}" sent to ASB("elementsSelector")`);
-            // Pass the locator to the switchboard
-            ASB.set("elementsSelector", selector);
+            }
+
+            if (commandName === '$$') {
+
+                const selector = args[0];
+                // Modify the selector or add additional functionality as needed
+                // For example, you can add a prefix to the selector for custom color logging
+                global.log(`BEFORE $$ COMMAND: Selector "${selector}" sent to ASB("ELEMENT_SELECTOR")`);
+                // Pass the locator to the switchboard
+                ASB.set("ELEMENT_SELECTOR", selector);
+            }
         }
     },
 
@@ -294,6 +305,9 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
      * Function to be executed before a test (in Mocha/Jasmine) starts.
      */
     beforeTest: async function (test, context) {
+
+        ASB.reset();
+
         //Option #1: Run browser full screen on dual monitors
         await browser.maximizeWindow();
 
@@ -326,13 +340,24 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
      * @param {Boolean} result.passed    true if test has passed, otherwise false
      * @param {Object}  result.retries   informations to spec related retries, e.g. `{ attempts: 0, limit: 0 }`
      */
+
     afterTest: async function (
         test,
         context,
         { error, result, duration, passed, retries }
     ) {
+        // Debugging: If the framework detected a failure changed the state.
+       //ASB.print();
+
+        if (ASB.get("alreadyFailed")) {
+            passed = false;
+        }
+
+        ASB.set("TEST_ENDED", true)
+
         if (!passed) {
             await browser.takeScreenshot();
+            //throw new Error(`Multiple errors occurred`);
         }
     },
     /**
@@ -349,8 +374,8 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
      * @param {Number} result 0 - command success, 1 - command error
      * @param {Object} error error object if any
      */
-    // afterCommand: function (commandName, args, result, error) {
-    // },
+    //afterCommand: function (commandName, args, result, error) {
+    //},
     /**
      * Gets executed after all tests are done. You still have access to all global variables from
      * the test.
@@ -379,9 +404,7 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
      * @param {<Object>} results object containing test results
      */
     onComplete: function (exitCode, config, capabilities, results) {
+
         global.log("ON COMPLETE");
-        if (ASB.get("alreadyFailed")) {
-            throw new Error('Test failed');
-        }
     },
 };

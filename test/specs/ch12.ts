@@ -16,7 +16,7 @@ describe("Chapter 12: Superhero Landing - setting up flexible Navigation Options
     allureReporter.addFeature("Automation Hello World");
     allureReporter.addDescription("Verify the user can login", 'html');
 
-    await LoginPage.login(Data.userData.username, Data.userData.password);
+    await LoginPage.loginAdv(Data.userData.username, Data.userData.password);
     await helpers.expectAdv(SecurePage.flashAlert, 'exists', null);
     await helpers.expectAdv(SecurePage.flashAlert, 'toHaveTextContaining', (["You logged into a secure area!"]));
   });

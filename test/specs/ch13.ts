@@ -10,7 +10,7 @@ describe("Chapter 13: The Multiverses Cross Browser and Cross Environment Testin
   });
 
   it("should login with valid credentials", async () => {
-    await LoginPage.login(Data.userData.username, Data.userData.password);
+    await LoginPage.loginAdv(Data.userData.username, Data.userData.password);
     await helpers.expectAdv(SecurePage.flashAlert, 'exists', null);
     await helpers.expectAdv(SecurePage.flashAlert, 'toHaveTextContaining', "You logged into a secure area!");
   });

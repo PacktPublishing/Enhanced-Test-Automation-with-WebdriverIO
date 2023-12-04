@@ -50,7 +50,7 @@ describe("Chapter 5: Intentional Fail Last clickAdv with pageSync and autoscroll
 
   it("should login with valid credentials", async () => {
     await LoginPage.open();
-    await LoginPage.login("tomsmith", "SuperSecretPassword!");
+    await LoginPage.loginAdv("tomsmith", "SuperSecretPassword!");
     await expect(SecurePage.flashAlert).toBeExisting();
     await expect(SecurePage.flashAlert).toHaveTextContaining(
       "You logged into a secure area!"

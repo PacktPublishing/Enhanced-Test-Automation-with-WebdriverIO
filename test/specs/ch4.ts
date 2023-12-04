@@ -15,7 +15,7 @@ describe("Chapter 4: Super Speed : Login with Await", () => {
     it('Should PASS to login because await statements exist to ensure code executes in sequence', async () => {
         await LoginPage.open();
 
-        await LoginPage.login("tomsmith", "SuperSecretPassword!");
+        await LoginPage.loginAdv("tomsmith", "SuperSecretPassword!");
         await expect(SecurePage.flashAlert).toBeExisting();
         await expect(SecurePage.flashAlert).toHaveTextContaining(
             "You logged into a secure area!"
