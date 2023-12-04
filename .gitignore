@@ -9,5 +9,5 @@ screenshots
 *.log
 .vscode
 reports
-.env
+allure-report/.env
 yarn-error.log
