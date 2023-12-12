@@ -197,12 +197,6 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
     // Make sure you have the wdio adapter package for the specific framework installed
     // before running any tests.
     framework: "jasmine",
-
-    jasmineOpts: {
-        // If printErrorDetails is set to true, it will print the stack trace for failed tests.
-        printErrorDetails: false,
-    },
-
     //
     // The number of times to retry the entire specfile when it fails as a whole
     // specFileRetries: 1,
@@ -236,7 +230,9 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
             if (!passed) {
                 await browser.saveScreenshot(`./reports/assertionError.png`)
             }
-        }
+        },
+        // If printErrorDetails is set to true, it will print the stack trace for failed tests.
+        printErrorDetails: false,
     },
     // =====
     // Hooks
@@ -347,7 +343,7 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
         { error, result, duration, passed, retries }
     ) {
         // Debugging: If the framework detected a failure changed the state.
-       //ASB.print();
+        //ASB.print();
 
         if (ASB.get("alreadyFailed")) {
             passed = false;
