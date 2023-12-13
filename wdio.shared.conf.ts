@@ -62,10 +62,6 @@ global.log = (message: any) => {
         if (typeof message === "string" || typeof message === "number") {
             if (message) {
 
-                if (messageString.toString().includes(`[object Promise]`)) {
-                    messageString = (`--->  WARN: ${message} \n      Promise object detected. async function call missing await keyword.`);
-                    console.trace();
-                }
                 if (messageString.includes("WARN: ")) {
                     messageString = ANSI_WARNING + messageString + " " + ANSI_RESET
                 } else if (messageString.includes("FAIL: ") || messageString.includes("ERROR: ") || messageString.includes("Promise")) {
@@ -85,6 +81,13 @@ global.log = (message: any) => {
                 messageString = messageString.replace(regex, ` Selector "${ANSI_LOCATOR}$1${ANSI_RESET}" `);
 
                 console.log(`--->   ${messageString}`);
+
+            }
+        } else {
+            if (messageString.toString().includes(` Promise`)) {
+                messageString = (`${ANSI_WARNING} --->  WARN: ${message} \n      Promise object detected. An ${ANSI_TEXT}async${ANSI_WARNING} function call may be missing ${ANSI_TEXT}await${ANSI_WARNING} keyword.${ANSI_RESET}`);
+                console.log(`--->   ${messageString}`);
+                console.trace();
             }
         }
     } catch (error: any) {
