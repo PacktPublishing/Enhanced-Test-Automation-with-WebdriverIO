@@ -44,4 +44,41 @@ export default class Page {
         global.log(message);
         global.log(line);
     }
+
+
+
+    /**
+     * Opens a sub page of the page or the url provided
+     * @param path optional path of the sub page (e.g. /path/to/page.html)
+     */
+    public async open_sync(path: string) {
+        allureReporter.addAttachment('Navigating to url', path, 'string');
+
+        if (path.startsWith(`http`)) {
+            browser.url(path); // Overwrite the path
+        } else if (path.startsWith(`components`)) {
+            browser.url(`https://www.telerik.com/kendo-react-ui/${path}`);
+        } else if (path === ``) { //uses baseUrl from wdio.shared.conf.ts
+            browser.url(`${browser.options.baseUrl}`);
+        } else {
+            return browser.url(`${baseUrl}/${path}`);
+        }
+        
+        // Wait for the landing page to load
+        //helpers.pageSync();
+
+        let message: string = '';
+        if (path.startsWith(`components`)) {
+            message = `Opening URL: https://www.telerik.com/kendo-react-ui/${path}`;
+        }
+        else {
+            message = `Opening URL: ${baseUrl}/${path}`;
+        }
+        const line = '-'.repeat(message.length);
+        
+        global.log(line);
+        global.log(message);
+        global.log(line);
+    }
+
 }
