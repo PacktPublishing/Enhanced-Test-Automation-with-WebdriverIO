@@ -6,8 +6,6 @@ describe("Bonus 1: Embed a 500ms wait before every click", () => {
 
         beforeEach(async () => {
             ASB.set("SLOW_MODE", true);
-            ASB.set("SLOW_MODE_DELAY", 1000);
-           
         });
 
         it('Should PASS to logon as clicks are slowed', async () => {
