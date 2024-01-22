@@ -2,7 +2,7 @@ import LoginPage from "../pageObjects/login.page";
 import SecurePage from "../pageObjects/secure.page";
 
   // This test uses almost no custom framework except the wdio.shared.conf.ts custom commands
-  describe("A near mortal WebdriverIO script", () => {
+  describe("A mere mortal WebdriverIO script", () => {
     it("should login with valid credentials", async () => {
       await LoginPage.open();
 

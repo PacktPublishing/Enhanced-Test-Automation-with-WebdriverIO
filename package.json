@@ -43,7 +43,8 @@
         "ch14dev": "cross-env Env=dev wdio wdio.dev.conf.ts --spec ./test/specs/ch14.ts",
         "ch14prod": "cross-env Env=prod wdio wdio.dev.conf.ts --spec ./test/specs/ch14.ts",
         "ltlocal": "cross-env Env=dev wdio wdio.lambdatest.conf.ts --spec ./test/specs/ch14.ts",
-        "ch15": "cross-env Env=prod wdio wdio.lambdatest.conf.ts --spec ./test/specs/ch15.ts"
+        "ch15": "cross-env Env=prod wdio wdio.lambdatest.conf.ts --spec ./test/specs/ch15.ts",
+        "bonus1": "yarn wdio --spec ./test/specs/bonus1.ts"
     },
     "dependencies": {
         "@types/jasmine": "^5.1.2",
