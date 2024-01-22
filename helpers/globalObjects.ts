@@ -16,6 +16,8 @@ function switchboardFactory(): { get: (k: string) => any; set: (k: string, v: an
             }
         },
         reset() {
+            this.print();
+            console.log(` --->   Clearing Switchboard`);
             switchboard.clear();
         }
     }

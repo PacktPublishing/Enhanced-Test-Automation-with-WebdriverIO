@@ -3,6 +3,7 @@
  Replace with expect(el).toHaveText(expect.stringContaining('...')))
 */
 import { ASB } from './helpers/globalObjects';
+import { pause } from './helpers/helpers';
 require('dotenv').config();
 
 const DEBUG =
@@ -259,6 +260,30 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
      */
     beforeCommand: function (commandName, args) {
         if (!ASB.get("TEST_ENDED")) {
+
+            global.log(`Command: ${commandName}`);
+
+            if (commandName === 'click') {
+                // Bonus 1: Embed a 500ms wait before every click
+                if (ASB.get("SLOW_MODE")) {
+                    // Bonus 1: Embed a 500ms wait only in slow mode tests
+                    global.log(`Pausing 1000ms before click`);
+                    // browser.pause(1000);
+
+                    new Promise<void>(async (resolve) => { 
+                        // Force the delay to be async
+                        await pause(1000);
+
+                        //Alternate solution: Dynamicly wait for the page to be ready 
+                        //await pageSync();
+
+                        resolve();
+                    });
+
+                    global.log(`Clicking...`);
+                }
+            }
+
             if (commandName === '$') {
                 const selector = args[0];
                 // Modify the selector or add additional functionality as needed
@@ -304,8 +329,6 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
      * Function to be executed before a test (in Mocha/Jasmine) starts.
      */
     beforeTest: async function (test, context) {
-
-        ASB.reset();
 
         //Option #1: Run browser full screen on dual monitors
         await browser.maximizeWindow();
@@ -358,6 +381,9 @@ export const config: Omit<WebdriverIO.Config, 'capabilities'> = {
             await browser.takeScreenshot();
             //throw new Error(`Multiple errors occurred`);
         }
+
+        // Reset the switchboard
+        ASB.reset(); // added to clear the switchboard after each test
     },
     /**
      * Hook that gets executed after the suite has ended
